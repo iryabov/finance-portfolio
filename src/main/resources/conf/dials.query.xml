@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<query xmlns="http://n2oapp.net/framework/config/schema/query-4.0"
+       object-id="dial">
+    <list>
+        <sql file="sql/dials.sql"/>
+    </list>
+    <unique filters="id">
+        <sql file="sql/dials.sql"/>
+    </unique>
+    
+    <fields>
+        <field id="id">
+            <select>d.id</select>
+            <filters>
+                <eq filter-id="id">d.id = :id</eq>
+            </filters>
+        </field>
+        <field id="active" domain="boolean">
+            <select>d.active</select>
+        </field>
+        <field id="dt_open" domain="date">
+            <select>d.dt_open</select>
+        </field>
+        <field id="account.id" domain="integer">
+            <select>d.account_id</select>
+        </field>
+        <field id="account.name" domain="string">
+            <select>a.name</select>
+        </field>
+        <field id="ticker" domain="string">
+            <select>d.ticker</select>
+        </field>
+        <field id="asset.name" domain="string">
+            <select>s.name</select>
+        </field>
+        <field id="type" domain="string">
+            <select>d.type</select>
+        </field>
+        <field id="currency" domain="string">
+            <select>d.currency</select>
+        </field>
+        <field id="amount" domain="numeric">
+            <select>d.amount</select>
+        </field>
+        <field id="quantity" domain="numeric">
+            <select>d.quantity</select>
+        </field>
+        <field id="fee" domain="numeric">
+            <select>d.fee</select>
+        </field>
+        <field id="sold_quantity" domain="numeric">
+            <select>d.sold_quantity</select>
+        </field>
+        <field id="sold_amount" domain="numeric">
+            <select>d.sold_amount</select>
+        </field>
+        <field id="dt_close" domain="date">
+            <select>d.dt_close</select>
+        </field>
+        <field id="tax" domain="numeric">
+            <select>d.tax</select>
+        </field>
+        <field id="note" domain="string">
+            <select>d.note</select>
+        </field>
+    </fields>
+</query>

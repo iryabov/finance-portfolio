@@ -1,0 +1,12 @@
+server:
+  servlet.context-path: /
+
+spring:
+  http.encoding:
+    forceResponse: true
+    force: true
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/invest
+    username: postgres
+    password: postgres

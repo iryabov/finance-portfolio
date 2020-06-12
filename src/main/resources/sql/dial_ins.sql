@@ -1,0 +1,33 @@
+INSERT INTO dial
+(id,
+account_id,
+active,
+amount,
+currency,
+dt_close,
+dt_open,
+fee,
+note,
+portfolio_id,
+quantity,
+tax,
+ticker,
+type,
+_sold_amount,
+_sold_quantity)
+VALUES (
+nextval('dial_seq'),
+:account_id,
+:amount,
+:currency,
+:dt_close,
+:dt_open,
+:fee,
+:note,
+:quantity,
+:tax,
+:ticker,
+:type,
+:_sold_amount,
+:_sold_quantity
+)
