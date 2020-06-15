@@ -1,7 +1,9 @@
 package com.github.iryabov.invest.service
 
 import com.github.iryabov.invest.model.AccountForm
+import com.github.iryabov.invest.model.AccountView
 import com.github.iryabov.invest.model.DialForm
+import java.net.URI
 
 interface InvestService {
     fun createAccount(form: AccountForm): Int
@@ -13,5 +15,8 @@ interface InvestService {
     fun deleteDial(accountId: Int, id: Long)
 
     fun deactivateDial(accountId: Int, id: Long)
+
+    fun getAccount(accountId: Int): AccountView
+
 
 }

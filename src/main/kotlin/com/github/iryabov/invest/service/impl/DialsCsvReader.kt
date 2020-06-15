@@ -1,0 +1,122 @@
+package com.github.iryabov.invest.service.impl
+
+import com.github.iryabov.invest.entity.Account
+import com.github.iryabov.invest.entity.Dial
+import com.github.iryabov.invest.relation.Currency
+import com.github.iryabov.invest.relation.DialType
+import com.github.iryabov.invest.repository.AccountRepository
+import com.github.iryabov.invest.repository.DialRepository
+import org.springframework.core.io.Resource
+import org.springframework.stereotype.Component
+import java.util.*
+import com.github.iryabov.invest.service.impl.CsvColumn.*
+import java.math.BigDecimal
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import kotlin.math.abs
+
+@Component
+class DialsCsvReader(
+        val dialRepo: DialRepository,
+        val accountRepo: AccountRepository
+) {
+    private val delimiter = ","
+    private val skipHeader = true
+
+    fun read(csv: Resource) {
+        val records = readRecords(csv)
+        for (record in records) {
+            val dial = Dial(
+                    ticker = record[TICKER.idx].toTicker(),
+                    dateOpen = record[OPENED.idx].toDate(),
+                    accountId = record[ACCOUNT.idx].toAccountId(),
+                    currency = record[CURRENCY.idx].toCurrency(),
+                    amount = record[AMOUNT.idx].toAmount(),
+                    quantity = record[QUANTITY.idx].toQuantity(),
+                    type = record[TYPE.idx].toType())
+            dialRepo.save(dial)
+        }
+    }
+
+    private fun readRecords(csv: Resource): List<List<String>> {
+        val records: MutableList<List<String>> = ArrayList()
+        Scanner(csv.inputStream).use { lines ->
+            if (skipHeader && lines.hasNextLine())
+                lines.nextLine()
+            while (lines.hasNextLine()) {
+                records.add(readRecordFromLine(lines.nextLine()))
+            }
+        }
+        return records
+    }
+
+    private fun readRecordFromLine(line: String): List<String> {
+        val values: MutableList<String> = ArrayList()
+        Scanner(line).use { row ->
+            row.useDelimiter(delimiter)
+            while (row.hasNext()) {
+                values.add(row.next())
+            }
+        }
+        return values
+    }
+
+    private fun String.toAccountId(): Int {
+        val account = accountRepo.findByName(this) ?: accountRepo.save(Account(name = this))
+        return account.id!!
+    }
+
+    private fun String.toCurrency(): Currency {
+        return when (this) {
+            "р" -> Currency.RUB
+            "$" -> Currency.USD
+            "e" -> Currency.EUR
+            else -> throw IllegalArgumentException(this)
+        }
+    }
+
+    private fun String.toDate(): LocalDate {
+        val formatter = DateTimeFormatter.ofPattern("dd.MM.yy")
+        return LocalDate.parse(this, formatter)
+    }
+
+    private fun String.toType(): DialType {
+        return when (this) {
+            "b" -> DialType.PURCHASE
+            "s" -> DialType.SALE
+            "d" -> DialType.DIVIDEND
+            "i" -> DialType.DEPOSIT
+            "o" -> DialType.WITHDRAWALS
+            else -> throw java.lang.IllegalArgumentException(this)
+        }
+    }
+
+    private fun String.toTicker(): String {
+        return this
+    }
+
+    private fun String.toAmount(): BigDecimal {
+        return if (!this.isBlank())
+            this.replace(" ", "")
+                    .replace(",", ".")
+                    .toBigDecimal()
+        else BigDecimal.ZERO
+    }
+
+    private fun String.toQuantity(): Int {
+        return if (!this.isBlank())
+            this.toInt()
+        else 0
+    }
+
+}
+
+enum class CsvColumn(val idx: Int) {
+    TYPE(0),
+    OPENED(1),
+    ACCOUNT(2),
+    TICKER(3),
+    CURRENCY(4),
+    AMOUNT(5),
+    QUANTITY(6)
+}

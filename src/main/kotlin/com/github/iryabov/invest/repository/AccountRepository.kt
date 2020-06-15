@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface AccountRepository: CrudRepository<Account, Int> {
+
+    fun findByName(name: String): Account?
 }

@@ -2,14 +2,18 @@ package com.github.iryabov.invest.service.impl
 
 import com.github.iryabov.invest.entity.Account
 import com.github.iryabov.invest.entity.Dial
+import com.github.iryabov.invest.model.AccountAssetView
 import com.github.iryabov.invest.model.AccountForm
+import com.github.iryabov.invest.model.AccountView
 import com.github.iryabov.invest.model.DialForm
 import com.github.iryabov.invest.repository.AccountRepository
 import com.github.iryabov.invest.repository.DialRepository
 import com.github.iryabov.invest.service.InvestService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.math.BigDecimal
 import java.time.LocalDate
+import kotlin.math.abs
 
 @Service
 @Transactional
@@ -18,7 +22,7 @@ class InvestServiceImpl(
         val dialRepo: DialRepository
 ) : InvestService {
     override fun createAccount(form: AccountForm): Int {
-        val created = accountRepo.save(form.toEntityWith())
+        val created = accountRepo.save(form.toEntity())
         return created.id!!
     }
 
@@ -39,6 +43,16 @@ class InvestServiceImpl(
         dialRepo.deactivate(id)
     }
 
+    override fun getAccount(accountId: Int): AccountView {
+        val totalDeposit = (dialRepo.findTotalDeposit(accountId) ?: BigDecimal.ZERO).abs()
+        val totalWithdrawals = (dialRepo.findTotalWithdrawals(accountId) ?: BigDecimal.ZERO).abs()
+        val assets = ArrayList<AccountAssetView>()
+        assets.addAll(dialRepo.findAssets(accountId))
+        return AccountView(
+                totalDeposit = totalDeposit,
+                totalWithdrawals = totalWithdrawals ?: BigDecimal.ZERO,
+                assets = assets)
+    }
 }
 
 private fun DialForm.toEntityWith(accountId: Int) = Dial(
@@ -51,7 +65,7 @@ private fun DialForm.toEntityWith(accountId: Int) = Dial(
         quantity = quantity
 )
 
-fun AccountForm.toEntityWith() = Account(
+fun AccountForm.toEntity() = Account(
         name = name,
         num = num
 )

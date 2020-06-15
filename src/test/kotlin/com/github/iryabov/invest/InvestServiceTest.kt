@@ -7,11 +7,13 @@ import com.github.iryabov.invest.relation.DialType
 import com.github.iryabov.invest.repository.AccountRepository
 import com.github.iryabov.invest.repository.DialRepository
 import com.github.iryabov.invest.service.InvestService
+import com.github.iryabov.invest.service.impl.DialsCsvReader
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.core.io.ClassPathResource
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.transaction.annotation.Transactional
 import java.math.BigDecimal
@@ -25,7 +27,9 @@ class InvestServiceTest(
         @Autowired
         val accountRepo: AccountRepository,
         @Autowired
-        val investService: InvestService
+        val investService: InvestService,
+        @Autowired
+        val csvReader: DialsCsvReader
 ) {
 
     @BeforeEach
@@ -65,5 +69,19 @@ class InvestServiceTest(
         //account deleting
         investService.deleteAccount(accountId)
         assertThat(accountRepo.findById(accountId).isEmpty).isTrue()
+    }
+
+    @Test
+    @Transactional
+    fun getAccountView() {
+        csvReader.read(ClassPathResource("/csv/test.csv"))
+        val bank = investService.getAccount(accountRepo.findByName("Bank")!!.id!!)
+        assertThat(bank.totalDeposit).isEqualTo(BigDecimal("101000"))
+        assertThat(bank.totalWithdrawals).isEqualTo(BigDecimal("50000"))
+        assertThat(bank.assets?.size).isEqualTo(2)
+
+        val broker = investService.getAccount(accountRepo.findByName("Broker")!!.id!!)
+        assertThat(broker.totalDeposit).isEqualTo(BigDecimal("50000"))
+        assertThat(broker.totalWithdrawals).isEqualTo(BigDecimal("1000"))
     }
 }
