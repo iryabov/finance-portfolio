@@ -3,29 +3,36 @@ package com.github.iryabov.invest.model
 import java.math.BigDecimal
 
 data class AccountView(
-        val totalDeposit: BigDecimal,
-        val totalWithdrawals: BigDecimal,
-        val totalAssets: BigDecimal? = null,
-        val totalFixedEarningPercent: BigDecimal? = null,
-        val totalCourseEarningPercent: BigDecimal? = null,
-        val assets: List<AccountAssetView>? = null
-)
+        val assets: List<AssetView>
+) {
+    lateinit var totalAmount: BigDecimal
+    lateinit var totalDeposit: BigDecimal
+    lateinit var totalWithdrawals: BigDecimal
+    lateinit var totalSpent: BigDecimal
+    lateinit var totalReceived: BigDecimal
+    lateinit var totalAmountCourse: BigDecimal
+    lateinit var totalProfitCourse: BigDecimal
+    lateinit var totalProfitFix: BigDecimal
+    lateinit var totalProfit: BigDecimal
+}
 
-data class AccountAssetView(
+data class AssetView(
         val assetTicker: String,
         val assetName: String? = null,
         val assetClass: String? = null,
-        val amount: BigDecimal,
+        val assetPriceNow: BigDecimal? = null,
         val quantity: Int,
-        val spent: BigDecimal,
-        val received: BigDecimal,
+        val amount: BigDecimal,
+        val spent: BigDecimal = BigDecimal.ZERO,
+        val received: BigDecimal = BigDecimal.ZERO,
+        val deposit: BigDecimal = BigDecimal.ZERO,
+        val withdrawals: BigDecimal = BigDecimal.ZERO) {
 
-        val proportionPercent: BigDecimal? = null,
-        val fixedEarningPercent: BigDecimal? = null,
-        val courseEarningPercent: BigDecimal? = null,
-        val fixedEarning: BigDecimal? = null,
-        val courseEarning: BigDecimal? = null,
-        val averagePurchasePrice: BigDecimal? = null,
-        val currentPrice: BigDecimal? = null,
-        val changeProportionPercent: BigDecimal? = null
-)
+    lateinit var amountCourse: BigDecimal
+    lateinit var profitCourse: BigDecimal
+    lateinit var profitFix: BigDecimal
+    lateinit var profit: BigDecimal
+    lateinit var proportion: BigDecimal
+    lateinit var proportionCourse: BigDecimal
+    lateinit var proportionProfit: BigDecimal
+}

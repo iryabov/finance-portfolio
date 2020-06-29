@@ -1,11 +1,13 @@
 package com.github.iryabov.invest.service.impl
 
-import com.github.iryabov.invest.entity.Account
 import com.github.iryabov.invest.entity.Dial
+import com.github.iryabov.invest.model.AccountForm
+import com.github.iryabov.invest.model.DialForm
 import com.github.iryabov.invest.relation.Currency
 import com.github.iryabov.invest.relation.DialType
 import com.github.iryabov.invest.repository.AccountRepository
 import com.github.iryabov.invest.repository.DialRepository
+import com.github.iryabov.invest.service.InvestService
 import org.springframework.core.io.Resource
 import org.springframework.stereotype.Component
 import java.util.*
@@ -13,12 +15,12 @@ import com.github.iryabov.invest.service.impl.CsvColumn.*
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import kotlin.math.abs
 
 @Component
 class DialsCsvReader(
         val dialRepo: DialRepository,
-        val accountRepo: AccountRepository
+        val accountRepo: AccountRepository,
+        val service: InvestService
 ) {
     private val delimiter = ","
     private val skipHeader = true
@@ -26,15 +28,14 @@ class DialsCsvReader(
     fun read(csv: Resource) {
         val records = readRecords(csv)
         for (record in records) {
-            val dial = Dial(
+            val dial = DialForm(
                     ticker = record[TICKER.idx].toTicker(),
-                    dateOpen = record[OPENED.idx].toDate(),
-                    accountId = record[ACCOUNT.idx].toAccountId(),
+                    opened = record[OPENED.idx].toDate(),
                     currency = record[CURRENCY.idx].toCurrency(),
                     amount = record[AMOUNT.idx].toAmount(),
                     quantity = record[QUANTITY.idx].toQuantity(),
                     type = record[TYPE.idx].toType())
-            dialRepo.save(dial)
+            service.addDial(record[ACCOUNT.idx].toAccountId(), dial)
         }
     }
 
@@ -62,8 +63,7 @@ class DialsCsvReader(
     }
 
     private fun String.toAccountId(): Int {
-        val account = accountRepo.findByName(this) ?: accountRepo.save(Account(name = this))
-        return account.id!!
+        return accountRepo.findByName(this)?.id ?: service.createAccount(AccountForm(name = this))
     }
 
     private fun String.toCurrency(): Currency {
