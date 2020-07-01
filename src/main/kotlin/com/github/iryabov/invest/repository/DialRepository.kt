@@ -21,13 +21,13 @@ interface DialRepository : CrudRepository<Dial, Long> {
 
     @Query("""
 select 
-    d.ticker as ticker,
+    d.ticker as asset_ticker,
     sum(d.quantity) as quantity,
     sum(case when d.quantity > 0 
         then  -1 * (d.amount_cur * (d.quantity - d.sold_quantity) / d.quantity)
         else  0 
         end  
-    ) as amount,
+    ) as net_value,
     sum(case  
       when  d.type = 'DEPOSIT' then  -1*d.amount_cur
       else  0 
@@ -39,11 +39,11 @@ select
     sum(case 
        when  d.amount_cur < 0 then  -1*d.amount_cur
        else  0 
-       end) as spent,
+       end) as expenses,
     sum(case 
        when  d.amount_cur > 0 then  d.amount_cur
        else   0 
-       end) as received 
+       end) as proceeds 
 from
 (select 
     d.id,

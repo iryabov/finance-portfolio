@@ -10,6 +10,7 @@ import com.github.iryabov.invest.repository.RateRepository
 import com.github.iryabov.invest.repository.StockQuotesRepository
 import com.github.iryabov.invest.service.InvestService
 import com.github.iryabov.invest.service.impl.DialsCsvReader
+import com.github.iryabov.invest.service.impl.eq
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
@@ -86,18 +87,22 @@ class InvestServiceTest(
 
     @Test()
     @Transactional
-    @Disabled
+//    @Disabled
     fun getAccountView() {
         csvReader.read(ClassPathResource("/csv/test.csv"))
         val bank = investService.getAccount(accountRepo.findByName("Bank")!!.id!!)
-        assertThat(bank.totalDeposit).isEqualTo(BigDecimal("101000"))
-        assertThat(bank.totalWithdrawals).isEqualTo(BigDecimal("50000"))
-        assertThat(bank.totalAmount).isEqualTo(BigDecimal("51000"))
-        assertThat(bank.assets.size).isEqualTo(2)
+        assertThat(bank.assets.size).isEqualTo(4)
+        assertThat(bank.totalDeposit.eq(BigDecimal("101000"))).isTrue()
+        assertThat(bank.totalWithdrawals.eq(BigDecimal("82132"))).isTrue()
+        assertThat(bank.totalNetValue.eq(BigDecimal("29777"))).isTrue()
+        assertThat(bank.totalFixedProfit.eq(BigDecimal("3.2"), 1)).isTrue()
 
         val broker = investService.getAccount(accountRepo.findByName("Broker")!!.id!!)
-        assertThat(broker.totalDeposit).isEqualTo(BigDecimal("50000"))
-        assertThat(broker.totalWithdrawals).isEqualTo(BigDecimal("1000"))
+        assertThat(broker.assets.size).isEqualTo(5)
+        assertThat(broker.totalDeposit.eq(BigDecimal("82132"))).isTrue()
+        assertThat(broker.totalWithdrawals.eq(BigDecimal("1000"))).isTrue()
+        assertThat(broker.totalNetValue.eq(BigDecimal("89009"))).isTrue()
+        assertThat(broker.totalFixedProfit.eq(BigDecimal("4.8"), 1)).isTrue()
     }
 
 
@@ -115,7 +120,7 @@ class InvestServiceTest(
 
     @Test
     @Transactional
-//    @Disabled
+    @Disabled
     @Rollback(false)
     fun read() {
         csvReader.read(ClassPathResource("/csv/test.csv"))

@@ -45,7 +45,6 @@ class InvestServiceImpl(
         if (setOf(DialType.PURCHASE).contains(created.type))
             writeOffByFifo(created.invert())
 
-
         return created.id!!
     }
 
@@ -100,36 +99,36 @@ class InvestServiceImpl(
 
 private fun AccountView.calc() {
     assets.forEach { a -> a.calc() }
-    totalAmount = assets.sumByBigDecimal { a -> a.amount }
+    totalNetValue = assets.sumByBigDecimal { a -> a.netValue }
     totalDeposit = assets.sumByBigDecimal { a -> a.deposit }
     totalWithdrawals = assets.sumByBigDecimal { a -> a.withdrawals }
-    totalSpent = assets.sumByBigDecimal { a -> a.spent }
-    totalReceived = assets.sumByBigDecimal { a -> a.received }
-    totalAmountCourse = assets.sumByBigDecimal { a -> a.amountCourse }
+    totalExpenses = assets.sumByBigDecimal { a -> a.expenses }
+    totalProceeds = assets.sumByBigDecimal { a -> a.proceeds }
+    totalMarketValue = assets.sumByBigDecimal { a -> a.marketValue }
 
-    totalProfitCourse = calcIncomePercent(totalAmountCourse, totalAmount)
-    totalProfitFix = calcIncomePercent(totalAmount + totalReceived, totalSpent)
-    totalProfit = calcIncomePercent(totalAmountCourse + totalReceived, totalSpent)
+    totalValueProfit = calcProfit(totalMarketValue, totalNetValue)
+    totalFixedProfit = calcProfit(totalNetValue + totalProceeds, totalExpenses)
+    totalMarketProfit = calcProfit(totalMarketValue + totalProceeds, totalExpenses)
 }
 
 private fun AccountView.calcProportion() {
-    assets.forEach { a -> a.calcProportion(totalAmount, totalAmountCourse) }
-    assert(assets.sumByBigDecimal { a -> a.proportion } == P100)
-    assert(assets.sumByBigDecimal { a -> a.proportionCourse } == P100)
-    assert(assets.sumByBigDecimal { a -> a.proportionProfit } == P0)
+    assets.forEach { a -> a.calcProportion(totalNetValue, totalMarketValue) }
+    assert(assets.sumByBigDecimal { a -> a.netInterest }.eq(P100) )
+    assert(assets.sumByBigDecimal { a -> a.marketInterest }.eq(P100))
+    assert(assets.sumByBigDecimal { a -> a.profitInterest }.eq(P0))
 }
 
 private fun AssetView.calc() {
-    amountCourse = if (assetPriceNow != null) BigDecimal(quantity) * assetPriceNow else amount
-    profitCourse = calcIncomePercent(amountCourse, amount)
-    profitFix = calcIncomePercent(amount + received, spent)
-    profit = calcIncomePercent(amountCourse + received, spent)
+    marketValue = if (assetPriceNow != null) BigDecimal(quantity) * assetPriceNow else netValue
+    valueProfit = calcProfit(marketValue, netValue)
+    fixedProfit = calcProfit(netValue + proceeds, expenses)
+    marketProfit = calcProfit(marketValue + proceeds, expenses)
 }
 
-private fun AssetView.calcProportion(totalAmount: BigDecimal, totalAmountCourse: BigDecimal) {
-    proportion = amount / totalAmount
-    proportionCourse = amountCourse / totalAmountCourse
-    proportionProfit = proportionCourse - proportion
+private fun AssetView.calcProportion(totalNetValue: BigDecimal, totalMarketValue: BigDecimal) {
+    netInterest = calcPercent(netValue, totalNetValue)
+    marketInterest = calcPercent(marketValue, totalMarketValue)
+    profitInterest = marketInterest - netInterest
 }
 
 private fun DialForm.toEntityWith(accountId: Int) = Dial(
@@ -161,14 +160,6 @@ private fun Dial.invert(): Dial {
             note = note,
             fee = fee,
             tax = tax)
-}
-
-private inline fun <T> Iterable<T>.sumByBigDecimal(selector: (T) -> BigDecimal): BigDecimal {
-    var sum: BigDecimal = BigDecimal.ZERO
-    for (element in this) {
-        sum += selector(element)
-    }
-    return sum
 }
 
 private fun isCurrency(ticker: String): Boolean {
