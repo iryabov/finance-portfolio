@@ -1,16 +1,23 @@
 package com.github.iryabov.invest.repository
 
 import com.github.iryabov.invest.relation.Currency
+import com.github.iryabov.invest.service.impl.invert
 import java.math.BigDecimal
 import java.time.LocalDate
 
 interface StockQuotesRepository {
-    fun findCurrencyByBaseAndDate(base: Currency, date: LocalDate): ExchangeRate
+    fun findCurrencyByDate(date: LocalDate): ExchangeRate
 }
 
 data class ExchangeRate(
         val date: LocalDate,
+        /**
+         * Base currency
+         */
         val base: Currency,
+        /**
+         * Prices for purchase base currency
+         */
         val rates: Map<Currency, BigDecimal>
 ) {
     fun getPairExchangePrice(purchased: Currency, sale: Currency): BigDecimal {
@@ -19,7 +26,7 @@ data class ExchangeRate(
                 rates.getOrDefault(sale, BigDecimal.ZERO)
             }
             sale -> {
-                BigDecimal(1.000000001) / rates.getOrDefault(purchased, BigDecimal.ZERO)
+                rates.getOrDefault(purchased, BigDecimal.ZERO).invert()
             }
             else -> {
                 rates.getOrDefault(sale, BigDecimal.ZERO) / rates.getOrDefault(purchased, BigDecimal.ZERO)

@@ -32,6 +32,10 @@ fun BigDecimal.less(other: BigDecimal, scale: Int = 0): Boolean {
     return this.setScale(scale, RoundingMode.HALF_UP) < other.setScale(scale, RoundingMode.HALF_UP)
 }
 
-fun BigDecimal.more(other: BigDecimal, scale: Int = 0): Boolean {
+fun BigDecimal.greater(other: BigDecimal, scale: Int = 0): Boolean {
     return this.setScale(scale, RoundingMode.HALF_UP) > other.setScale(scale, RoundingMode.HALF_UP)
+}
+
+fun BigDecimal.invert(): BigDecimal {
+    return BigDecimal(1.000000001) / this
 }

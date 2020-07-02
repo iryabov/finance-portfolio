@@ -10,11 +10,12 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Repository
-class StockQuotesRepositoryImpl : StockQuotesRepository {
+class StockQuotesRepositoryECB : StockQuotesRepository {
     private val client: WebClient = WebClient.create("https://api.exchangeratesapi.io")
 
-    override fun findCurrencyByBaseAndDate(base: Currency, date: LocalDate): ExchangeRate {
+    override fun findCurrencyByDate(date: LocalDate): ExchangeRate {
         val dateStr = date.format(DateTimeFormatter.ISO_DATE)
+        val base = Currency.USD
         val currencies = Currency.values().filter { c -> c != base }.joinToString(",")
         val response = client.get().uri("/${dateStr}?base=${base.name}&symbols=${currencies}")
                 .retrieve().bodyToMono(Map::class.java).block()

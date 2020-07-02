@@ -12,6 +12,7 @@ import com.github.iryabov.invest.relation.Currency
 import com.github.iryabov.invest.relation.DialType
 import com.github.iryabov.invest.repository.*
 import com.github.iryabov.invest.service.InvestService
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.lang.Integer.min
@@ -25,6 +26,7 @@ class InvestServiceImpl(
         val dialRepo: DialRepository,
         val writeOffRepo: WriteOffRepository,
         val rateRepository: RateRepository,
+        @Qualifier("stockQuotesRepositoryCBRF")
         val stockQuotesRepo: StockQuotesRepository
 ) : InvestService {
     override fun createAccount(form: AccountForm): Int {
@@ -66,7 +68,7 @@ class InvestServiceImpl(
     }
 
     private fun addExchangeRate(date: LocalDate) {
-        val exchange: ExchangeRate by lazy { stockQuotesRepo.findCurrencyByBaseAndDate(Currency.USD, date) }
+        val exchange: ExchangeRate by lazy { stockQuotesRepo.findCurrencyByDate(date) }
         for (currencyPurchased in Currency.values()) {
             val rates = rateRepository.findByDateAndBase(date, currencyPurchased)
             for (currencySale in Currency.values().filter { it != currencyPurchased }) {
