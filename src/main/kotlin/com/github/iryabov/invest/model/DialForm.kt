@@ -10,6 +10,6 @@ data class DialForm(
         val opened: LocalDate? = null,
         val type: DialType,
         val currency: Currency,
-        val amount: BigDecimal,
+        val volume: BigDecimal,
         val quantity: Int
 )

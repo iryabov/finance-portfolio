@@ -7,7 +7,6 @@ import com.github.iryabov.invest.relation.DialType
 import com.github.iryabov.invest.repository.AccountRepository
 import com.github.iryabov.invest.repository.DialRepository
 import com.github.iryabov.invest.repository.RateRepository
-import com.github.iryabov.invest.repository.StockQuotesRepository
 import com.github.iryabov.invest.repository.impl.StockQuotesRepositoryCBRF
 import com.github.iryabov.invest.repository.impl.StockQuotesRepositoryECB
 import com.github.iryabov.invest.service.InvestService
@@ -65,7 +64,7 @@ class InvestServiceTest(
         //dial creating
         val dialId = investService.addDial(accountId, DialForm(type = DialType.PURCHASE,
                 ticker = "TEST",
-                amount = BigDecimal(100),
+                volume = BigDecimal(100),
                 currency = Currency.RUB,
                 quantity = 10))
         assertThat(dialRepo.findById(dialId)).matches { d ->
@@ -91,10 +90,10 @@ class InvestServiceTest(
 
     @Test()
     @Transactional
-    @Disabled
+    //@Disabled
     fun getAccountView() {
         csvReader.read(ClassPathResource("/csv/test.csv"))
-        val bank = investService.getAccount(accountRepo.findByName("Bank")!!.id!!)
+        val bank = investService.getAccount(accountRepo.findByName("Bank")?.id!!)
         assertThat(bank.assets.size).isEqualTo(4)
         assertThat(bank.totalDeposit.eq(BigDecimal("101000"))).isTrue()
         assertThat(bank.totalWithdrawals.eq(BigDecimal("82132"))).isTrue()
@@ -123,7 +122,7 @@ class InvestServiceTest(
     }
 
     @Test
-//    @Disabled
+    @Disabled
     fun exchangeCBRF() {
         val exchange = stockQuotesRepoCBRF.findCurrencyByDate(LocalDate.of(2020, Month.JANUARY, 1))
         assertThat(exchange.getPairExchangePrice(Currency.USD, Currency.RUB).setScale(3, RoundingMode.HALF_DOWN))

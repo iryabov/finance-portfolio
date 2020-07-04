@@ -18,5 +18,5 @@ interface InvestService {
 
     fun getAccount(accountId: Int): AccountView
 
-
+    fun getAccounts(): List<AccountView>
 }

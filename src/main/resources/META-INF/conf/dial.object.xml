@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<object xmlns="http://n2oapp.net/framework/config/schema/object-4.0"
+        name="Dial"
+        service-class="com.github.iryabov.invest.service.InvestService">
+    <fields>
+        <field id="ticker.id" domain="string"/>
+        <field id="opened" domain="localdate"/>
+        <field id="type.id" domain="string"/>
+        <field id="currency.id" domain="string"/>
+        <field id="volume" domain="string"/>
+        <field id="quantity" domain="integer"/>
+        <field id="account.id" domain="integer" mapping="['account_id']"/>
+    </fields>
+
+    <operations>
+        <operation id="addDial">
+            <invocation>
+                <java method="addDial">
+                    <spring/>
+                    <arguments>
+                        <argument type="primitive" name="accountId"/>
+                        <argument type="entity" name="form" class="com.github.iryabov.invest.model.DialForm"/>
+                    </arguments>
+                </java>
+            </invocation>
+            <in>
+                <field id="account.id" mapping="[0]"/>
+                <field id="ticker.id"/>
+                <field id="opened"/>
+                <field id="type.id"/>
+                <field id="currency.id"/>
+                <field id="volume"/>
+                <field id="quantity"/>
+            </in>
+            <out>
+                <field id="id" domain="long" mapping="#this"/>
+            </out>
+        </operation>
+    </operations>
+</object>

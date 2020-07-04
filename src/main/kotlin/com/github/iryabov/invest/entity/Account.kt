@@ -9,6 +9,8 @@ data class Account(
         @Id
         var id: Int? = null,
         @Column
+        val active: Boolean = true,
+        @Column
         val name: String,
         @Column
         val num: String? = null

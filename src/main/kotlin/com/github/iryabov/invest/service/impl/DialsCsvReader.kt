@@ -1,6 +1,5 @@
 package com.github.iryabov.invest.service.impl
 
-import com.github.iryabov.invest.entity.Dial
 import com.github.iryabov.invest.model.AccountForm
 import com.github.iryabov.invest.model.DialForm
 import com.github.iryabov.invest.relation.Currency
@@ -32,7 +31,7 @@ class DialsCsvReader(
                     ticker = record[TICKER.idx].toTicker(),
                     opened = record[OPENED.idx].toDate(),
                     currency = record[CURRENCY.idx].toCurrency(),
-                    amount = record[AMOUNT.idx].toAmount(),
+                    volume = record[AMOUNT.idx].toAmount(),
                     quantity = record[QUANTITY.idx].toQuantity(),
                     type = record[TYPE.idx].toType())
             service.addDial(record[ACCOUNT.idx].toAccountId(), dial)

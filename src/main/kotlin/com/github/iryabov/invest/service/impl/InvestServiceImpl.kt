@@ -40,7 +40,7 @@ class InvestServiceImpl(
 
     override fun addDial(accountId: Int, form: DialForm): Long {
         val created = dialRepo.save(form.toEntityWith(accountId))
-        if (created.amount != P0)
+        if (created.volume != P0)
             addExchangeRate(created.date)
         if (setOf(DialType.SALE, DialType.WITHDRAWALS).contains(created.type))
             writeOffByFifo(created)
@@ -65,6 +65,10 @@ class InvestServiceImpl(
         account.calc()
         account.calcProportion()
         return account
+    }
+
+    override fun getAccounts(): List<AccountView> {
+        return accountRepo.findAllByActive().map { getAccount(it.id!!) }
     }
 
     private fun addExchangeRate(date: LocalDate) {
@@ -139,7 +143,7 @@ private fun DialForm.toEntityWith(accountId: Int) = Dial(
         ticker = ticker,
         date = opened ?: LocalDate.now(),
         currency = currency,
-        amount = amount,
+        volume = volume,
         quantity = quantity
 )
 
@@ -156,8 +160,8 @@ private fun Dial.invert(): Dial {
             accountId = accountId,
             ticker = currency!!.name,
             currency = currencyOf(ticker),
-            quantity = amount.intValueExact(),
-            amount = BigDecimal(quantity),
+            quantity = volume.intValueExact(),
+            volume = BigDecimal(quantity),
             type = type.invert(),
             note = note,
             fee = fee,

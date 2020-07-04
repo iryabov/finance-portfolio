@@ -26,7 +26,7 @@ class Dial(
         @Column
         val currency: Currency? = Currency.RUB,
         @Column
-        val amount: BigDecimal = BigDecimal.ZERO,
+        val volume: BigDecimal = BigDecimal.ZERO,
         @Column
         val quantity: Int = 0,
         @Column
