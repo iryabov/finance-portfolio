@@ -7,6 +7,8 @@ import java.math.BigDecimal
  * Счет
  */
 data class AccountView(
+        val id: Int,
+        val name: String,
         /**
          * Активы счета
          */
@@ -37,17 +39,29 @@ data class AccountView(
      */
     lateinit var totalMarketValue: BigDecimal
     /**
-     * Процент изменения стоимости по рыночному курсу
+     * Изменение стоимости по рыночному курсу
      */
     lateinit var totalValueProfit: BigDecimal
     /**
-     * Процент фиксированной прибыли
+     * Процент изменения стоимости по рыночному курсу
+     */
+    lateinit var totalValueProfitPercent: BigDecimal
+    /**
+     * Фиксированная прибыль
      */
     lateinit var totalFixedProfit: BigDecimal
     /**
-     * Процент полной прибыли
+     * Процент фиксированной прибыли
+     */
+    lateinit var totalFixedProfitPercent: BigDecimal
+    /**
+     * Полная "бумажная" прибыль
      */
     lateinit var totalMarketProfit: BigDecimal
+    /**
+     * Процент полной прибыли
+     */
+    lateinit var totalMarketProfitPercent: BigDecimal
 }
 
 /**

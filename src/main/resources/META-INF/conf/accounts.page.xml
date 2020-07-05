@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<page xmlns="http://n2oapp.net/framework/config/schema/page-2.0"
+      name="My accounts">
+    <toolbar place="topLeft">
+        <button icon="fa fa-plus" label="Add account" color="primary" widget-id="accounts" model="filter">
+            <open-page page-id="accountNew" submit-operation-id="addAccount"/>
+        </button>
+    </toolbar>
+    <regions>
+        <panel>
+            <list id="accounts" query-id="account">
+                <content>
+                    <header text-field-id="name"/>
+                    <body text-field-id="totalMarketValue"/>
+                    <right-top text-field-id="totalValueProfitPercent"/>
+                    <right-top text-field-id="totalMarkedProfit"/>
+                </content>
+                <pagination/>
+            </list>
+        </panel>
+    </regions>
+
+</page>

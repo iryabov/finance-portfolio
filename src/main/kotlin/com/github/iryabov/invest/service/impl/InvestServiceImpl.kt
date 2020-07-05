@@ -60,8 +60,9 @@ class InvestServiceImpl(
 
     override fun getAccount(accountId: Int): AccountView {
         val assets = ArrayList<AssetView>()
+        val accountEntity = accountRepo.findById(accountId).orElseThrow()
         assets.addAll(dialRepo.findAssets(accountId, Currency.RUB))
-        val account = AccountView(assets)
+        val account = AccountView(accountId, accountEntity.name, assets)
         account.calc()
         account.calcProportion()
         return account
@@ -112,9 +113,12 @@ private fun AccountView.calc() {
     totalProceeds = assets.sumByBigDecimal { a -> a.proceeds }
     totalMarketValue = assets.sumByBigDecimal { a -> a.marketValue }
 
-    totalValueProfit = calcProfit(totalMarketValue, totalNetValue)
-    totalFixedProfit = calcProfit(totalNetValue + totalProceeds, totalExpenses)
-    totalMarketProfit = calcProfit(totalMarketValue + totalProceeds, totalExpenses)
+    totalValueProfit = totalMarketValue - totalNetValue
+    totalValueProfitPercent = calcProfitPercent(totalMarketValue, totalNetValue)
+    totalFixedProfit = (totalNetValue + totalProceeds) - totalExpenses
+    totalFixedProfitPercent = calcProfitPercent(totalNetValue + totalProceeds, totalExpenses)
+    totalMarketProfit = (totalMarketValue + totalProceeds) - totalExpenses
+    totalMarketProfitPercent = calcProfitPercent(totalMarketValue + totalProceeds, totalExpenses)
 }
 
 private fun AccountView.calcProportion() {
@@ -126,9 +130,9 @@ private fun AccountView.calcProportion() {
 
 private fun AssetView.calc() {
     marketValue = if (assetPriceNow != null) BigDecimal(quantity) * assetPriceNow else netValue
-    valueProfit = calcProfit(marketValue, netValue)
-    fixedProfit = calcProfit(netValue + proceeds, expenses)
-    marketProfit = calcProfit(marketValue + proceeds, expenses)
+    valueProfit = calcProfitPercent(marketValue, netValue)
+    fixedProfit = calcProfitPercent(netValue + proceeds, expenses)
+    marketProfit = calcProfitPercent(marketValue + proceeds, expenses)
 }
 
 private fun AssetView.calcProportion(totalNetValue: BigDecimal, totalMarketValue: BigDecimal) {
@@ -148,7 +152,7 @@ private fun DialForm.toEntityWith(accountId: Int) = Dial(
 )
 
 private fun AccountForm.toEntity() = Account(
-        name = name,
+        name = name!!,
         num = num
 )
 

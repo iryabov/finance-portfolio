@@ -1,16 +1,19 @@
 server:
-  servlet.context-path: /
-
+  servlet:
+    context-path: /
+    encoding:
+      forceResponse: true
+      forceRequest: true
+      charset: UTF-8
+      enabled: true
 spring:
-  http.encoding:
-    forceResponse: true
-    force: true
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/invest
     username: postgres
     password: postgres
-
 logging:
   level:
     org.springframework.jdbc.core.JdbcTemplate: debug
+n2o:
+  header.id: invest

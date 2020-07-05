@@ -8,7 +8,7 @@ val P100 = BigDecimal(100)
 val P0 = BigDecimal.ZERO
 val P1 = BigDecimal.ONE
 
-fun calcProfit(a: BigDecimal, b: BigDecimal): BigDecimal {
+fun calcProfitPercent(a: BigDecimal, b: BigDecimal): BigDecimal {
     return if (b.compareTo(P0) != 0) a / b * P100 - P100 else P0
 }
 

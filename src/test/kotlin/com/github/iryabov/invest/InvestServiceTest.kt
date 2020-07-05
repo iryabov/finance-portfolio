@@ -98,14 +98,14 @@ class InvestServiceTest(
         assertThat(bank.totalDeposit.eq(BigDecimal("101000"))).isTrue()
         assertThat(bank.totalWithdrawals.eq(BigDecimal("82132"))).isTrue()
         assertThat(bank.totalNetValue.eq(BigDecimal("29777"))).isTrue()
-        assertThat(bank.totalFixedProfit.eq(BigDecimal("3.2"), 1)).isTrue()
+        assertThat(bank.totalFixedProfitPercent.eq(BigDecimal("3.2"), 1)).isTrue()
 
         val broker = investService.getAccount(accountRepo.findByName("Broker")!!.id!!)
         assertThat(broker.assets.size).isEqualTo(5)
         assertThat(broker.totalDeposit.eq(BigDecimal("82132"))).isTrue()
         assertThat(broker.totalWithdrawals.eq(BigDecimal("1000"))).isTrue()
         assertThat(broker.totalNetValue.eq(BigDecimal("89009"))).isTrue()
-        assertThat(broker.totalFixedProfit.eq(BigDecimal("4.8"), 1)).isTrue()
+        assertThat(broker.totalFixedProfitPercent.eq(BigDecimal("4.8"), 1)).isTrue()
     }
 
 
