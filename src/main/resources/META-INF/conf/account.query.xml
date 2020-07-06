@@ -17,40 +17,40 @@
 
     <fields>
         <field id="id">
-            <select/>
+            <select mapping="id"/>
             <filters>
                 <eq mapping="[0]"/>
             </filters>
         </field>
         <field id="name">
-            <select/>
+            <select mapping="name"/>
         </field>
         <field id="totalNetValue">
-            <select/>
+            <select mapping="totalNetValue"/>
         </field>
         <field id="totalMarketValue">
-            <select/>
+            <select mapping="totalMarketValue"/>
         </field>
         <field id="totalValueProfit">
-            <select/>
+            <select mapping="totalValueProfit"/>
         </field>
         <field id="totalValueProfitPercent">
-            <select/>
+            <select mapping="totalValueProfitPercent"/>
         </field>
         <field id="totalFixedProfit">
-            <select/>
+            <select mapping="totalFixedProfit"/>
         </field>
         <field id="totalFixedProfitPercent">
-            <select/>
+            <select mapping="totalFixedProfitPercent"/>
         </field>
-        <field id="totalMarkedProfit">
-            <select/>
+        <field id="totalMarketProfit">
+            <select mapping="totalMarketProfit"/>
         </field>
-        <field id="totalMarkedProfitPercent">
-            <select/>
+        <field id="totalMarketProfitPercent">
+            <select mapping="totalMarketProfitPercent"/>
         </field>
         <field id="totalDeposit">
-            <select/>
+            <select mapping="totalDeposit"/>
         </field>
 
     </fields>

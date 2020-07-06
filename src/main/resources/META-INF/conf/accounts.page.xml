@@ -10,10 +10,12 @@
         <panel>
             <list id="accounts" query-id="account">
                 <content>
-                    <header text-field-id="name"/>
-                    <body text-field-id="totalMarketValue"/>
-                    <right-top text-field-id="totalValueProfitPercent"/>
-                    <right-top text-field-id="totalMarkedProfit"/>
+                    <header text-field-id="name">
+                        <text/>
+                    </header>
+                    <body text-field-id="name">
+                        <text/>
+                    </body>
                 </content>
                 <pagination/>
             </list>

@@ -12,7 +12,7 @@
         <operation id="addAccount"
                    submit-label="Save">
             <invocation>
-                <java method="createAccount">
+                <java method="createAccount" class="com.github.iryabov.invest.service.InvestService">
                     <spring/>
                     <arguments>
                         <argument type="entity" name="form" class="com.github.iryabov.invest.model.AccountForm"/>
@@ -20,8 +20,8 @@
                 </java>
             </invocation>
             <in>
-                <field id="name"/>
-                <field id="num"/>
+                <field id="name" mapping="name"/>
+                <field id="num" mapping="num"/>
             </in>
             <out>
                 <field id="id" domain="integer" mapping="#this"/>

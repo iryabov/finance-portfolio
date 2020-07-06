@@ -24,24 +24,24 @@ select
     d.ticker as asset_ticker,
     sum(d.quantity) as quantity,
     sum(case when d.quantity > 0 
-        then  -1 * (d.amount_cur * (d.quantity - d.sold_quantity) / d.quantity)
+        then  -1 * (d.volume_cur * (d.quantity - d.sold_quantity) / d.quantity)
         else  0 
         end  
     ) as net_value,
     sum(case  
-      when  d.type = 'DEPOSIT' then  -1*d.amount_cur
+      when  d.type = 'DEPOSIT' then  -1*d.volume_cur
       else  0 
        end) as deposit,
     sum(case  
-       when  d.type = 'WITHDRAWALS' then  d.amount_cur
+       when  d.type = 'WITHDRAWALS' then  d.volume_cur
        else   0 
        end) as withdrawals,
     sum(case 
-       when  d.amount_cur < 0 then  -1*d.amount_cur
+       when  d.volume_cur < 0 then  -1*d.volume_cur
        else  0 
        end) as expenses,
     sum(case 
-       when  d.amount_cur > 0 then  d.amount_cur
+       when  d.volume_cur > 0 then  d.volume_cur
        else   0 
        end) as proceeds 
 from
@@ -51,12 +51,12 @@ from
     d.dt as dt,
     d.quantity as quantity,
     d.currency as currency,
-    d.amount as amount,
+    d.volume as volume,
     d.type as type,
-    (case when d.currency = :currency then  d.amount
-     else coalesce((select r.price * d.amount from rate r where  r.dt = d.dt and  r.currency_purchase = d.currency and  r.currency_sale = :currency), 0) 
+    (case when d.currency = :currency then  d.volume
+     else coalesce((select r.price * d.volume from rate r where  r.dt = d.dt and  r.currency_purchase = d.currency and  r.currency_sale = :currency), 0) 
      end 
-    ) as amount_cur,
+    ) as volume_cur,
     (case when d.quantity > 0 
      then (
          select coalesce(sum(w.quantity),0) as sold_quantity
@@ -74,19 +74,19 @@ select
     d.id,
     d.currency as ticker,
     d.dt as dt,
-    d.amount as quantity,
+    d.volume as quantity,
     d.ticker as currency,
-    d.quantity as amount,
+    d.quantity as volume,
     (case 
         when d.type = 'SALE' then 'PURCHASE'
         when d.type = 'PURCHASE' then 'SALE'
         else d.type
      end) as type,
-    (case when d.currency = :currency then -1*d.amount
-     else -1*coalesce((select r.price * d.amount from rate r where  r.dt = d.dt and  r.currency_purchase = d.currency and  r.currency_sale = :currency), 0) 
+    (case when d.currency = :currency then -1*d.volume
+     else -1*coalesce((select r.price * d.volume from rate r where  r.dt = d.dt and  r.currency_purchase = d.currency and  r.currency_sale = :currency), 0) 
      end 
-    ) as amount_cur,
-    (case when d.amount > 0 
+    ) as volume_cur,
+    (case when d.volume > 0 
      then (
          select coalesce(sum(w.quantity),0) as sold_quantity
          FROM writeoff w
