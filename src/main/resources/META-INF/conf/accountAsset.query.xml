@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<query xmlns="http://n2oapp.net/framework/config/schema/query-4.0"
+       name="Account asset">
+    <list result-mapping="#this.assets" filters="accountId">
+        <java method="getAccount" class="com.github.iryabov.invest.service.InvestService">
+            <spring/>
+            <arguments>
+                <argument type="primitive" name="accountId"/>
+            </arguments>
+        </java>
+    </list>
+
+    <fields>
+        <field id="accountId">
+            <filters>
+                <eq filter-id="accountId" mapping="[0]"/>
+            </filters>
+        </field>
+        <field id="id">
+            <select mapping="assetTicker"/>
+        </field>
+        <field id="asset.ticker">
+            <select mapping="assetTicker"/>
+        </field>
+        <field id="asset.name">
+            <select mapping="assetName"/>
+        </field>
+        <field id="asset.class">
+            <select mapping="assetClass"/>
+        </field>
+        <field id="quantity">
+            <select mapping="quantity"/>
+        </field>
+        <field id="netValue">
+            <select mapping="netValue"/>
+        </field>
+        <field id="marketValue">
+            <select mapping="marketValue"/>
+        </field>
+        <field id="valueProfit">
+            <select mapping="valueProfit"/>
+        </field>
+        <field id="fixedProfit">
+            <select mapping="fixedProfit"/>
+        </field>
+        <field id="marketProfit">
+            <select mapping="marketProfit"/>
+        </field>
+        <field id="netInterest">
+            <select mapping="netInterest"/>
+        </field>
+        <field id="marketInterest">
+            <select mapping="marketInterest"/>
+        </field>
+        <field id="profitInterest">
+            <select mapping="profitInterest"/>
+        </field>
+    </fields>
+
+</query>

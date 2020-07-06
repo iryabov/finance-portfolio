@@ -7,19 +7,26 @@
         </button>
     </toolbar>
     <regions>
-        <panel>
-            <list id="accounts" query-id="account">
+        <region>
+            <list id="accounts" query-id="account" route="/">
                 <content>
-                    <header text-field-id="name">
+                    <left-top text-field-id="name">
                         <text/>
-                    </header>
-                    <body text-field-id="name">
+                    </left-top>
+                    <left-bottom text-field-id="totalMarketProfitPercent">
                         <text/>
-                    </body>
+                    </left-bottom>
                 </content>
+                <rows>
+                    <click>
+                        <open-page page-id="accountAssets" route="/:account_id/assets">
+                            <path-param name="account_id" value="{id}"/>
+                        </open-page>
+                    </click>
+                </rows>
                 <pagination/>
             </list>
-        </panel>
+        </region>
     </regions>
 
 </page>
