@@ -37,7 +37,7 @@ union
 select 
     d.id as dial_from,
     d.dt as dt,
-    d.amount as purchased_quantity,
+    d.volume as purchased_quantity,
     (
     SELECT sum(w.quantity) as sold_quantity
     FROM writeoff w
@@ -47,7 +47,7 @@ select
     ) as sold_quantity   
 from dial d
 where d.active = true
-  and d.amount > 0
+  and d.volume > 0
   and d.ticker != d.currency
   and d.account_id = :account_id
   and d.currency = :ticker   

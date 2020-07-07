@@ -1,9 +1,14 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <page xmlns="http://n2oapp.net/framework/config/schema/page-2.0"
       name="My assets">
+    <toolbar place="topLeft">
+        <button label="Add dial" widget-id="assets" model="filter">
+            <open-page page-id="dialNew" submit-operation-id="addDial"/>
+        </button>
+    </toolbar>
     <regions>
         <region>
-            <list query-id="accountAsset">
+            <list id="assets" query-id="accountAsset">
                 <content>
                     <left-top text-field-id="asset.ticker"/>
                     <left-bottom text-field-id="asset.name"/>
