@@ -8,15 +8,10 @@
     </toolbar>
     <regions>
         <region>
-            <list id="accounts" query-id="account" route="/">
-                <content>
-                    <left-top text-field-id="name">
-                        <text/>
-                    </left-top>
-                    <left-bottom text-field-id="totalMarketProfitPercent">
-                        <text/>
-                    </left-bottom>
-                </content>
+            <table id="accounts" query-id="account" route="/">
+                <columns>
+                    <column text-field-id="name"/>
+                </columns>
                 <rows>
                     <click>
                         <open-page page-id="accountAssets" route="/:account_id/assets">
@@ -25,7 +20,7 @@
                     </click>
                 </rows>
                 <pagination/>
-            </list>
+            </table>
         </region>
     </regions>
 

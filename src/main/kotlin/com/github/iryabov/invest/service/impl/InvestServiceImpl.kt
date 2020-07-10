@@ -4,10 +4,7 @@ import com.github.iryabov.invest.entity.Account
 import com.github.iryabov.invest.entity.Dial
 import com.github.iryabov.invest.entity.CurrencyPair
 import com.github.iryabov.invest.entity.WriteOff
-import com.github.iryabov.invest.model.AssetView
-import com.github.iryabov.invest.model.AccountForm
-import com.github.iryabov.invest.model.AccountView
-import com.github.iryabov.invest.model.DialForm
+import com.github.iryabov.invest.model.*
 import com.github.iryabov.invest.relation.Currency
 import com.github.iryabov.invest.relation.DialType
 import com.github.iryabov.invest.repository.*
@@ -17,6 +14,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.lang.Integer.min
 import java.math.BigDecimal
+import java.math.MathContext
 import java.time.LocalDate
 
 @Service
@@ -70,6 +68,10 @@ class InvestServiceImpl(
 
     override fun getAccounts(): List<AccountView> {
         return accountRepo.findAllByActive().map { getAccount(it.id!!) }
+    }
+
+    override fun getDials(accountId: Int, ticker: String): List<DialView> {
+        return dialRepo.findAllByAsset(accountId, ticker, Currency.RUB)
     }
 
     private fun addExchangeRate(date: LocalDate) {
@@ -129,15 +131,16 @@ private fun AccountView.calcProportion() {
 }
 
 private fun AssetView.calc() {
-    marketValue = if (assetPriceNow != null) BigDecimal(quantity) * assetPriceNow else netValue
-    valueProfit = calcProfitPercent(marketValue, netValue)
-    fixedProfit = calcProfitPercent(netValue + proceeds, expenses)
-    marketProfit = calcProfitPercent(marketValue + proceeds, expenses)
+    netValue = netValue.round()
+    marketValue = if (assetPriceNow != null) (BigDecimal(quantity) * assetPriceNow!!).round() else netValue
+    valueProfit = calcProfitPercent(marketValue, netValue).round()
+    fixedProfit = calcProfitPercent(netValue + proceeds, expenses).round()
+    marketProfit = calcProfitPercent(marketValue + proceeds, expenses).round()
 }
 
 private fun AssetView.calcProportion(totalNetValue: BigDecimal, totalMarketValue: BigDecimal) {
-    netInterest = calcPercent(netValue, totalNetValue)
-    marketInterest = calcPercent(marketValue, totalMarketValue)
+    netInterest = calcPercent(netValue, totalNetValue).round()
+    marketInterest = calcPercent(marketValue, totalMarketValue).round()
     profitInterest = marketInterest - netInterest
 }
 
@@ -147,12 +150,12 @@ private fun DialForm.toEntityWith(accountId: Int) = Dial(
         ticker = ticker,
         date = opened ?: LocalDate.now(),
         currency = currency,
-        volume = volume,
-        quantity = quantity
+        volume = if (type.income) volume else volume.negate(),
+        quantity = if (type.income) quantity.negate() else quantity
 )
 
 private fun AccountForm.toEntity() = Account(
-        name = name!!,
+        name = name,
         num = num
 )
 

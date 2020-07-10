@@ -7,12 +7,12 @@ import java.math.BigDecimal
  * Счет
  */
 data class AccountView(
-        val id: Int,
-        val name: String,
+        var id: Int,
+        var name: String,
         /**
          * Активы счета
          */
-        val assets: List<AssetView>
+        var assets: List<AssetView>
 ) {
     /**
      * Суммарная себестоимость активов
@@ -71,43 +71,43 @@ data class AssetView(
         /**
          * Тикер актива
          */
-        val assetTicker: String,
+        var assetTicker: String,
         /**
          * Наименование актива
          */
-        val assetName: String? = null,
+        var assetName: String? = null,
         /**
          * Класс актива
          */
-        val assetClass: AssetClass? = null,
+        var assetClass: AssetClass? = null,
         /**
          * Цена на данный момент
          */
-        val assetPriceNow: BigDecimal? = null,
+        var assetPriceNow: BigDecimal? = null,
         /**
          * Количество актива
          */
-        val quantity: Int,
+        var quantity: Int,
         /**
          * Себестоимость активов
          */
-        val netValue: BigDecimal,
+        var netValue: BigDecimal,
         /**
          * Затраты на приобретение
          */
-        val expenses: BigDecimal = BigDecimal.ZERO,
+        var expenses: BigDecimal = BigDecimal.ZERO,
         /**
          * Выручка с продажи или дивидендов
          */
-        val proceeds: BigDecimal = BigDecimal.ZERO,
+        var proceeds: BigDecimal = BigDecimal.ZERO,
         /**
          * Средства заевденные на счет
          */
-        val deposit: BigDecimal = BigDecimal.ZERO,
+        var deposit: BigDecimal = BigDecimal.ZERO,
         /**
          * Средства выведенные со счета
          */
-        val withdrawals: BigDecimal = BigDecimal.ZERO) {
+        var withdrawals: BigDecimal = BigDecimal.ZERO) {
     /**
      * Рыночная стоимость по текущему курсу
      */

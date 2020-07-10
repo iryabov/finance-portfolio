@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<simple-page xmlns="http://n2oapp.net/framework/config/schema/page-2.0">
+<simple-page xmlns="http://n2oapp.net/framework/config/schema/page-2.0"
+             name="New dial">
     <form object-id="dial">
         <fields>
             <hidden id="account.id" param="account_id"/>
@@ -28,7 +29,7 @@
                 </options>
             </radio-group>
             <input-money id="volume" label="Volume" required="true" suffix=""/>
-            <input-text id="quantity" label="Quantity" required="true" domain="integer"/>
+            <input-text id="quantity" label="Quantity" required="true" domain="integer" min="0"/>
             <output-text id="price" label="Price" format="number 1.0">
                 <dependencies>
                     <set-value apply-on-init="false" on="volume,quantity">volume / quantity</set-value>

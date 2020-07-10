@@ -3,6 +3,7 @@ package com.github.iryabov.invest.repository
 import com.github.iryabov.invest.entity.Dial
 import com.github.iryabov.invest.model.AssetView
 import com.github.iryabov.invest.model.Balance
+import com.github.iryabov.invest.model.DialView
 import com.github.iryabov.invest.relation.Currency
 import org.springframework.data.jdbc.repository.query.Modifying
 import org.springframework.data.jdbc.repository.query.Query
@@ -104,4 +105,33 @@ group by d.ticker
     """)
     fun findAssets(@Param("account_id") accountId: Int,
                    @Param("currency") currency: Currency): List<AssetView>
+
+    @Query("""
+select 
+    d.id,
+    d.active as active,
+    d.dt as dt,
+    d.ticker as asset_ticker,
+    a.name as asset_name,
+    d.type as type,
+    abs(d.quantity) as quantity,
+    d.currency as currency,
+    (case when d.currency = :currency then abs(d.volume)
+     else abs(coalesce((select r.price * d.volume from rate r where  r.dt = d.dt and  r.currency_purchase = d.currency and  r.currency_sale = :currency), 0)) 
+     end 
+    ) as volume,
+    (case when d.quantity > 0 then abs(d.volume / d.quantity)
+     else 0 
+     end
+    ) as price
+from dial d
+left join asset a on a.ticker = d.ticker 
+where d.active = true
+  and d.account_id = :account_id
+  and d.ticker = :asset_id
+order by d.dt desc        
+    """)
+    fun findAllByAsset(@Param("account_id") accountId: Int,
+                       @Param("asset_id") ticker: String,
+                       @Param("currency") currency: Currency): List<DialView>
 }
