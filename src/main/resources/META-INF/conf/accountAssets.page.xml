@@ -8,7 +8,7 @@
     </toolbar>
     <regions>
         <region>
-            <table id="assets" query-id="accountAsset">
+            <table id="assets" query-id="accountAsset" route="/">
                 <columns>
                     <column text-field-id="asset.ticker"/>
                     <column text-field-id="quantity"/>
