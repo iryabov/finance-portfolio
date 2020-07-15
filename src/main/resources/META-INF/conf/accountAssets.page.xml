@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <page xmlns="http://n2oapp.net/framework/config/schema/page-2.0"
-      name="My assets">
+      name="{name}">
     <toolbar place="topLeft">
         <button id="addDial" label="Add dial" widget-id="assets" model="filter" color="primary">
             <open-page page-id="dialNew" submit-operation-id="addDial" route="/dialsadd"/>
@@ -35,7 +35,7 @@
                 <rows>
                     <click>
                         <open-page page-id="dials" route="/:asset_id/dials">
-                            <path-param name="asset_id" value="{asset.id}"/>
+                            <path-param name="asset_id" value="{id}"/>
                         </open-page>
                     </click>
                 </rows>

@@ -126,8 +126,7 @@ select
     ) as price
 from dial d
 left join asset a on a.ticker = d.ticker 
-where d.active = true
-  and d.account_id = :account_id
+where d.account_id = :account_id
   and d.ticker = :asset_id
 order by d.dt desc        
     """)
