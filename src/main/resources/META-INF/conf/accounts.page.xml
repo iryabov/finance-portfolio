@@ -14,7 +14,7 @@
                 </columns>
                 <rows>
                     <click>
-                        <open-page page-id="accountAssets" route="/:account_id/assets">
+                        <open-page page-id="accountAssets" route="/:account_id/details">
                             <path-param name="account_id" value="{id}"/>
                         </open-page>
                     </click>

@@ -8,7 +8,24 @@
     </toolbar>
     <regions>
         <region>
-            <table id="assets" query-id="accountAsset" route="/">
+            <form id="account" query-id="account" route="/">
+                <fields>
+                    <set field-label-location="left">
+                        <row>
+                            <output-text id="totalMarketValue"/>
+                            <output-text id="totalNetValue"/>
+                            <output-text id="totalValueProfit"/>
+                            <output-text id="totalValueProfitPercent"/>
+                            <output-text id="totalMarketProfit"/>
+                            <output-text id="totalMarketProfitPercent"/>
+                        </row>
+                    </set>
+                </fields>
+                <pre-filters>
+                    <eq field-id="id" param="account_id"/>
+                </pre-filters>
+            </form>
+            <table id="assets" query-id="accountAsset" route="/assets">
                 <columns>
                     <column text-field-id="asset.ticker"/>
                     <column text-field-id="quantity"/>

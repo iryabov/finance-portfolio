@@ -19,7 +19,7 @@
         <field id="id">
             <select mapping="id"/>
             <filters>
-                <eq mapping="[0]"/>
+                <eq filter-id="id" mapping="[0]"/>
             </filters>
         </field>
         <field id="name">
