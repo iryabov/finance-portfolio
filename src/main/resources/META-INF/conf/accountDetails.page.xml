@@ -2,8 +2,16 @@
 <page xmlns="http://n2oapp.net/framework/config/schema/page-2.0"
       name="{name}">
     <toolbar place="topLeft">
-        <button id="addDial" label="Add dial" widget-id="assets" model="filter" color="primary">
+        <button id="addDial" label="Add dial" widget-id="assets" model="filter"
+                icon="fa fa-plus" color="primary">
             <open-page page-id="dialNew" submit-operation-id="addDial" route="/dialsadd"/>
+        </button>
+    </toolbar>
+    <toolbar place="topRight">
+        <button id="deleteAccount" label="Delete account" widget-id="account"
+                icon="fa fa-trash" type="icon" color="danger"
+                confirm="true" confirm-text="Are you sure to delete account {name}?">
+            <invoke operation-id="deleteAccount" close-on-success="true"/>
         </button>
     </toolbar>
     <regions>
@@ -34,7 +42,7 @@
                 </columns>
                 <rows>
                     <click>
-                        <open-page page-id="dials" route="/:asset_id/dials">
+                        <open-page page-id="assetDetails" route="/:asset_id/dials">
                             <path-param name="asset_id" value="{id}"/>
                         </open-page>
                     </click>

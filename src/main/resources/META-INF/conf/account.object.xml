@@ -27,5 +27,18 @@
                 <field id="id" domain="integer" mapping="#this"/>
             </out>
         </operation>
+        <operation id="deleteAccount">
+            <invocation>
+                <java method="deleteAccount" class="com.github.iryabov.invest.service.InvestService">
+                    <spring/>
+                    <arguments>
+                        <argument type="primitive" name="id"/>
+                    </arguments>
+                </java>
+            </invocation>
+            <in>
+                <field id="id" param="account_id" mapping="[0]"/>
+            </in>
+        </operation>
     </operations>
 </object>
