@@ -3,13 +3,15 @@
              name="New dial">
     <form object-id="dial">
         <fields>
-            <hidden id="account.id" param="account_id"/>
+            <output-text id="account.id" param="account_id"/>
 <!--            <input-select id="asset" label="Asset" query-id="assets" label-field-id="fullName">-->
 <!--                -->
 <!--            </input-select> -->
-            <input-text id="asset.id" label="Ticker" required="true"/>
+            <input-text id="asset.id" label="Ticker" param="asset_id"
+                        required="true"/>
             <date-time id="opened" label="Opened" required="true"/>
-            <select id="type" label="Dial type" required="true">
+            <select id="type" label="Dial type" param="type"
+                    required="true">
                 <default-value id="PURCHASE"/>
                 <options>
                     <option id="SALE" name="Sale"/>

@@ -4,7 +4,7 @@
     <toolbar place="topLeft">
         <button id="addDial" label="Add dial" widget-id="assets" model="filter"
                 icon="fa fa-plus" color="primary">
-            <open-page page-id="dialNew" submit-operation-id="addDial" route="/dialsadd"/>
+            <open-page page-id="dialNew" submit-operation-id="addDial" route="/newdial"/>
         </button>
     </toolbar>
     <toolbar place="topRight">

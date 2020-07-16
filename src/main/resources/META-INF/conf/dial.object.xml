@@ -24,10 +24,10 @@
                 </java>
             </invocation>
             <in>
-                <field id="account.id" mapping="[0]"/>
-                <field id="asset.id" mapping="[1].ticker"/>
+                <field id="account.id" param="account_id" mapping="[0]"/>
+                <field id="asset.id" param="asset_id" mapping="[1].ticker"/>
+                <field id="type.id" param="type" mapping="[1].type"/>
                 <field id="opened" mapping="[1].opened"/>
-                <field id="type.id" mapping="[1].type"/>
                 <field id="currency.id" mapping="[1].currency"/>
                 <field id="volume" mapping="[1].volume"/>
                 <field id="quantity" mapping="[1].quantity"/>
