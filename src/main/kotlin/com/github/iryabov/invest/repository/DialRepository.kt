@@ -101,10 +101,12 @@ where d.account_id = :account_id
   and d.active = true
   and d.ticker != d.currency
 ) d  
+where (:ticker is null or d.ticker = :ticker)
 group by d.ticker
     """)
     fun findAssets(@Param("account_id") accountId: Int,
-                   @Param("currency") currency: Currency): List<AssetView>
+                   @Param("currency") currency: Currency,
+                   @Param("ticker") ticker: String? = null): List<AssetView>
 
     @Query("""
 select 

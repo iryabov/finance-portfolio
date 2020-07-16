@@ -9,6 +9,15 @@
             </arguments>
         </java>
     </list>
+    <unique result-mapping="#this" filters="accountId,ticker">
+        <java method="getAsset" class="com.github.iryabov.invest.service.InvestService">
+            <spring/>
+            <arguments>
+                <argument type="primitive" name="accountId"/>
+                <argument type="primitive" name="ticker"/>
+            </arguments>
+        </java>
+    </unique>
 
     <fields>
         <field id="accountId">
@@ -18,6 +27,9 @@
         </field>
         <field id="id">
             <select mapping="assetTicker"/>
+            <filters>
+                <eq filter-id="ticker" mapping="[1]"/>
+            </filters>
         </field>
         <field id="asset.ticker">
             <select mapping="assetTicker"/>

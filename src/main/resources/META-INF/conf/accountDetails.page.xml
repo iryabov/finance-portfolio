@@ -42,7 +42,7 @@
                 </columns>
                 <rows>
                     <click>
-                        <open-page page-id="assetDetails" route="/:asset_id/dials">
+                        <open-page page-id="assetDetails" route="/:asset_id/details">
                             <path-param name="asset_id" value="{id}"/>
                         </open-page>
                     </click>

@@ -1,10 +1,7 @@
 package com.github.iryabov.invest.service
 
 import com.github.iryabov.invest.entity.Dial
-import com.github.iryabov.invest.model.AccountForm
-import com.github.iryabov.invest.model.AccountView
-import com.github.iryabov.invest.model.DialForm
-import com.github.iryabov.invest.model.DialView
+import com.github.iryabov.invest.model.*
 import java.net.URI
 
 interface InvestService {
@@ -21,6 +18,8 @@ interface InvestService {
     fun getAccount(accountId: Int): AccountView
 
     fun getAccounts(): List<AccountView>
+
+    fun getAsset(accountId: Int, ticker: String): AssetView
 
     fun getDials(accountId: Int, ticker: String): List<DialView>
 }

@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.lang.Integer.min
 import java.math.BigDecimal
-import java.math.MathContext
 import java.time.LocalDate
 
 @Service
@@ -68,6 +67,13 @@ class InvestServiceImpl(
 
     override fun getAccounts(): List<AccountView> {
         return accountRepo.findAllByActive().map { getAccount(it.id!!) }
+    }
+
+    override fun getAsset(accountId: Int, ticker: String): AssetView {
+        val asset = dialRepo.findAssets(accountId, Currency.RUB, ticker).first()
+        asset.calc()
+        asset.calcProportion(P0, P0)
+        return asset
     }
 
     override fun getDials(accountId: Int, ticker: String): List<DialView> {
