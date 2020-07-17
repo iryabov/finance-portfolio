@@ -19,23 +19,6 @@
                 </dependencies>
             </button>
         </group>
-        <group>
-            <button id="dividend" label="Dividend" widget-id="asset"
-                    color="info">
-                <open-page page-id="dialNew" submit-operation-id="addDial" route="/dividend">
-                    <query-param name="type" value="DIVIDEND"/>
-                </open-page>
-            </button>
-            <button id="tax" label="Tax" widget-id="asset"
-                    color="warning">
-                <open-page page-id="dialNew" submit-operation-id="addDial" route="/tax">
-                    <query-param name="type" value="TAX"/>
-                </open-page>
-                <dependencies>
-                    <enabling message="You do not have this asset now">quantity > 0</enabling>
-                </dependencies>
-            </button>
-        </group>
     </toolbar>
     <regions>
         <region>

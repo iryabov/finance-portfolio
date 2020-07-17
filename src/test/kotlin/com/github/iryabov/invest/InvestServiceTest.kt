@@ -54,34 +54,67 @@ class InvestServiceTest(
     }
 
     @Test
-    @Transactional
-    @Disabled
     fun test() {
         //account creating
         val accountId = investService.createAccount(AccountForm("MyBrocker", "12345"))
         assertThat(accountRepo.findById(accountId)).isPresent
 
         //dial creating
-        val dialId = investService.addDial(accountId, DialForm(type = DialType.PURCHASE,
+        val purchase = investService.addDial(accountId, DialForm(type = DialType.PURCHASE,
                 ticker = "TEST",
                 volume = BigDecimal(100),
                 currency = Currency.RUB,
                 quantity = 10))
-        assertThat(dialRepo.findById(dialId)).matches { d ->
-            d.get().ticker == "TEST" && d.get().accountId == accountId && d.get().active
+        assertThat(dialRepo.findById(purchase).get()).matches { d ->
+            d.ticker == "TEST" && d.accountId == accountId && d.active
+                    && d.quantity == 10 && d.volume == BigDecimal(-100)
+        }
+
+        var account = investService.getAccount(accountId)
+        assertThat(account).matches {
+            it.totalNetValue.eq(BigDecimal(100))
+            it.assets.find { a -> a.assetTicker == "TEST" }!!.netValue.eq(BigDecimal(100))
+        }
+
+        val sale = investService.addDial(accountId, DialForm(type = DialType.SALE,
+                ticker = "TEST",
+                volume = BigDecimal(25),
+                currency = Currency.RUB,
+                quantity = 2))
+        assertThat(dialRepo.findById(sale).get()).matches { d ->
+            d.ticker == "TEST" && d.accountId == accountId && d.active
+                    && d.quantity == -2 && d.volume == BigDecimal(25)
+        }
+
+        account = investService.getAccount(accountId)
+        assertThat(account).matches {
+            it.totalNetValue.eq(BigDecimal(105))
+            it.assets.find { a -> a.assetTicker == "TEST" }!!.netValue.eq(BigDecimal(80))
         }
 
         //dial deactivating
-        investService.deactivateDial(accountId, dialId)
-        assertThat(dialRepo.findById(dialId)).matches { d -> !d.get().active }
+        investService.deactivateDial(accountId, sale)
+        assertThat(dialRepo.findById(sale).get()).matches { d -> !d.active }
+
+        account = investService.getAccount(accountId)
+        assertThat(account).matches {
+            it.totalNetValue.eq(BigDecimal(80))
+            it.assets.find { a -> a.assetTicker == "TEST" }!!.netValue.eq(BigDecimal(80))
+        }
 
         //dial activating
-        investService.deactivateDial(accountId, dialId)
-        assertThat(dialRepo.findById(dialId)).matches { d -> d.get().active }
+        investService.deactivateDial(accountId, sale)
+        assertThat(dialRepo.findById(sale).get()).matches { d -> d.active }
+
+        account = investService.getAccount(accountId)
+        assertThat(account).matches {
+            it.totalNetValue.eq(BigDecimal(105))
+            it.assets.find { a -> a.assetTicker == "TEST" }!!.netValue.eq(BigDecimal(80))
+        }
 
         //dial deleting
-        investService.deleteDial(accountId, dialId)
-        assertThat(dialRepo.findById(dialId).isEmpty).isTrue()
+        investService.deleteDial(accountId, purchase)
+        assertThat(dialRepo.findById(purchase).isEmpty).isTrue()
 
         //account deleting
         investService.deleteAccount(accountId)
@@ -89,8 +122,7 @@ class InvestServiceTest(
     }
 
     @Test()
-    @Transactional
-    //@Disabled
+    @Disabled
     fun getAccountView() {
         csvReader.read(ClassPathResource("/csv/test.csv"))
         val bank = investService.getAccount(accountRepo.findByName("Bank")?.id!!)

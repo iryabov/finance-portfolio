@@ -7,9 +7,13 @@
 <!--            <input-select id="asset" label="Asset" query-id="assets" label-field-id="fullName">-->
 <!--                -->
 <!--            </input-select> -->
+<!--            <auto-complete id="asset.id" label="Ticker" param="asset_id"-->
+<!--                           query-id="accountAsset" value-field-id="ticker"-->
+<!--                           required="true">-->
+<!--            </auto-complete>-->
             <input-text id="asset.id" label="Ticker" param="asset_id"
                         required="true"/>
-            <date-time id="opened" label="Opened" required="true"/>
+            <date-time id="opened" label="Opened" required="true" default-value="{$.today()}"/>
             <select id="type" label="Dial type" param="type"
                     required="true">
                 <default-value id="PURCHASE"/>
