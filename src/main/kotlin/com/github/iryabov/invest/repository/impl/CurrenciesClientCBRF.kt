@@ -2,7 +2,7 @@ package com.github.iryabov.invest.repository.impl
 
 import com.github.iryabov.invest.relation.Currency
 import com.github.iryabov.invest.repository.ExchangeRate
-import com.github.iryabov.invest.repository.StockQuotesRepository
+import com.github.iryabov.invest.repository.CurrenciesClient
 import com.github.iryabov.invest.service.impl.invert
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Repository
@@ -17,7 +17,7 @@ import java.time.format.DateTimeFormatter
 import javax.xml.parsers.DocumentBuilderFactory
 
 @Repository
-class StockQuotesRepositoryCBRF : StockQuotesRepository {
+class CurrenciesClientCBRF : CurrenciesClient {
     private val client: WebClient = WebClient.create("http://www.cbr.ru/scripts/XML_daily.asp")
 
     override fun findCurrencyByDate(date: LocalDate): ExchangeRate {

@@ -23,8 +23,8 @@ class InvestServiceImpl(
         val dialRepo: DialRepository,
         val writeOffRepo: WriteOffRepository,
         val rateRepository: RateRepository,
-        @Qualifier("stockQuotesRepositoryCBRF")
-        val stockQuotesRepo: StockQuotesRepository
+        @Qualifier("currenciesClientCBRF")
+        val currenciesRepo: CurrenciesClient
 ) : InvestService {
     override fun createAccount(form: AccountForm): Int {
         val created = accountRepo.save(form.toEntity())
@@ -81,7 +81,7 @@ class InvestServiceImpl(
     }
 
     private fun addExchangeRate(date: LocalDate) {
-        val exchange: ExchangeRate by lazy { stockQuotesRepo.findCurrencyByDate(date) }
+        val exchange: ExchangeRate by lazy { currenciesRepo.findCurrencyByDate(date) }
         for (currencyPurchased in Currency.values()) {
             val rates = rateRepository.findByDateAndBase(date, currencyPurchased)
             for (currencySale in Currency.values().filter { it != currencyPurchased }) {

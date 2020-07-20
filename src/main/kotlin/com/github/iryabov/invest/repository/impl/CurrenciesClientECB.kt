@@ -2,7 +2,7 @@ package com.github.iryabov.invest.repository.impl
 
 import com.github.iryabov.invest.relation.Currency
 import com.github.iryabov.invest.repository.ExchangeRate
-import com.github.iryabov.invest.repository.StockQuotesRepository
+import com.github.iryabov.invest.repository.CurrenciesClient
 import org.springframework.stereotype.Repository
 import org.springframework.web.reactive.function.client.WebClient
 import java.math.BigDecimal
@@ -10,7 +10,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Repository
-class StockQuotesRepositoryECB : StockQuotesRepository {
+class CurrenciesClientECB : CurrenciesClient {
     private val client: WebClient = WebClient.create("https://api.exchangeratesapi.io")
 
     override fun findCurrencyByDate(date: LocalDate): ExchangeRate {

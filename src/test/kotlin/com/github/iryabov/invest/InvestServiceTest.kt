@@ -7,8 +7,9 @@ import com.github.iryabov.invest.relation.DialType
 import com.github.iryabov.invest.repository.AccountRepository
 import com.github.iryabov.invest.repository.DialRepository
 import com.github.iryabov.invest.repository.RateRepository
-import com.github.iryabov.invest.repository.impl.StockQuotesRepositoryCBRF
-import com.github.iryabov.invest.repository.impl.StockQuotesRepositoryECB
+import com.github.iryabov.invest.repository.impl.CurrenciesClientCBRF
+import com.github.iryabov.invest.repository.impl.CurrenciesClientECB
+import com.github.iryabov.invest.repository.impl.SecuritiesClientMoex
 import com.github.iryabov.invest.service.InvestService
 import com.github.iryabov.invest.service.impl.DialsCsvReader
 import com.github.iryabov.invest.service.impl.eq
@@ -40,11 +41,13 @@ class InvestServiceTest(
         @Autowired
         val csvReader: DialsCsvReader,
         @Autowired
-        val stockQuotesRepoECB: StockQuotesRepositoryECB,
+        val currenciesClientECB: CurrenciesClientECB,
         @Autowired
-        val stockQuotesRepoCBRF: StockQuotesRepositoryCBRF,
+        val currenciesClientCBRF: CurrenciesClientCBRF,
         @Autowired
-        val rateRepo: RateRepository
+        val rateRepo: RateRepository,
+        @Autowired
+        val securitiesClientMoex: SecuritiesClientMoex
 ) {
 
     @BeforeEach
@@ -54,6 +57,7 @@ class InvestServiceTest(
     }
 
     @Test
+    @Disabled
     fun test() {
         //account creating
         val accountId = investService.createAccount(AccountForm("MyBrocker", "12345"))
@@ -144,7 +148,7 @@ class InvestServiceTest(
     @Test
     @Disabled
     fun exchangeECB() {
-        val exchange = stockQuotesRepoECB.findCurrencyByDate(LocalDate.of(2020, Month.JANUARY, 1))
+        val exchange = currenciesClientECB.findCurrencyByDate(LocalDate.of(2020, Month.JANUARY, 1))
         assertThat(exchange.getPairExchangePrice(Currency.USD, Currency.RUB).setScale(3, RoundingMode.HALF_DOWN))
                 .isEqualTo(BigDecimal(62.272).setScale(3, RoundingMode.HALF_DOWN))
         assertThat(exchange.getPairExchangePrice(Currency.RUB, Currency.USD).setScale(3, RoundingMode.HALF_DOWN))
@@ -156,13 +160,26 @@ class InvestServiceTest(
     @Test
     @Disabled
     fun exchangeCBRF() {
-        val exchange = stockQuotesRepoCBRF.findCurrencyByDate(LocalDate.of(2020, Month.JANUARY, 1))
+        val exchange = currenciesClientCBRF.findCurrencyByDate(LocalDate.of(2020, Month.JANUARY, 1))
         assertThat(exchange.getPairExchangePrice(Currency.USD, Currency.RUB).setScale(3, RoundingMode.HALF_DOWN))
                 .isEqualTo(BigDecimal(61.906).setScale(3, RoundingMode.HALF_DOWN))
         assertThat(exchange.getPairExchangePrice(Currency.RUB, Currency.USD).setScale(3, RoundingMode.HALF_DOWN))
                 .isEqualTo(BigDecimal(0.016).setScale(3, RoundingMode.HALF_DOWN))
         assertThat(exchange.getPairExchangePrice(Currency.EUR, Currency.USD).setScale(3, RoundingMode.HALF_DOWN))
                 .isEqualTo(BigDecimal(1.121).setScale(3, RoundingMode.HALF_DOWN))
+    }
+
+    @Test
+    fun securitiesClient() {
+//        val yndx = securitiesClientMoex.findLastPrice("YNDX")
+//        assertThat(yndx.ticker).isEqualTo("YNDX")
+//        assertThat(yndx.price).isGreaterThan(BigDecimal.ZERO)
+
+        val history = securitiesClientMoex.findHistoryPrices("YNDX",
+                LocalDate.of(2020, 1, 1),
+                LocalDate.of(2020, 2, 1))
+        assertThat(history[0].ticker).isEqualTo("YNDX")
+        assertThat(history[0].price).isGreaterThan(BigDecimal.ZERO)
     }
 
     @Test
