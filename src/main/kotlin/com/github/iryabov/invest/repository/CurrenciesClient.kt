@@ -5,7 +5,7 @@ import com.github.iryabov.invest.service.impl.invert
 import java.math.BigDecimal
 import java.time.LocalDate
 
-interface StockQuotesRepository {
+interface CurrenciesClient {
     fun findCurrencyByDate(date: LocalDate): ExchangeRate
 }
 

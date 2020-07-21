@@ -13,7 +13,9 @@ import java.lang.IllegalStateException
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.*
 import javax.xml.parsers.DocumentBuilderFactory
+import kotlin.collections.ArrayList
 
 @Repository
 class SecuritiesClientMoex: SecuritiesClient {
@@ -64,10 +66,34 @@ class SecuritiesClientMoex: SecuritiesClient {
         val row0 = rows.getElementsByTagName("row").item(0) as Element
         assert(row0.getAttribute("SECID") == ticker)
         return Security(
-                LocalDate.parse(row0.getAttribute("PREVDATE"), DateTimeFormatter.ISO_DATE),
-                row0.getAttribute("SECID"),
-                row0.getAttribute("SHORTNAME"),
-                BigDecimal(row0.getAttribute("PREVADMITTEDQUOTE")))
+                date = LocalDate.parse(row0.getAttribute("PREVDATE"), DateTimeFormatter.ISO_DATE),
+                ticker = row0.getAttribute("SECID"),
+                shortName = row0.getAttribute("SHORTNAME"),
+                price = BigDecimal(row0.getAttribute("PREVADMITTEDQUOTE")))
+    }
+
+    override fun findByName(name: String): List<Security> {
+        val response = client.get().uri("/securities.xml?q=$name")
+                .accept(MediaType.APPLICATION_XML)
+                .acceptCharset(Charsets.UTF_8)
+                .retrieve().bodyToMono(String::class.java).block()
+        val xml = readXml(response!!)
+        val document = xml.getElementsByTagName("document").item(0) as Element
+        val securities = findData(document, "securities")
+        val rows = (securities.getElementsByTagName("rows").item(0) as Element)
+                .getElementsByTagName("row")
+        if (rows.length == 0)
+            return Collections.emptyList()
+        val list =  ArrayList<Security>()
+        for (i in 0 until rows.length) {
+            val row = rows.item(i) as Element
+            list.add(Security(
+                    ticker = row.getAttribute("secid"),
+                    shortName = row.getAttribute("shortname"),
+                    fullName = row.getAttribute("name"))
+            )
+        }
+        return list
     }
 
     private fun findData(document: Element, id: String): Element {
