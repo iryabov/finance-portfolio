@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository
 import java.time.LocalDate
 
 @Repository
-interface RateRepository : CrudRepository<CurrencyPair, Long> {
+interface CurrencyRateRepository : CrudRepository<CurrencyPair, Long> {
     @Query("""
             select r.*
             from rate r

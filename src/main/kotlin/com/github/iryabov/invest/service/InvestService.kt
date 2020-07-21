@@ -1,8 +1,9 @@
 package com.github.iryabov.invest.service
 
-import com.github.iryabov.invest.entity.Dial
+import com.github.iryabov.invest.entity.AssetHistory
 import com.github.iryabov.invest.model.*
-import java.net.URI
+import com.github.iryabov.invest.repository.Security
+import java.time.LocalDate
 
 interface InvestService {
     fun createAccount(form: AccountForm): Int
@@ -22,4 +23,8 @@ interface InvestService {
     fun getAsset(accountId: Int, ticker: String): AssetView
 
     fun getDials(accountId: Int, ticker: String): List<DialView>
+
+    fun getSecurity(ticker: String,
+                   from: LocalDate = LocalDate.now().minusYears(1),
+                   till: LocalDate = LocalDate.now()): SecurityView
 }

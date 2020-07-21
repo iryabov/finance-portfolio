@@ -1,17 +1,18 @@
 package com.github.iryabov.invest
 
+import com.github.iryabov.invest.etl.AssetHistoryLoader
 import com.github.iryabov.invest.relation.Currency
 import com.github.iryabov.invest.model.AccountForm
 import com.github.iryabov.invest.model.DialForm
 import com.github.iryabov.invest.relation.DialType
 import com.github.iryabov.invest.repository.AccountRepository
 import com.github.iryabov.invest.repository.DialRepository
-import com.github.iryabov.invest.repository.RateRepository
+import com.github.iryabov.invest.repository.CurrencyRateRepository
 import com.github.iryabov.invest.repository.impl.CurrenciesClientCBRF
 import com.github.iryabov.invest.repository.impl.CurrenciesClientECB
 import com.github.iryabov.invest.repository.impl.SecuritiesClientMoex
 import com.github.iryabov.invest.service.InvestService
-import com.github.iryabov.invest.service.impl.DialsCsvReader
+import com.github.iryabov.invest.etl.DialsCsvLoader
 import com.github.iryabov.invest.service.impl.eq
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -39,15 +40,17 @@ class InvestServiceTest(
         @Autowired
         val investService: InvestService,
         @Autowired
-        val csvReader: DialsCsvReader,
+        val csvLoader: DialsCsvLoader,
         @Autowired
         val currenciesClientECB: CurrenciesClientECB,
         @Autowired
         val currenciesClientCBRF: CurrenciesClientCBRF,
         @Autowired
-        val rateRepo: RateRepository,
+        val rateRepo: CurrencyRateRepository,
         @Autowired
-        val securitiesClientMoex: SecuritiesClientMoex
+        val securitiesClientMoex: SecuritiesClientMoex,
+        @Autowired
+        val assetHistoryLoader: AssetHistoryLoader
 ) {
 
     @BeforeEach
@@ -128,7 +131,7 @@ class InvestServiceTest(
     @Test()
     @Disabled
     fun getAccountView() {
-        csvReader.read(ClassPathResource("/csv/test.csv"))
+        csvLoader.load(ClassPathResource("/csv/test.csv"))
         val bank = investService.getAccount(accountRepo.findByName("Bank")?.id!!)
         assertThat(bank.assets.size).isEqualTo(4)
         assertThat(bank.totalDeposit.eq(BigDecimal("101000"))).isTrue()
@@ -170,6 +173,7 @@ class InvestServiceTest(
     }
 
     @Test
+    @Disabled
     fun securitiesClient() {
         val price = securitiesClientMoex.findLastPrice("YNDX")
         assertThat(price.ticker).isEqualTo("YNDX")
@@ -189,7 +193,15 @@ class InvestServiceTest(
     @Transactional
     @Disabled
     @Rollback(false)
-    fun read() {
-        csvReader.read(ClassPathResource("/csv/test.csv"))
+    fun csvLoad() {
+        csvLoader.load(ClassPathResource("/csv/test.csv"))
+    }
+
+    @Test
+    @Transactional
+//    @Disabled
+    @Rollback(false)
+    fun assetHistoryLoad() {
+        assetHistoryLoader.load("YNDX", LocalDate.of(2019, 1, 1), LocalDate.of(2020, 1, 1))
     }
 }

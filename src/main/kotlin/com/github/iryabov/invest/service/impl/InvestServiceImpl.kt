@@ -1,9 +1,6 @@
 package com.github.iryabov.invest.service.impl
 
-import com.github.iryabov.invest.entity.Account
-import com.github.iryabov.invest.entity.Dial
-import com.github.iryabov.invest.entity.CurrencyPair
-import com.github.iryabov.invest.entity.WriteOff
+import com.github.iryabov.invest.entity.*
 import com.github.iryabov.invest.model.*
 import com.github.iryabov.invest.relation.Currency
 import com.github.iryabov.invest.relation.DialType
@@ -22,9 +19,11 @@ class InvestServiceImpl(
         val accountRepo: AccountRepository,
         val dialRepo: DialRepository,
         val writeOffRepo: WriteOffRepository,
-        val rateRepository: RateRepository,
+        val rateRepository: CurrencyRateRepository,
         @Qualifier("currenciesClientCBRF")
-        val currenciesRepo: CurrenciesClient
+        val currenciesRepo: CurrenciesClient,
+        val assetRepo: AssetRepository,
+        val assetHistoryRepo: AssetHistoryRepository
 ) : InvestService {
     override fun createAccount(form: AccountForm): Int {
         val created = accountRepo.save(form.toEntity())
@@ -78,6 +77,16 @@ class InvestServiceImpl(
 
     override fun getDials(accountId: Int, ticker: String): List<DialView> {
         return dialRepo.findAllByAsset(accountId, ticker, Currency.RUB)
+    }
+
+    override fun getSecurity(ticker: String,
+                             from: LocalDate,
+                             till: LocalDate): SecurityView {
+        val security = assetRepo.findSecurityByTicker(ticker)
+        val history = assetHistoryRepo.findAllHistoryByTicker(ticker, from, till, Currency.RUB)
+        security.history = history
+        security.currency = Currency.RUB
+        return security
     }
 
     private fun addExchangeRate(date: LocalDate) {

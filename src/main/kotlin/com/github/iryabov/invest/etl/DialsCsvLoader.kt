@@ -1,4 +1,4 @@
-package com.github.iryabov.invest.service.impl
+package com.github.iryabov.invest.etl
 
 import com.github.iryabov.invest.model.AccountForm
 import com.github.iryabov.invest.model.DialForm
@@ -10,13 +10,13 @@ import com.github.iryabov.invest.service.InvestService
 import org.springframework.core.io.Resource
 import org.springframework.stereotype.Component
 import java.util.*
-import com.github.iryabov.invest.service.impl.CsvColumn.*
+import com.github.iryabov.invest.etl.CsvColumn.*
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Component
-class DialsCsvReader(
+class DialsCsvLoader(
         val dialRepo: DialRepository,
         val accountRepo: AccountRepository,
         val service: InvestService
@@ -24,7 +24,7 @@ class DialsCsvReader(
     private val delimiter = ","
     private val skipHeader = true
 
-    fun read(csv: Resource) {
+    fun load(csv: Resource) {
         val records = readRecords(csv)
         for (record in records) {
             val dial = DialForm(
