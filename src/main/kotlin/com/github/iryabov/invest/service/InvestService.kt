@@ -2,6 +2,7 @@ package com.github.iryabov.invest.service
 
 import com.github.iryabov.invest.entity.AssetHistory
 import com.github.iryabov.invest.model.*
+import com.github.iryabov.invest.relation.Period
 import com.github.iryabov.invest.repository.Security
 import java.time.LocalDate
 
@@ -25,6 +26,5 @@ interface InvestService {
     fun getDials(accountId: Int, ticker: String): List<DialView>
 
     fun getSecurity(ticker: String,
-                   from: LocalDate = LocalDate.now().minusYears(1),
-                   till: LocalDate = LocalDate.now()): SecurityView
+                    period: Period): SecurityView
 }

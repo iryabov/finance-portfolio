@@ -13,6 +13,7 @@ import com.github.iryabov.invest.repository.impl.CurrenciesClientECB
 import com.github.iryabov.invest.repository.impl.SecuritiesClientMoex
 import com.github.iryabov.invest.service.InvestService
 import com.github.iryabov.invest.etl.DialsCsvLoader
+import com.github.iryabov.invest.relation.Period
 import com.github.iryabov.invest.service.impl.eq
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -199,9 +200,17 @@ class InvestServiceTest(
 
     @Test
     @Transactional
-//    @Disabled
+    //@Disabled
     @Rollback(false)
     fun assetHistoryLoad() {
         assetHistoryLoader.load("YNDX", LocalDate.of(2019, 1, 1), LocalDate.of(2020, 1, 1))
+    }
+
+    @Test
+    @Disabled
+    fun security() {
+        val security = investService.getSecurity("YNDX", Period.WEEK)
+        assertThat(security.history.size).isGreaterThan(0)
+        assertThat(security.name).contains("Yandex")
     }
 }

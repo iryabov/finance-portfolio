@@ -12,14 +12,14 @@ import java.time.LocalDate
 @Repository
 interface AssetRepository: CrudRepository<Asset, String> {
     @Query("""
-select 
-    a.ticker as ticker,
-    a.name as name,
-    a.type as asset_class,
-    a.sector as asset_sector,
-    a.country as asset_country
-from asset a
-where a.ticker = :ticker
-""")
+    select 
+        a.ticker as ticker,
+        a.name as name,
+        a.class as asset_class,
+        a.sector as asset_sector,
+        a.country as asset_country
+    from asset a
+    where a.ticker = :ticker
+    """)
     fun findSecurityByTicker(@Param("ticker") ticker: String): SecurityView
 }

@@ -4,6 +4,7 @@ import com.github.iryabov.invest.entity.*
 import com.github.iryabov.invest.model.*
 import com.github.iryabov.invest.relation.Currency
 import com.github.iryabov.invest.relation.DialType
+import com.github.iryabov.invest.relation.Period
 import com.github.iryabov.invest.repository.*
 import com.github.iryabov.invest.service.InvestService
 import org.springframework.beans.factory.annotation.Qualifier
@@ -80,10 +81,9 @@ class InvestServiceImpl(
     }
 
     override fun getSecurity(ticker: String,
-                             from: LocalDate,
-                             till: LocalDate): SecurityView {
+                             period: Period): SecurityView {
         val security = assetRepo.findSecurityByTicker(ticker)
-        val history = assetHistoryRepo.findAllHistoryByTicker(ticker, from, till, Currency.RUB)
+        val history = assetHistoryRepo.findAllHistoryByTicker(ticker, LocalDate.now(), period.till(), Currency.RUB)
         security.history = history
         security.currency = Currency.RUB
         return security

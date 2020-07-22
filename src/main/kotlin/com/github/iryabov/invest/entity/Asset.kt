@@ -1,29 +1,46 @@
 package com.github.iryabov.invest.entity
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.github.iryabov.invest.relation.AssetClass
+import com.github.iryabov.invest.relation.Country
+import com.github.iryabov.invest.relation.Currency
+import com.github.iryabov.invest.relation.Sector
 import org.springframework.data.annotation.Id
+import org.springframework.data.domain.Persistable
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
+import java.math.BigDecimal
 
 @Table
-data class Asset(
+data class Asset (
         @Id
         val ticker: String,
         @Column
         val name: String,
+        @Column("class")
+        val assetClass: AssetClass? = null,
         @Column
-        val type: String? = null,
+        val sector: Sector? = null,
         @Column
-        val sector: String? = null,
+        val country: Country? = null,
         @Column
-        val country: String? = null,
-        @Column
-        val currency: String? = null,
+        val currency: Currency? = null,
         @Column("price_now")
-        val priceNow: String? = null,
+        val priceNow: BigDecimal? = null,
         @Column("price_week")
-        val priceWeek: String? = null,
+        val priceWeek: BigDecimal? = null,
         @Column("price_month")
-        val priceMonth: String? = null,
-        @Column("price_year")
-        val priceYear: String? = null
-)
+        val priceMonth: BigDecimal? = null
+): Persistable<String> {
+        @org.springframework.data.annotation.Transient
+        @JsonIgnore
+        var newEntity = false
+
+        override fun getId(): String? {
+                return ticker
+        }
+
+        override fun isNew(): Boolean {
+                return newEntity
+        }
+}

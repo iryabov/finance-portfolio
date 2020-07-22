@@ -26,7 +26,7 @@ class SecuritiesClientMoex: SecuritiesClient {
         val tillStr = till.format(DateTimeFormatter.ISO_DATE)
         val market = "shares"
         val board = "tqbr"
-        val response = client.get().uri("/history/engines/stock/markets/$market/boards/$board/securities/$ticker/candlebordes.xml?from=$fromStr&till=$tillStr")
+        val response = client.get().uri("/history/engines/stock/markets/$market/boards/$board/securities/$ticker/candlebordes.xml?from=$fromStr&till=$tillStr&iss.meta=off")
                 .accept(MediaType.APPLICATION_XML)
                 .acceptCharset(Charsets.UTF_8)
                 .retrieve().bodyToMono(String::class.java).block()
@@ -53,7 +53,7 @@ class SecuritiesClientMoex: SecuritiesClient {
     override fun findLastPrice(ticker: String): Security {
         val market = "shares"
         val board = "tqbr"
-        val response = client.get().uri("/engines/stock/markets/$market/boards/$board/securities/$ticker.xml")
+        val response = client.get().uri("/engines/stock/markets/$market/boards/$board/securities/$ticker.xml?iss.meta=off")
                 .accept(MediaType.APPLICATION_XML)
                 .acceptCharset(Charsets.UTF_8)
                 .retrieve().bodyToMono(String::class.java).block()
@@ -73,7 +73,7 @@ class SecuritiesClientMoex: SecuritiesClient {
     }
 
     override fun findByName(name: String): List<Security> {
-        val response = client.get().uri("/securities.xml?q=$name")
+        val response = client.get().uri("/securities.xml?q=$name&iss.meta=off")
                 .accept(MediaType.APPLICATION_XML)
                 .acceptCharset(Charsets.UTF_8)
                 .retrieve().bodyToMono(String::class.java).block()

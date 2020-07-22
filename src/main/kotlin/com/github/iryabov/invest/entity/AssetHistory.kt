@@ -16,7 +16,5 @@ data class AssetHistory(
         @Column("ticker")
         val ticker: String,
         @Column("price")
-        val price: BigDecimal,
-        @Column("currency")
-        val currency: Currency = Currency.RUB
+        val price: BigDecimal
 )
