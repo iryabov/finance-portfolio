@@ -82,11 +82,9 @@ class InvestServiceImpl(
 
     override fun getSecurity(ticker: String,
                              period: Period): SecurityView {
-        val security = assetRepo.findSecurityByTicker(ticker)
-        val history = assetHistoryRepo.findAllHistoryByTicker(ticker, LocalDate.now(), period.till(), Currency.RUB)
-        security.history = history
-        security.currency = Currency.RUB
-        return security
+        val securityEntity = assetRepo.findById(ticker).orElseThrow()
+        val history = assetHistoryRepo.findAllHistoryByTicker(ticker, period.from(), LocalDate.now(), Currency.RUB)
+        return securityEntity.toView(history)
     }
 
     private fun addExchangeRate(date: LocalDate) {
@@ -196,4 +194,19 @@ private fun isCurrency(ticker: String): Boolean {
 
 private fun currencyOf(ticker: String): Currency? {
     return Currency.values().find {  c -> c.name == ticker }
+}
+
+private fun Asset.toView(history: List<HistoryView>): SecurityView {
+    return SecurityView(
+            ticker = this.ticker,
+            name = this.name,
+            assetClass = this.assetClass,
+            assetSector = this.sector,
+            assetCountry = this.country,
+            currency = this.currency ?: Currency.RUB,
+            priceNow = this.priceNow ?: P0,
+            priceWeek = this.priceWeek ?: P0,
+            priceMonth = this.priceMonth ?: P0,
+            history = history
+            )
 }

@@ -73,7 +73,9 @@ CREATE TABLE IF NOT EXISTS public.asset_history
     ticker character varying NOT NULL,
     dt date NOT NULL,
     price numeric NOT NULL,
-    currency character varying NOT NULL DEFAULT 'RUB',
-    CONSTRAINT asset_history_pkey PRIMARY KEY (id)
+    CONSTRAINT asset_history_pkey PRIMARY KEY (id),
+    CONSTRAINT ticker_fk FOREIGN KEY (ticker)
+        REFERENCES public.asset (ticker) MATCH SIMPLE
+        ON DELETE CASCADE
 )
 

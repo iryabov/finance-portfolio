@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<page xmlns="http://n2oapp.net/framework/config/schema/page-2.0"
+      name="Securities">
+    <regions>
+        <region>
+            <form id="security" object-id="security">
+                <fields>
+                    <hidden id="id" default-value="1"/>
+                    <row>
+                        <select id="security" label="Ticker" param="ticker">
+                            <options>
+                                <option id="YNDX" name="Yandex"/>
+                                <option id="SBER" name="Sberbank"/>
+                            </options>
+                        </select>
+                        <radio-group id="period" label="Period" param="period" inline="true">
+                            <options>
+                                <option id="WEEK" name="Week"/>
+                                <option id="MONTH" name="Month"/>
+                                <option id="QUARTER" name="Quarter"/>
+                                <option id="HALF_YEAR" name="Half year"/>
+                                <option id="YEAR" name="Year"/>
+                                <option id="FIVE_YEARS" name="5 years"/>
+                            </options>
+                        </radio-group>
+                    </row>
+                </fields>
+                <toolbar place="bottomLeft">
+                    <button label="Generate">
+                        <invoke operation-id="load" route="/load"/>
+                    </button>
+                </toolbar>
+            </form>
+        </region>
+        <region>
+            <chart id="history" route="/history"
+                   query-id="securityHistory" size="20"
+                   name="Security history" depends-on="security"
+                   width="1000">
+                <lines x-field-id="date" y-field-id="price" grid-horizontal="false" grid-vertical="false">
+                    <line field-id="price" type="natural" color="#8884d8" has-label="false"/>
+                </lines>
+                <pre-filters>
+                    <eq field-id="ticker" value="{security.id}" ref-widget-id="security" ref-model="resolve"/>
+                    <eq field-id="period" value="{period.id}" ref-widget-id="security" ref-model="resolve"/>
+                </pre-filters>
+            </chart>
+        </region>
+    </regions>
+</page>

@@ -16,11 +16,12 @@ interface AssetHistoryRepository : CrudRepository<AssetHistory, Long> {
     @Query(
     """
     select h.dt as date,
-           (case when h.currency = :currency then h.price
+           (case when a.currency = :currency then h.price
             else coalesce(r.price * h.price, 0) 
-           end) as price,
+           end) as price
     from asset_history h
-    left join rate r on r.dt = h.dt and r.currency_purchase = h.currency and r.currency_sale = :currency
+    join asset a on a.ticker = h.ticker
+    left join rate r on r.dt = h.dt and r.currency_purchase = a.currency and r.currency_sale = :currency
     where h.ticker = :ticker
       and h.dt >= :from
       and h.dt <= :till

@@ -3,5 +3,8 @@
         brand-name="Portfolio">
     <nav>
         <page page-id="accounts" label="Accounts" icon="fa fa-university"/>
+        <sub-menu label="Admin">
+            <page page-id="security" label="Securities"/>
+        </sub-menu>
     </nav>
 </header>
