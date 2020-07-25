@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional
 import java.lang.Integer.min
 import java.math.BigDecimal
 import java.time.LocalDate
+import java.util.*
+import kotlin.collections.ArrayList
 
 @Service
 @Transactional
@@ -82,7 +84,8 @@ class InvestServiceImpl(
 
     override fun getSecurity(ticker: String,
                              period: Period): SecurityView {
-        val securityEntity = assetRepo.findById(ticker).orElseThrow()
+        val securityEntity = assetRepo.findById(ticker)
+                .orElse(Asset(ticker = ticker, name = ticker))
         val history = assetHistoryRepo.findAllHistoryByTicker(ticker, period.from(), LocalDate.now(), Currency.RUB)
         return securityEntity.toView(history)
     }

@@ -17,7 +17,6 @@
                             <options>
                                 <option id="WEEK" name="Week"/>
                                 <option id="MONTH" name="Month"/>
-                                <option id="QUARTER" name="Quarter"/>
                                 <option id="HALF_YEAR" name="Half year"/>
                                 <option id="YEAR" name="Year"/>
                                 <option id="FIVE_YEARS" name="5 years"/>
@@ -26,7 +25,7 @@
                     </row>
                 </fields>
                 <toolbar place="bottomLeft">
-                    <button label="Generate">
+                    <button label="Load">
                         <invoke operation-id="load" route="/load"/>
                     </button>
                 </toolbar>
@@ -36,8 +35,9 @@
             <chart id="history" route="/history"
                    query-id="securityHistory" size="20"
                    name="Security history" depends-on="security"
-                   width="1000">
-                <lines x-field-id="date" y-field-id="price" grid-horizontal="false" grid-vertical="false">
+                   width="1000" height="500">
+                <lines x-field-id="date" y-field-id="price" grid-horizontal="false" grid-vertical="false"
+                       tooltip-separator=" ">
                     <line field-id="price" type="natural" color="#8884d8" has-label="false"/>
                 </lines>
                 <pre-filters>

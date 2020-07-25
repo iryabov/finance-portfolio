@@ -11,7 +11,7 @@ import java.time.LocalDate
 
 @Repository
 interface AssetHistoryRepository : CrudRepository<AssetHistory, Long> {
-    fun findByTickerAndDate(ticker: String, date: LocalDate): AssetHistory
+    fun findByTickerAndDate(ticker: String, date: LocalDate): AssetHistory?
 
     @Query(
     """
@@ -25,9 +25,19 @@ interface AssetHistoryRepository : CrudRepository<AssetHistory, Long> {
     where h.ticker = :ticker
       and h.dt >= :from
       and h.dt <= :till
+    order by h.dt  
     """)
     fun findAllHistoryByTicker(@Param("ticker") ticker: String,
                                @Param("from") from: LocalDate,
                                @Param("till") till: LocalDate,
                                @Param("currency") currency: Currency): List<HistoryView>
+
+    @Query("""
+    delete from asset_history
+     where ticker = :ticker 
+       and dt >= :from and dt <= :till
+    """)
+    fun deleteByTicker(@Param("ticker") ticker: String,
+                       @Param("from") from: LocalDate,
+                       @Param("till") till: LocalDate)
 }

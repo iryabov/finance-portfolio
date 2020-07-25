@@ -1,6 +1,5 @@
 package com.github.iryabov.invest.entity
 
-import com.github.iryabov.invest.relation.Currency
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table

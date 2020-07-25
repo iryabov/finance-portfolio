@@ -25,18 +25,20 @@ class AssetHistoryLoader(
             end = if (till > begin.plusMonths(3)) begin.plusMonths(3) else till
             val historyPrices = securitiesClient.findHistoryPrices(ticker, begin, end)
             for (historyPrice in historyPrices) {
-                assetHistoryRepo.save(historyPrice.toHistoryEntity())
+                val found = assetHistoryRepo.findByTickerAndDate(ticker, historyPrice.date)
+                assetHistoryRepo.save(historyPrice.toHistoryEntity(found))
             }
             begin = end
         } while (end < till)
     }
 }
 
-private fun Security.toHistoryEntity(): AssetHistory {
+private fun Security.toHistoryEntity(dest: AssetHistory? = null): AssetHistory {
     return AssetHistory(
             date = this.date,
             price = this.price,
             ticker = this.ticker)
+            .copy(id = dest?.id)
 }
 
 private fun Security.toEntity(exists: Boolean): Asset {
