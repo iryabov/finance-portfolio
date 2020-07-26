@@ -1,4 +1,4 @@
-package com.github.iryabov.invest.repository
+package com.github.iryabov.invest.client
 
 import java.math.BigDecimal
 import java.time.LocalDate

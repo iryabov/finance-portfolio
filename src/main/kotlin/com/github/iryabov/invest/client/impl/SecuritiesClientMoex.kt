@@ -1,7 +1,7 @@
-package com.github.iryabov.invest.repository.impl
+package com.github.iryabov.invest.client.impl
 
-import com.github.iryabov.invest.repository.Security
-import com.github.iryabov.invest.repository.SecuritiesClient
+import com.github.iryabov.invest.client.Security
+import com.github.iryabov.invest.client.SecuritiesClient
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Repository
 import org.springframework.web.reactive.function.client.WebClient

@@ -1,1 +1,0 @@
-UPDATE dial SET active = NOT active WHERE id = :id

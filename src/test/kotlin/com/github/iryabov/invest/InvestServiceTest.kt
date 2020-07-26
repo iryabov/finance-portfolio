@@ -8,9 +8,9 @@ import com.github.iryabov.invest.relation.DialType
 import com.github.iryabov.invest.repository.AccountRepository
 import com.github.iryabov.invest.repository.DialRepository
 import com.github.iryabov.invest.repository.CurrencyRateRepository
-import com.github.iryabov.invest.repository.impl.CurrenciesClientCBRF
-import com.github.iryabov.invest.repository.impl.CurrenciesClientECB
-import com.github.iryabov.invest.repository.impl.SecuritiesClientMoex
+import com.github.iryabov.invest.client.impl.CurrenciesClientCBRF
+import com.github.iryabov.invest.client.impl.CurrenciesClientECB
+import com.github.iryabov.invest.client.impl.SecuritiesClientMoex
 import com.github.iryabov.invest.service.InvestService
 import com.github.iryabov.invest.etl.DialsCsvLoader
 import com.github.iryabov.invest.relation.Period

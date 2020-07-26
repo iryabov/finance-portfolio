@@ -6,8 +6,8 @@ import org.springframework.data.relational.core.mapping.Table
 import java.math.BigDecimal
 import java.time.LocalDate
 
-@Table
-data class AssetHistory(
+@Table("asset_history")
+data class SecurityHistory(
         @Id
         var id: Long? = null,
         @Column("dt")

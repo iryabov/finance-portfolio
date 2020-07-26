@@ -1,5 +1,7 @@
 package com.github.iryabov.invest.service.impl
 
+import com.github.iryabov.invest.client.CurrenciesClient
+import com.github.iryabov.invest.client.ExchangeRate
 import com.github.iryabov.invest.entity.*
 import com.github.iryabov.invest.model.*
 import com.github.iryabov.invest.relation.Currency
@@ -13,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional
 import java.lang.Integer.min
 import java.math.BigDecimal
 import java.time.LocalDate
-import java.util.*
 import kotlin.collections.ArrayList
 
 @Service
@@ -26,7 +27,7 @@ class InvestServiceImpl(
         @Qualifier("currenciesClientCBRF")
         val currenciesRepo: CurrenciesClient,
         val assetRepo: AssetRepository,
-        val assetHistoryRepo: AssetHistoryRepository
+        val securityHistoryRepo: SecurityHistoryRepository
 ) : InvestService {
     override fun createAccount(form: AccountForm): Int {
         val created = accountRepo.save(form.toEntity())
@@ -78,6 +79,13 @@ class InvestServiceImpl(
         return asset
     }
 
+    override fun getAssetHistory(accountId: Int, ticker: String, period: Period): List<AssetHistoryView> {
+        val history = dialRepo.findAllByPeriod(accountId, ticker, Currency.RUB, period.from.invoke(), LocalDate.now())
+        history.forEach { it.purchase = if (it.quantity > 0) it.quantity else 0 }
+        history.forEach { it.sale = if (it.quantity < 0) it.quantity else 0 }
+        return history
+    }
+
     override fun getDials(accountId: Int, ticker: String): List<DialView> {
         return dialRepo.findAllByAsset(accountId, ticker, Currency.RUB)
     }
@@ -86,7 +94,7 @@ class InvestServiceImpl(
                              period: Period): SecurityView {
         val securityEntity = assetRepo.findById(ticker)
                 .orElse(Asset(ticker = ticker, name = ticker))
-        val history = assetHistoryRepo.findAllHistoryByTicker(ticker, period.from(), LocalDate.now(), Currency.RUB)
+        val history = securityHistoryRepo.findAllHistoryByTicker(ticker, period.from(), LocalDate.now(), Currency.RUB)
         return securityEntity.toView(history)
     }
 

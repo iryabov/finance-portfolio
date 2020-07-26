@@ -13,7 +13,7 @@
 <!--            </auto-complete>-->
             <input-text id="asset.id" label="Ticker" param="asset_id"
                         required="true"/>
-            <date-time id="opened" label="Opened" required="true" default-value="{$.today()}"/>
+            <date-time id="opened" label="Opened" required="true" default-value="{moment().format('DD.MM.YYYY')}"/>
             <select id="type" label="Dial type" param="type"
                     required="true">
                 <default-value id="PURCHASE"/>

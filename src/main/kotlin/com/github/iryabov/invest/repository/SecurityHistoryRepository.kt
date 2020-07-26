@@ -1,6 +1,6 @@
 package com.github.iryabov.invest.repository
 
-import com.github.iryabov.invest.entity.AssetHistory
+import com.github.iryabov.invest.entity.SecurityHistory
 import com.github.iryabov.invest.model.HistoryView
 import com.github.iryabov.invest.relation.Currency
 import org.springframework.data.jdbc.repository.query.Query
@@ -10,8 +10,8 @@ import org.springframework.stereotype.Repository
 import java.time.LocalDate
 
 @Repository
-interface AssetHistoryRepository : CrudRepository<AssetHistory, Long> {
-    fun findByTickerAndDate(ticker: String, date: LocalDate): AssetHistory?
+interface SecurityHistoryRepository : CrudRepository<SecurityHistory, Long> {
+    fun findByTickerAndDate(ticker: String, date: LocalDate): SecurityHistory?
 
     @Query(
     """

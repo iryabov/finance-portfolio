@@ -1,6 +1,7 @@
 package com.github.iryabov.invest.repository
 
 import com.github.iryabov.invest.entity.Dial
+import com.github.iryabov.invest.model.AssetHistoryView
 import com.github.iryabov.invest.model.AssetView
 import com.github.iryabov.invest.model.Balance
 import com.github.iryabov.invest.model.DialView
@@ -19,6 +20,29 @@ interface DialRepository : CrudRepository<Dial, Long> {
     @Modifying
     @Query("UPDATE dial SET active = NOT active WHERE id = :id")
     fun deactivate(@Param("id") id: Long): Boolean
+
+    @Query("""
+    select 
+        d.dt as date,
+        ((case when d.currency = :currency then  d.volume
+         else coalesce((select r.price * d.volume from rate r where  r.dt = d.dt and  r.currency_purchase = d.currency and  r.currency_sale = :currency), 0) 
+         end 
+        ) / d.quantity) as price,
+        d.quantity as quantity
+    from dial d
+    where d.account_id = :account_id
+      and d.active = true
+      and d.ticker = :ticker 
+      and d.type in ('PURCHASE', 'SALE') 
+      and d.dt >= :from 
+      and d.dt <= :till
+    order by d.dt  
+    """)
+    fun findAllByPeriod(@Param("account_id") accountId: Int,
+                        @Param("ticker") ticker: String,
+                        @Param("currency") currency: Currency,
+                        @Param("from") from: LocalDate,
+                        @Param("till") till: LocalDate): List<AssetHistoryView>
 
     @Query("""
 select 

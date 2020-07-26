@@ -1,12 +1,12 @@
 package com.github.iryabov.invest.etl
 
 import com.github.iryabov.invest.entity.Asset
-import com.github.iryabov.invest.entity.AssetHistory
+import com.github.iryabov.invest.entity.SecurityHistory
 import com.github.iryabov.invest.relation.Currency
-import com.github.iryabov.invest.repository.AssetHistoryRepository
+import com.github.iryabov.invest.repository.SecurityHistoryRepository
 import com.github.iryabov.invest.repository.AssetRepository
-import com.github.iryabov.invest.repository.SecuritiesClient
-import com.github.iryabov.invest.repository.Security
+import com.github.iryabov.invest.client.SecuritiesClient
+import com.github.iryabov.invest.client.Security
 import org.springframework.stereotype.Component
 import java.time.LocalDate
 
@@ -14,7 +14,7 @@ import java.time.LocalDate
 class AssetHistoryLoader(
         val securitiesClient: SecuritiesClient,
         val assetRepo: AssetRepository,
-        val assetHistoryRepo: AssetHistoryRepository
+        val securityHistoryRepo: SecurityHistoryRepository
 ) {
     fun load(ticker: String, from: LocalDate, till: LocalDate) {
         val security = securitiesClient.findLastPrice(ticker)
@@ -25,16 +25,16 @@ class AssetHistoryLoader(
             end = if (till > begin.plusMonths(3)) begin.plusMonths(3) else till
             val historyPrices = securitiesClient.findHistoryPrices(ticker, begin, end)
             for (historyPrice in historyPrices) {
-                val found = assetHistoryRepo.findByTickerAndDate(ticker, historyPrice.date)
-                assetHistoryRepo.save(historyPrice.toHistoryEntity(found))
+                val found = securityHistoryRepo.findByTickerAndDate(ticker, historyPrice.date)
+                securityHistoryRepo.save(historyPrice.toHistoryEntity(found))
             }
             begin = end
         } while (end < till)
     }
 }
 
-private fun Security.toHistoryEntity(dest: AssetHistory? = null): AssetHistory {
-    return AssetHistory(
+private fun Security.toHistoryEntity(dest: SecurityHistory? = null): SecurityHistory {
+    return SecurityHistory(
             date = this.date,
             price = this.price,
             ticker = this.ticker)

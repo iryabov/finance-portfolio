@@ -1,8 +1,8 @@
-package com.github.iryabov.invest.repository.impl
+package com.github.iryabov.invest.client.impl
 
 import com.github.iryabov.invest.relation.Currency
-import com.github.iryabov.invest.repository.ExchangeRate
-import com.github.iryabov.invest.repository.CurrenciesClient
+import com.github.iryabov.invest.client.ExchangeRate
+import com.github.iryabov.invest.client.CurrenciesClient
 import com.github.iryabov.invest.service.impl.invert
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Repository

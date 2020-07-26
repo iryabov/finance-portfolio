@@ -1,4 +1,4 @@
-package com.github.iryabov.invest.repository
+package com.github.iryabov.invest.client
 
 import com.github.iryabov.invest.relation.Currency
 import com.github.iryabov.invest.service.impl.invert

@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<query xmlns="http://n2oapp.net/framework/config/schema/query-4.0"
+       name="Asset history">
+    <list result-mapping="#this" count-mapping="size()" filters="accountId,ticker,period.id">
+        <java method="getAssetHistory" class="com.github.iryabov.invest.service.InvestService">
+            <spring/>
+            <arguments>
+                <argument type="primitive" name="accountId"/>
+                <argument type="primitive" name="ticker"/>
+                <argument type="primitive" name="period"/>
+            </arguments>
+        </java>
+    </list>
+
+    <fields>
+        <field id="accountId">
+            <filters>
+                <eq filter-id="accountId" mapping="[0]"/>
+            </filters>
+        </field>
+        <field id="ticker">
+            <filters>
+                <eq filter-id="ticker" mapping="[1]"/>
+            </filters>
+        </field>
+        <field id="period">
+            <filters>
+                <eq filter-id="period.id" default-value="FIVE_YEARS" normalize="T(com.github.iryabov.invest.relation.Period).valueOf(#this)" mapping="[2]"/>
+            </filters>
+        </field>
+        <field id="date">
+            <select mapping="date"/>
+        </field>
+        <field id="price">
+            <select mapping="price"/>
+        </field>
+        <field id="quantity">
+            <select mapping="quantity"/>
+        </field>
+        <field id="purchase">
+            <select mapping="purchase"/>
+        </field>
+        <field id="sale">
+            <select mapping="sale"/>
+        </field>
+    </fields>
+
+</query>
