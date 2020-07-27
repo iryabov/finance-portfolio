@@ -80,10 +80,20 @@ class InvestServiceImpl(
     }
 
     override fun getAssetHistory(accountId: Int, ticker: String, period: Period): List<AssetHistoryView> {
-        val history = dialRepo.findAllByPeriod(accountId, ticker, Currency.RUB, period.from.invoke(), LocalDate.now())
+        val fromDate = period.from.invoke()
+        val tillDate = LocalDate.now()
+        val history = dialRepo.findAllByPeriod(accountId, ticker, Currency.RUB, fromDate, tillDate)
         history.forEach { it.purchase = if (it.quantity > 0) it.quantity else 0 }
         history.forEach { it.sale = if (it.quantity < 0) it.quantity else 0 }
-        return history
+        return fillChart(history, fromDate, tillDate, period.step,
+                { h -> h.date },
+                { d, _ -> AssetHistoryView(date = d, price = P0, quantity = 0) },
+                { a, b -> AssetHistoryView(
+                        date = a.date,
+                        price = a.price,
+                        quantity = a.quantity + b.quantity,
+                        purchase = a.purchase + b.purchase,
+                        sale = a.sale + b.sale) })
     }
 
     override fun getDials(accountId: Int, ticker: String): List<DialView> {
@@ -94,8 +104,13 @@ class InvestServiceImpl(
                              period: Period): SecurityView {
         val securityEntity = assetRepo.findById(ticker)
                 .orElse(Asset(ticker = ticker, name = ticker))
-        val history = securityHistoryRepo.findAllHistoryByTicker(ticker, period.from(), LocalDate.now(), Currency.RUB)
-        return securityEntity.toView(history)
+        val from = period.from()
+        val till = LocalDate.now()
+        val history = securityHistoryRepo.findAllHistoryByTicker(ticker, from, till, Currency.RUB)
+        val chart = fillChart(history, from, till, period.step,
+                { s -> s.date },
+                { date, prev -> HistoryView(date = date, price = prev?.price ?: P0) })
+        return securityEntity.toView(chart)
     }
 
     private fun addExchangeRate(date: LocalDate) {
@@ -149,7 +164,7 @@ private fun AccountView.calc() {
 
 private fun AccountView.calcProportion() {
     assets.forEach { a -> a.calcProportion(totalNetValue, totalMarketValue) }
-    assert(assets.sumByBigDecimal { a -> a.netInterest }.eq(P100) )
+    assert(assets.sumByBigDecimal { a -> a.netInterest }.eq(P100))
     assert(assets.sumByBigDecimal { a -> a.marketInterest }.eq(P100))
     assert(assets.sumByBigDecimal { a -> a.profitInterest }.eq(P0))
 }
@@ -200,11 +215,11 @@ private fun Dial.invert(): Dial {
 }
 
 private fun isCurrency(ticker: String): Boolean {
-    return Currency.values().any {  c -> c.name == ticker }
+    return Currency.values().any { c -> c.name == ticker }
 }
 
 private fun currencyOf(ticker: String): Currency? {
-    return Currency.values().find {  c -> c.name == ticker }
+    return Currency.values().find { c -> c.name == ticker }
 }
 
 private fun Asset.toView(history: List<HistoryView>): SecurityView {
@@ -219,5 +234,5 @@ private fun Asset.toView(history: List<HistoryView>): SecurityView {
             priceWeek = this.priceWeek ?: P0,
             priceMonth = this.priceMonth ?: P0,
             history = history
-            )
+    )
 }

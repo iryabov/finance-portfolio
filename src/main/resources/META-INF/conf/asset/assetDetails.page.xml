@@ -32,6 +32,29 @@
                             <output-text id="valueProfit"/>
                         </row>
                     </set>
+                </fields>
+                <pre-filters>
+                    <eq field-id="accountId" param="account_id"/>
+                    <eq field-id="id" param="asset_id"/>
+                </pre-filters>
+            </form>
+            <chart id="history" route="/history"
+                   query-id="assetHistory"
+                   name="History" depends-on="period"
+                   width="1000" height="200">
+                <bars x-field-id="date" y-field-id="quantity" grid-horizontal="false" grid-vertical="false"
+                       tooltip-separator=" ">
+                    <bar field-id="purchase" color="#8884d8" />
+                    <bar field-id="sale" color="#FF0000"/>
+                </bars>
+                <pre-filters>
+                    <eq field-id="accountId" param="account_id"/>
+                    <eq field-id="ticker" param="asset_id"/>
+                    <eq field-id="period" value="{period.id}" ref-widget-id="period" ref-model="resolve"/>
+                </pre-filters>
+            </chart>
+            <form id="period">
+                <fields>
                     <set>
                         <radio-group id="period" label="Period" param="period" inline="true">
                             <default-value id="FIVE_YEARS" name="5 years"/>
@@ -45,26 +68,7 @@
                         </radio-group>
                     </set>
                 </fields>
-                <pre-filters>
-                    <eq field-id="accountId" param="account_id"/>
-                    <eq field-id="id" param="asset_id"/>
-                </pre-filters>
             </form>
-            <chart id="history" route="/history"
-                   query-id="assetHistory"
-                   name="History" depends-on="asset"
-                   width="1000" height="500">
-                <bars x-field-id="date" y-field-id="quantity" grid-horizontal="false" grid-vertical="false"
-                       tooltip-separator=" ">
-                    <bar field-id="purchase" color="#8884d8" />
-                    <bar field-id="sale" color="#FF0000"/>
-                </bars>
-                <pre-filters>
-                    <eq field-id="accountId" param="account_id"/>
-                    <eq field-id="ticker" param="asset_id"/>
-                    <eq field-id="period" value="{period.id}" ref-widget-id="asset" ref-model="resolve"/>
-                </pre-filters>
-            </chart>
             <table id="dials" query-id="dials" route="/dials">
                 <columns>
                     <column text-field-id="active">
