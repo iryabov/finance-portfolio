@@ -38,7 +38,7 @@
                    width="1000" height="500">
                 <lines x-field-id="date" y-field-id="price" grid-horizontal="false" grid-vertical="false"
                        tooltip-separator=" ">
-                    <line field-id="price" type="natural" color="#8884d8" has-label="false"/>
+                    <line field-id="price" type="linear" color="#8884d8"/>
                 </lines>
                 <pre-filters>
                     <eq field-id="ticker" value="{security.id}" ref-widget-id="security" ref-model="resolve"/>

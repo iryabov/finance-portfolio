@@ -31,9 +31,6 @@
         <field id="date">
             <select mapping="date"/>
         </field>
-        <field id="price">
-            <select mapping="price"/>
-        </field>
         <field id="quantity">
             <select mapping="quantity"/>
         </field>
@@ -42,6 +39,15 @@
         </field>
         <field id="sale">
             <select mapping="sale"/>
+        </field>
+        <field id="securityPrice">
+            <select mapping="securityPrice"/>
+        </field>
+        <field id="purchasePrice">
+            <select mapping="purchasePrice"/>
+        </field>
+        <field id="salePrice">
+            <select mapping="salePrice"/>
         </field>
     </fields>
 

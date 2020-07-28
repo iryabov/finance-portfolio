@@ -42,11 +42,17 @@
                    query-id="assetHistory"
                    name="History" depends-on="period"
                    width="1000" height="200">
-                <bars x-field-id="date" y-field-id="quantity" grid-horizontal="false" grid-vertical="false"
+                <lines x-field-id="date" grid-horizontal="false" grid-vertical="false"
                        tooltip-separator=" ">
-                    <bar field-id="purchase" color="#8884d8" />
-                    <bar field-id="sale" color="#FF0000"/>
-                </bars>
+                    <line field-id="securityPrice" color="#8884d8" type="linear"/>
+                    <line field-id="purchasePrice" color="#00FF00" type="linear"/>
+                    <line field-id="salePrice" color="#FF0000" type="linear"/>
+                </lines>
+<!--                <bars x-field-id="date" y-field-id="quantity" grid-horizontal="false" grid-vertical="false"-->
+<!--                       tooltip-separator=" ">-->
+<!--                    <bar field-id="purchase" color="#8884d8" />-->
+<!--                    <bar field-id="sale" color="#FF0000"/>-->
+<!--                </bars>-->
                 <pre-filters>
                     <eq field-id="accountId" param="account_id"/>
                     <eq field-id="ticker" param="asset_id"/>

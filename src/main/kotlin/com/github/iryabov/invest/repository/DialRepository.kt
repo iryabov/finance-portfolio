@@ -24,10 +24,10 @@ interface DialRepository : CrudRepository<Dial, Long> {
     @Query("""
     select 
         d.dt as date,
-        ((case when d.currency = :currency then  d.volume
-         else coalesce((select r.price * d.volume from rate r where  r.dt = d.dt and  r.currency_purchase = d.currency and  r.currency_sale = :currency), 0) 
+        ((case when d.currency = :currency then abs(d.volume)
+         else coalesce((select r.price * abs(d.volume) from rate r where  r.dt = d.dt and  r.currency_purchase = d.currency and  r.currency_sale = :currency), 0) 
          end 
-        ) / d.quantity) as price,
+        ) / abs(d.quantity)) as price,
         d.quantity as quantity
     from dial d
     where d.account_id = :account_id

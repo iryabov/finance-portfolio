@@ -12,10 +12,12 @@ import com.github.iryabov.invest.service.InvestService
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.lang.Integer.max
 import java.lang.Integer.min
 import java.math.BigDecimal
 import java.time.LocalDate
 import kotlin.collections.ArrayList
+import kotlin.math.abs
 
 @Service
 @Transactional
@@ -80,20 +82,22 @@ class InvestServiceImpl(
     }
 
     override fun getAssetHistory(accountId: Int, ticker: String, period: Period): List<AssetHistoryView> {
-        val fromDate = period.from.invoke()
-        val tillDate = LocalDate.now()
-        val history = dialRepo.findAllByPeriod(accountId, ticker, Currency.RUB, fromDate, tillDate)
-        history.forEach { it.purchase = if (it.quantity > 0) it.quantity else 0 }
-        history.forEach { it.sale = if (it.quantity < 0) it.quantity else 0 }
-        return fillChart(history, fromDate, tillDate, period.step,
+        val from = period.from.invoke()
+        val till = LocalDate.now()
+        val assetHistory = dialRepo.findAllByPeriod(accountId, ticker, Currency.RUB, from, till)
+        assetHistory.forEach {
+            it.purchase = if (it.quantity > 0) it.quantity else 0
+            it.purchasePrice = if (it.quantity > 0) it.price else null
+            it.sale = if (it.quantity < 0) it.quantity else 0
+            it.salePrice = if (it.quantity < 0) it.price else null
+        }
+        val securityHistory = securityHistoryRepo.findAllHistoryByTicker(ticker, from, till, Currency.RUB)
+        val resultHistory = ArrayList(assetHistory)
+        resultHistory.addAll(securityHistory.map { AssetHistoryView(date = it.date, securityPrice = it.price) })
+        return fillChart(resultHistory, from, till, period.step,
                 { h -> h.date },
-                { d, _ -> AssetHistoryView(date = d, price = P0, quantity = 0) },
-                { a, b -> AssetHistoryView(
-                        date = a.date,
-                        price = a.price,
-                        quantity = a.quantity + b.quantity,
-                        purchase = a.purchase + b.purchase,
-                        sale = a.sale + b.sale) })
+                { d, prev -> AssetHistoryView(date = d, securityPrice = prev?.securityPrice ?: P0) },
+                ::reduce)
     }
 
     override fun getDials(accountId: Int, ticker: String): List<DialView> {
@@ -109,7 +113,7 @@ class InvestServiceImpl(
         val history = securityHistoryRepo.findAllHistoryByTicker(ticker, from, till, Currency.RUB)
         val chart = fillChart(history, from, till, period.step,
                 { s -> s.date },
-                { date, prev -> HistoryView(date = date, price = prev?.price ?: P0) })
+                { date, prev -> SecurityHistoryView(date = date, price = prev?.price ?: P0) })
         return securityEntity.toView(chart)
     }
 
@@ -222,7 +226,7 @@ private fun currencyOf(ticker: String): Currency? {
     return Currency.values().find { c -> c.name == ticker }
 }
 
-private fun Asset.toView(history: List<HistoryView>): SecurityView {
+private fun Asset.toView(securityHistory: List<SecurityHistoryView>): SecurityView {
     return SecurityView(
             ticker = this.ticker,
             name = this.name,
@@ -233,6 +237,17 @@ private fun Asset.toView(history: List<HistoryView>): SecurityView {
             priceNow = this.priceNow ?: P0,
             priceWeek = this.priceWeek ?: P0,
             priceMonth = this.priceMonth ?: P0,
-            history = history
+            history = securityHistory
     )
+}
+
+private fun reduce(a: AssetHistoryView, b: AssetHistoryView): AssetHistoryView {
+    val result = AssetHistoryView(b.date)
+    result.securityPrice = max(a.securityPrice, b.securityPrice)
+    result.purchase = b.purchase + a.purchase
+    result.sale = b.sale + a.sale
+    result.quantity = a.quantity + b.quantity
+    result.purchasePrice = max(a.purchasePrice, b.purchasePrice)
+    result.salePrice = max(a.salePrice, b.salePrice)
+    return result
 }

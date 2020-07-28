@@ -20,9 +20,9 @@ data class SecurityView(
         val assetSector: Sector?,
         val assetCountry: Country?,
         var currency: Currency = Currency.RUB,
-        var history: List<HistoryView>)
+        var history: List<SecurityHistoryView>)
 
-data class HistoryView(
+data class SecurityHistoryView(
         val date: LocalDate,
         val price: BigDecimal
 )
