@@ -13,7 +13,7 @@
                 </java>
             </invocation>
             <in>
-                <field id="security.id" mapping="[0]"/>
+                <field id="ticker" mapping="[0]"/>
                 <field id="period.id" normalize="T(com.github.iryabov.invest.relation.Period).valueOf(#this).getFrom().invoke()"
                        default-value="FIVE_YEARS" mapping="[1]"/>
                 <field id="till" default-value="0" normalize="T(java.time.LocalDate).now()" mapping="[2]"/>

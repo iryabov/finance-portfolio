@@ -7,6 +7,7 @@ import com.github.iryabov.invest.repository.SecurityHistoryRepository
 import com.github.iryabov.invest.repository.AssetRepository
 import com.github.iryabov.invest.client.SecuritiesClient
 import com.github.iryabov.invest.client.Security
+import com.github.iryabov.invest.relation.AssetClass
 import org.springframework.stereotype.Component
 import java.time.LocalDate
 
@@ -46,6 +47,7 @@ private fun Security.toEntity(exists: Boolean): Asset {
             ticker = this.ticker,
             name = this.shortName,
             priceNow = this.price,
+            assetClass = AssetClass.SHARE,
             currency = Currency.RUB)
     asset.newEntity = !exists
     return asset

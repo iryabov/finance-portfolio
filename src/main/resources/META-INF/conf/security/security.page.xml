@@ -7,12 +7,10 @@
                 <fields>
                     <hidden id="id" default-value="1"/>
                     <row>
-                        <select id="security" label="Ticker" param="ticker">
-                            <options>
-                                <option id="YNDX" name="Yandex"/>
-                                <option id="SBER" name="Sberbank"/>
-                            </options>
-                        </select>
+<!--                        <auto-complete id="ticker" label="Ticker" param="ticker" query-id="security"-->
+<!--                                       search-filter-id="name" value-field-id="ticker" label-field-id="name">-->
+<!--                        </auto-complete>-->
+                        <input-text id="ticker" label="Ticker" param="ticker"/>
                         <radio-group id="period" label="Period" param="period" inline="true">
                             <options>
                                 <option id="WEEK" name="Week"/>
@@ -41,7 +39,7 @@
                     <line field-id="price" type="linear" color="#8884d8"/>
                 </lines>
                 <pre-filters>
-                    <eq field-id="ticker" value="{security.id}" ref-widget-id="security" ref-model="resolve"/>
+                    <eq field-id="ticker" value="{ticker}" ref-widget-id="security" ref-model="resolve"/>
                     <eq field-id="period" value="{period.id}" ref-widget-id="security" ref-model="resolve"/>
                 </pre-filters>
             </chart>
