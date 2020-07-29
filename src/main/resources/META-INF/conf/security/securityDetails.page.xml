@@ -7,20 +7,22 @@
                 <pre-filters>
                     <eq field-id="id" param="ticker"/>
                 </pre-filters>
-                <toolbar place="topLeft">
-                    <button id="edit" label="Edit">
+                <toolbar place="topRight">
+                    <button id="edit" label="Edit" icon="fa fa-pencil" type="icon" color="primary">
                         <open-page page-id="securityForm"
                                    page-name="Edit"
                                    submit-operation-id="editSecurity" route="/edit"/>
                     </button>
-                </toolbar>
-                <toolbar place="topRight">
                     <button label="Load">
                         <invoke operation-id="load" route="/load"/>
                     </button>
                 </toolbar>
                 <fields>
-                    <hidden id="id" default-value="1"/>
+                    <row>
+                        <output-text id="assetClass.id" label="Class"/>
+                        <output-text id="sector.id" label="Sector"/>
+                        <output-text id="country.id" label="Country"/>
+                    </row>
                     <row>
                         <radio-group id="period" label="Period" param="period" inline="true">
                             <default-value id="FIVE_YEARS"/>
