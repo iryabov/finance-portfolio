@@ -1,7 +1,7 @@
 package com.github.iryabov.invest.service
 
-import com.github.iryabov.invest.entity.SecurityHistory
 import com.github.iryabov.invest.model.*
+import com.github.iryabov.invest.relation.Currency
 import com.github.iryabov.invest.relation.Period
 
 interface InvestService {
@@ -15,16 +15,17 @@ interface InvestService {
 
     fun deactivateDial(accountId: Int, id: Long)
 
-    fun getAccount(accountId: Int): AccountView
+    fun getAccount(accountId: Int, currency: Currency = Currency.RUB): AccountView
 
     fun getAccounts(): List<AccountView>
 
-    fun getAsset(accountId: Int, ticker: String): AssetView
+    fun getAsset(accountId: Int, currency: Currency = Currency.RUB, ticker: String): AssetView
 
-    fun getAssetHistory(accountId: Int, ticker: String, period: Period): List<AssetHistoryView>
+    fun getAssetHistory(accountId: Int, ticker: String, period: Period, currency: Currency = Currency.RUB): List<AssetHistoryView>
 
-    fun getDials(accountId: Int, ticker: String): List<DialView>
+    fun getDials(accountId: Int, ticker: String, currency: Currency = Currency.RUB): List<DialView>
 
     fun getSecurity(ticker: String,
-                    period: Period): SecurityView
+                    period: Period,
+                    currency: Currency = Currency.RUB): SecurityView
 }

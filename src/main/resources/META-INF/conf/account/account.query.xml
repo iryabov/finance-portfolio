@@ -6,11 +6,12 @@
             <spring/>
         </java>
     </list>
-    <unique result-mapping="#this" filters="id">
+    <unique result-mapping="#this" filters="id,currency">
         <java method="getAccount" class="com.github.iryabov.invest.service.InvestService">
             <spring/>
             <arguments>
                 <argument type="primitive" name="accountId"/>
+                <argument type="primitive" name="currency"/>
             </arguments>
         </java>
     </unique>
@@ -20,6 +21,13 @@
             <select mapping="id"/>
             <filters>
                 <eq filter-id="id" mapping="[0]"/>
+            </filters>
+        </field>
+        <field id="currency">
+            <filters>
+                <eq filter-id="currency" default-value="${portfolio.currency}"
+                    normalize="T(com.github.iryabov.invest.relation.Currency).valueOf(#this)"
+                    mapping="[1]"/>
             </filters>
         </field>
         <field id="name">

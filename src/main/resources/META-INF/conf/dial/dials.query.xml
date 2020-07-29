@@ -1,16 +1,17 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <query xmlns="http://n2oapp.net/framework/config/schema/query-4.0"
        object-id="dial">
-    <list result-mapping="#this" filters="accountId,ticker">
+    <list result-mapping="#this" filters="accountId,ticker,currency">
         <java method="getDials" class="com.github.iryabov.invest.service.InvestService">
             <spring/>
             <arguments>
                 <argument type="primitive" name="accountId"/>
                 <argument type="primitive" name="ticker"/>
+                <argument type="primitive" name="currency"/>
             </arguments>
         </java>
     </list>
-    
+
     <fields>
         <field id="id">
             <select mapping="id"/>
@@ -40,6 +41,11 @@
         </field>
         <field id="currency" domain="string">
             <select mapping="currency"/>
+            <filters>
+                <eq filter-id="currency" default-value="${portfolio.currency}"
+                    normalize="T(com.github.iryabov.invest.relation.Currency).valueOf(#this)"
+                    mapping="[2]"/>
+            </filters>
         </field>
         <field id="volume" domain="numeric">
             <select mapping="volume"/>

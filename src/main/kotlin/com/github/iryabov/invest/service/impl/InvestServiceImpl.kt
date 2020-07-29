@@ -60,10 +60,10 @@ class InvestServiceImpl(
         dialRepo.deactivate(id)
     }
 
-    override fun getAccount(accountId: Int): AccountView {
+    override fun getAccount(accountId: Int, currency: Currency): AccountView {
         val assets = ArrayList<AssetView>()
         val accountEntity = accountRepo.findById(accountId).orElseThrow()
-        assets.addAll(dialRepo.findAssets(accountId, Currency.RUB))
+        assets.addAll(dialRepo.findAssets(accountId, currency))
         val account = AccountView(accountId, accountEntity.name, assets)
         account.calc()
         account.calcProportion()
@@ -74,24 +74,24 @@ class InvestServiceImpl(
         return accountRepo.findAllByActive().map { getAccount(it.id!!) }
     }
 
-    override fun getAsset(accountId: Int, ticker: String): AssetView {
-        val asset = dialRepo.findAssets(accountId, Currency.RUB, ticker).first()
+    override fun getAsset(accountId: Int, currency: Currency, ticker: String): AssetView {
+        val asset = dialRepo.findAssets(accountId, currency, ticker).first()
         asset.calc()
         asset.calcProportion(P0, P0)
         return asset
     }
 
-    override fun getAssetHistory(accountId: Int, ticker: String, period: Period): List<AssetHistoryView> {
+    override fun getAssetHistory(accountId: Int, ticker: String, period: Period, currency: Currency): List<AssetHistoryView> {
         val from = period.from.invoke()
         val till = LocalDate.now()
-        val assetHistory = dialRepo.findAllByPeriod(accountId, ticker, Currency.RUB, from, till)
+        val assetHistory = dialRepo.findAllByPeriod(accountId, ticker, currency, from, till)
         assetHistory.forEach {
             it.purchase = if (it.quantity > 0) it.quantity else 0
             it.purchasePrice = if (it.quantity > 0) it.price else null
             it.sale = if (it.quantity < 0) it.quantity else 0
             it.salePrice = if (it.quantity < 0) it.price else null
         }
-        val securityHistory = securityHistoryRepo.findAllHistoryByTicker(ticker, from, till, Currency.RUB)
+        val securityHistory = securityHistoryRepo.findAllHistoryByTicker(ticker, from, till, currency)
         val resultHistory = ArrayList(assetHistory)
         resultHistory.addAll(securityHistory.map { AssetHistoryView(date = it.date, securityPrice = it.price) })
         return fillChart(resultHistory, from, till, period.step,
@@ -100,21 +100,22 @@ class InvestServiceImpl(
                 ::reduce)
     }
 
-    override fun getDials(accountId: Int, ticker: String): List<DialView> {
-        return dialRepo.findAllByAsset(accountId, ticker, Currency.RUB)
+    override fun getDials(accountId: Int, ticker: String, currency: Currency): List<DialView> {
+        return dialRepo.findAllByAsset(accountId, ticker, currency)
     }
 
     override fun getSecurity(ticker: String,
-                             period: Period): SecurityView {
+                             period: Period,
+                             currency: Currency): SecurityView {
         val securityEntity = assetRepo.findById(ticker)
                 .orElse(Asset(ticker = ticker, name = ticker))
         val from = period.from()
         val till = LocalDate.now()
-        val history = securityHistoryRepo.findAllHistoryByTicker(ticker, from, till, Currency.RUB)
+        val history = securityHistoryRepo.findAllHistoryByTicker(ticker, from, till, currency)
         val chart = fillChart(history, from, till, period.step,
                 { s -> s.date },
                 { date, prev -> SecurityHistoryView(date = date, price = prev?.price ?: P0) })
-        return securityEntity.toView(chart)
+        return securityEntity.toView(chart, currency)
     }
 
     private fun addExchangeRate(date: LocalDate) {
@@ -226,14 +227,14 @@ private fun currencyOf(ticker: String): Currency? {
     return Currency.values().find { c -> c.name == ticker }
 }
 
-private fun Asset.toView(securityHistory: List<SecurityHistoryView>): SecurityView {
+private fun Asset.toView(securityHistory: List<SecurityHistoryView>, currency: Currency): SecurityView {
     return SecurityView(
             ticker = this.ticker,
             name = this.name,
             assetClass = this.assetClass,
             assetSector = this.sector,
             assetCountry = this.country,
-            currency = this.currency ?: Currency.RUB,
+            currency = this.currency ?: currency,
             priceNow = this.priceNow ?: P0,
             priceWeek = this.priceWeek ?: P0,
             priceMonth = this.priceMonth ?: P0,

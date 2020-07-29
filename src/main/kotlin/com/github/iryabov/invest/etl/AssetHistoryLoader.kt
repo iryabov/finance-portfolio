@@ -19,7 +19,7 @@ class AssetHistoryLoader(
 ) {
     fun load(ticker: String, from: LocalDate, till: LocalDate) {
         val security = securitiesClient.findLastPrice(ticker)
-        assetRepo.save(security.toEntity(assetRepo.existsById(ticker)))
+        assetRepo.save(security.toEntity(assetRepo.existsById(ticker), Currency.RUB))
         var begin = from
         var end = from
         do {
@@ -42,13 +42,13 @@ private fun Security.toHistoryEntity(dest: SecurityHistory? = null): SecurityHis
             .copy(id = dest?.id)
 }
 
-private fun Security.toEntity(exists: Boolean): Asset {
+private fun Security.toEntity(exists: Boolean, currency: Currency): Asset {
     val asset = Asset(
             ticker = this.ticker,
             name = this.shortName,
             priceNow = this.price,
             assetClass = AssetClass.SHARE,
-            currency = Currency.RUB)
+            currency = currency)
     asset.newEntity = !exists
     return asset
 }
