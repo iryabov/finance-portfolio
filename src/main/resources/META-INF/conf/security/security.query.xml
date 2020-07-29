@@ -12,9 +12,16 @@
     <list result-mapping="T(java.util.Collections).emptyList()">
         <test operation="echo"/>
     </list>
+    <unique filters="id">
+        <test operation="echo"/>
+    </unique>
+
     <fields>
         <field id="id">
             <select mapping="ticker"/>
+            <filters>
+                <eq filter-id="id"/>
+            </filters>
         </field>
         <field id="ticker">
             <select mapping="ticker"/>
@@ -29,7 +36,7 @@
             <select mapping="shortName"/>
         </field>
         <field id="name">
-            <select mapping="ticker + ' ' + shortName"/>
+            <select mapping="'(' + ticker + ') ' + shortName"/>
             <filters>
                 <eq filter-id="name" mapping="[0]"/>
             </filters>
