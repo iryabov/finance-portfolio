@@ -19,6 +19,14 @@
                                 <option id="FIVE_YEARS" name="5 years"/>
                             </options>
                         </radio-group>
+                        <select id="currency" label="Currency" param="currency">
+                            <default-value id="RUB"/>
+                            <options>
+                                <option id="RUB" name="RUB"/>
+                                <option id="USD" name="USD"/>
+                                <option id="EUR" name="EUR"/>
+                            </options>
+                        </select>
                     </row>
                 </fields>
                 <toolbar place="bottomLeft">
@@ -40,6 +48,7 @@
                 <pre-filters>
                     <eq field-id="ticker" value="{security.id}" ref-widget-id="security" ref-model="resolve"/>
                     <eq field-id="period" value="{period.id}" ref-widget-id="security" ref-model="resolve"/>
+                    <eq field-id="currency" value="{currency.id}" ref-widget-id="security" ref-model="resolve"/>
                 </pre-filters>
             </chart>
         </region>

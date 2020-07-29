@@ -41,7 +41,5 @@
                 <eq filter-id="name" mapping="[0]"/>
             </filters>
         </field>
-        <field id="undefined">
-        </field>
     </fields>
 </query>

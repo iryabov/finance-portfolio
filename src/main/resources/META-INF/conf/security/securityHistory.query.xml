@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <query xmlns="http://n2oapp.net/framework/config/schema/query-4.0"
        name="Asset history">
-    <list result-mapping="#this.history" filters="security.id,period.id,currency" count-mapping="#this.history.size()">
+    <list result-mapping="#this.history" filters="security.id,period.id,currency.id" count-mapping="#this.history.size()">
         <java method="getSecurity" class="com.github.iryabov.invest.service.InvestService">
             <spring/>
             <arguments>
@@ -30,7 +30,7 @@
         </field>
         <field id="currency">
             <filters>
-                <eq filter-id="currency" default-value="${portfolio.currency}"
+                <eq filter-id="currency.id"
                     normalize="T(com.github.iryabov.invest.relation.Currency).valueOf(#this)"
                     mapping="[2]"/>
             </filters>
