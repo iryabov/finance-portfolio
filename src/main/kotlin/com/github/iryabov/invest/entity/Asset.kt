@@ -1,10 +1,8 @@
 package com.github.iryabov.invest.entity
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.github.iryabov.invest.relation.AssetClass
-import com.github.iryabov.invest.relation.Country
-import com.github.iryabov.invest.relation.Currency
-import com.github.iryabov.invest.relation.Sector
+import com.github.iryabov.invest.relation.*
+import com.github.iryabov.invest.service.impl.P0
 import org.springframework.data.annotation.Id
 import org.springframework.data.domain.Persistable
 import org.springframework.data.relational.core.mapping.Column
@@ -14,24 +12,27 @@ import java.math.BigDecimal
 @Table
 data class Asset (
         @Id
-        val ticker: String,
+        var ticker: String,
         @Column
-        val name: String,
+        var name: String,
         @Column("class")
-        val assetClass: AssetClass? = null,
+        var assetClass: AssetClass? = null,
         @Column
-        val sector: Sector? = null,
+        var sector: Sector? = null,
         @Column
-        val country: Country? = null,
+        var country: Country? = null,
         @Column
-        val currency: Currency? = null,
+        var currency: Currency? = null,
         @Column("price_now")
-        val priceNow: BigDecimal? = null,
+        var priceNow: BigDecimal? = null,
         @Column("price_week")
-        val priceWeek: BigDecimal? = null,
+        var priceWeek: BigDecimal? = null,
         @Column("price_month")
-        val priceMonth: BigDecimal? = null
+        var priceMonth: BigDecimal? = null
 ): Persistable<String> {
+
+        constructor(): this("", "")
+
         @org.springframework.data.annotation.Transient
         @JsonIgnore
         var newEntity = false

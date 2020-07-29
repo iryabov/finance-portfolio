@@ -13,10 +13,48 @@
                 </java>
             </invocation>
             <in>
-                <field id="security.id" mapping="[0]"/>
+                <field id="ticker" mapping="[0]" param="ticker"/>
                 <field id="period.id" normalize="T(com.github.iryabov.invest.relation.Period).valueOf(#this).getFrom().invoke()"
                        default-value="FIVE_YEARS" mapping="[1]"/>
                 <field id="till" default-value="0" normalize="T(java.time.LocalDate).now()" mapping="[2]"/>
+            </in>
+        </operation>
+        <operation id="addSecurity">
+            <invocation>
+                <java method="addSecurity" class="com.github.iryabov.invest.service.InvestService">
+                    <spring/>
+                    <arguments>
+                        <argument type="entity" name="form" class="com.github.iryabov.invest.entity.Asset"/>
+                    </arguments>
+                </java>
+            </invocation>
+            <in>
+                <field id="security.id" mapping="ticker"/>
+                <field id="name" mapping="name"/>
+                <field id="price" mapping="priceNow"/>
+                <field id="assetClass.id" mapping="assetClass"/>
+                <field id="sector.id" mapping="sector"/>
+                <field id="country.id" mapping="country"/>
+                <field id="currency.id" mapping="currency"/>
+            </in>
+        </operation>
+        <operation id="editSecurity">
+            <invocation>
+                <java method="editSecurity" class="com.github.iryabov.invest.service.InvestService">
+                    <spring/>
+                    <arguments>
+                        <argument type="entity" name="form" class="com.github.iryabov.invest.entity.Asset"/>
+                    </arguments>
+                </java>
+            </invocation>
+            <in>
+                <field id="ticker" mapping="ticker"/>
+                <field id="name" mapping="name"/>
+                <field id="price" mapping="priceNow"/>
+                <field id="assetClass.id" mapping="assetClass"/>
+                <field id="sector.id" mapping="sector"/>
+                <field id="country.id" mapping="country"/>
+                <field id="currency.id" mapping="currency"/>
             </in>
         </operation>
     </operations>

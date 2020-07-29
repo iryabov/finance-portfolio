@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<simple-page xmlns="http://n2oapp.net/framework/config/schema/page-2.0">
+    <form query-id="security">
+        <fields>
+            <input-select id="security" label="Ticker" param="ticker" query-id="securityClient"
+                          label-field-id="name" search-filter-id="name">
+                <dependencies>
+                    <visibility>id == null</visibility>
+                </dependencies>
+            </input-select>
+            <input-text id="ticker" label="Ticker" enabled="false">
+                <dependencies>
+                    <set-value on="security">security.ticker</set-value>
+                    <visibility>id != null</visibility>
+                </dependencies>
+            </input-text>
+            <input-text id="name" label="Name">
+                <dependencies>
+                    <set-value on="security">security.shortName</set-value>
+                </dependencies>
+            </input-text>
+            <input-money id="price" label="Price" suffix="">
+                <dependencies>
+                    <set-value on="security">security.price</set-value>
+                </dependencies>
+            </input-money>
+            <select id="assetClass" label="Class">
+                <options>
+                    <option id="SHARE" name="Shares"/>
+                    <option id="BOND" name="Bonds"/>
+                    <option id="CACHE" name="Cache"/>
+                    <option id="DEPOSIT" name="Deposit"/>
+                </options>
+            </select>
+            <select id="sector" label="Sector">
+                <options>
+                    <option id="GOVERNMENT" name="Government"/>
+                    <option id="FINANCE" name="Finances"/>
+                    <option id="TECHNOLOGY" name="Technology"/>
+                    <option id="OIL_GAS" name="Oil &amp; Gas"/>
+                    <option id="METAL" name="Metal"/>
+                    <option id="ENERGY" name="Energy"/>
+                    <option id="RETAIL" name="Retail"/>
+                    <option id="GOLD" name="Gold"/>
+                </options>
+            </select>
+            <select id="country" label="Country">
+                <options>
+                    <option id="RUSSIA" name="Russia"/>
+                    <option id="USA" name="USA"/>
+                    <option id="CHINA" name="China"/>
+                    <option id="GERMANY" name="Germany"/>
+                    <option id="JAPAN" name="Japan"/>
+                    <option id="UK" name="UK"/>
+                </options>
+            </select>
+        </fields>
+        <pre-filters>
+            <eq field-id="id" param="ticker"/>
+        </pre-filters>
+    </form>
+</simple-page>

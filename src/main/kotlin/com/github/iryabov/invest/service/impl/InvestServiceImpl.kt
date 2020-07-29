@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional
 import java.lang.Integer.min
 import java.math.BigDecimal
 import java.time.LocalDate
+import java.util.*
 import kotlin.collections.ArrayList
 
 @Service
@@ -100,6 +101,25 @@ class InvestServiceImpl(
 
     override fun getDials(accountId: Int, ticker: String, currency: Currency): List<DialView> {
         return dialRepo.findAllByAsset(accountId, ticker, currency)
+    }
+
+    override fun getSecurities(): List<SecurityView> {
+        return assetRepo.findAll().map { it.toView() }
+    }
+
+    override fun addSecurity(form: Asset) {
+        form.newEntity = true
+        assetRepo.save(form)
+    }
+
+    override fun editSecurity(form: Asset) {
+        val old = assetRepo.findById(form.ticker).orElseThrow()
+        assetRepo.save(form)
+    }
+
+    override fun getSecurity(ticker: String): SecurityView {
+        val securityEntity = assetRepo.findById(ticker).orElseThrow()
+        return securityEntity.toView()
     }
 
     override fun getSecurity(ticker: String,
@@ -241,7 +261,8 @@ private fun currencyOf(ticker: String): Currency? {
     return Currency.values().find { c -> c.name == ticker }
 }
 
-private fun Asset.toView(securityHistory: List<SecurityHistoryView>, currency: Currency): SecurityView {
+private fun Asset.toView(securityHistory: List<SecurityHistoryView> = Collections.emptyList(),
+                         currency: Currency = Currency.RUB): SecurityView {
     return SecurityView(
             ticker = this.ticker,
             name = this.name,

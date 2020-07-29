@@ -7,6 +7,7 @@ import com.github.iryabov.invest.relation.Sector
 import com.github.iryabov.invest.service.impl.P0
 import java.math.BigDecimal
 import java.time.LocalDate
+import java.util.*
 
 data class SecurityView(
         val ticker: String,
@@ -20,7 +21,7 @@ data class SecurityView(
         val assetSector: Sector?,
         val assetCountry: Country?,
         var currency: Currency = Currency.RUB,
-        var history: List<SecurityHistoryView>)
+        var history: List<SecurityHistoryView> = Collections.emptyList())
 
 data class SecurityHistoryView(
         val date: LocalDate,

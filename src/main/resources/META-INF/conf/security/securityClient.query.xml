@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<query xmlns="http://n2oapp.net/framework/config/schema/query-4.0"
+       name="Securities">
+    <list result-mapping="#this" count-mapping="size()" filters="name">
+        <java method="findByName" class="com.github.iryabov.invest.client.SecuritiesClient">
+            <spring/>
+            <arguments>
+                <argument type="primitive" name="name"/>
+            </arguments>
+        </java>
+    </list>
+    <list result-mapping="T(java.util.Collections).emptyList()">
+        <test operation="echo"/>
+    </list>
+    <unique filters="id">
+        <test operation="echo"/>
+    </unique>
+
+    <fields>
+        <field id="id">
+            <select mapping="ticker"/>
+            <filters>
+                <eq filter-id="id"/>
+            </filters>
+        </field>
+        <field id="ticker">
+            <select mapping="ticker"/>
+        </field>
+        <field id="date">
+            <select mapping="date"/>
+        </field>
+        <field id="price">
+            <select mapping="price"/>
+        </field>
+        <field id="shortName">
+            <select mapping="shortName"/>
+        </field>
+        <field id="name">
+            <select mapping="'(' + ticker + ') ' + shortName"/>
+            <filters>
+                <eq filter-id="name" mapping="[0]"/>
+            </filters>
+        </field>
+    </fields>
+</query>

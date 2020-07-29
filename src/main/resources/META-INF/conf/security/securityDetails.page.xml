@@ -1,16 +1,29 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <page xmlns="http://n2oapp.net/framework/config/schema/page-2.0"
-      name="Securities">
+      name="{ticker}">
     <regions>
         <region>
-            <form id="security" object-id="security">
+            <form id="security" object-id="security" query-id="security">
+                <pre-filters>
+                    <eq field-id="id" param="ticker"/>
+                </pre-filters>
+                <toolbar place="topLeft">
+                    <button id="edit" label="Edit">
+                        <open-page page-id="securityForm"
+                                   page-name="Edit"
+                                   submit-operation-id="editSecurity" route="/edit"/>
+                    </button>
+                </toolbar>
+                <toolbar place="topRight">
+                    <button label="Load">
+                        <invoke operation-id="load" route="/load"/>
+                    </button>
+                </toolbar>
                 <fields>
                     <hidden id="id" default-value="1"/>
                     <row>
-                        <input-select id="security" label="Ticker" param="ticker" query-id="security"
-                                      label-field-id="name" search-filter-id="name">
-                        </input-select>
                         <radio-group id="period" label="Period" param="period" inline="true">
+                            <default-value id="FIVE_YEARS"/>
                             <options>
                                 <option id="WEEK" name="Week"/>
                                 <option id="MONTH" name="Month"/>
@@ -29,11 +42,6 @@
                         </select>
                     </row>
                 </fields>
-                <toolbar place="bottomLeft">
-                    <button label="Load">
-                        <invoke operation-id="load" route="/load"/>
-                    </button>
-                </toolbar>
             </form>
         </region>
         <region>
@@ -46,7 +54,7 @@
                     <line field-id="price" type="linear" color="#8884d8"/>
                 </lines>
                 <pre-filters>
-                    <eq field-id="ticker" value="{security.id}" ref-widget-id="security" ref-model="resolve"/>
+                    <eq field-id="ticker" param="ticker"/>
                     <eq field-id="period" value="{period.id}" ref-widget-id="security" ref-model="resolve"/>
                     <eq field-id="currency" value="{currency.id}" ref-widget-id="security" ref-model="resolve"/>
                 </pre-filters>
