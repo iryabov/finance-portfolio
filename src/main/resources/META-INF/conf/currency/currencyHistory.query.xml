@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<query xmlns="http://n2oapp.net/framework/config/schema/query-4.0"
+       name="Currencies history">
+    <list result-mapping="#this.history" filters="pair1.id,pair2.id,period.id" count-mapping="#this.history.size()">
+        <java method="getCurrency" class="com.github.iryabov.invest.service.InvestService">
+            <spring/>
+            <arguments>
+                <argument type="primitive" name="pair1"/>
+                <argument type="primitive" name="pair2"/>
+                <argument type="primitive" name="period"/>
+            </arguments>
+        </java>
+    </list>
+    <list result-mapping="T(java.util.Collections).emptyList()">
+        <test operation="echo"/>
+    </list>
+    <fields>
+        <field id="id">
+            <select mapping="date"/>
+        </field>
+        <field id="pair1">
+            <filters>
+                <eq filter-id="pair1.id"
+                    normalize="T(com.github.iryabov.invest.relation.Currency).valueOf(#this)"
+                    mapping="[0]"/>
+            </filters>
+        </field>
+        <field id="pair2">
+            <filters>
+                <eq filter-id="pair2.id"
+                    normalize="T(com.github.iryabov.invest.relation.Currency).valueOf(#this)"
+                    mapping="[1]"/>
+            </filters>
+        </field>
+        <field id="period">
+            <filters>
+                <eq filter-id="period.id" default-value="FIVE_YEARS"
+                    normalize="T(com.github.iryabov.invest.relation.Period).valueOf(#this)"
+                    mapping="[2]"/>
+            </filters>
+        </field>
+        <field id="date">
+            <select mapping="date"/>
+        </field>
+        <field id="price">
+            <select mapping="price" normalize="T(java.lang.Double).parseDouble(#this)"/>
+        </field>
+    </fields>
+</query>

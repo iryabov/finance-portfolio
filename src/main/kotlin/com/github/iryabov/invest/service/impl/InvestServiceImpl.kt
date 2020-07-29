@@ -12,12 +12,10 @@ import com.github.iryabov.invest.service.InvestService
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.lang.Integer.max
 import java.lang.Integer.min
 import java.math.BigDecimal
 import java.time.LocalDate
 import kotlin.collections.ArrayList
-import kotlin.math.abs
 
 @Service
 @Transactional
@@ -27,7 +25,7 @@ class InvestServiceImpl(
         val writeOffRepo: WriteOffRepository,
         val rateRepository: CurrencyRateRepository,
         @Qualifier("currenciesClientCBRF")
-        val currenciesRepo: CurrenciesClient,
+        val currenciesClient: CurrenciesClient,
         val assetRepo: AssetRepository,
         val securityHistoryRepo: SecurityHistoryRepository
 ) : InvestService {
@@ -118,8 +116,24 @@ class InvestServiceImpl(
         return securityEntity.toView(chart, currency)
     }
 
+    override fun getCurrency(pair1: Currency, pair2: Currency, period: Period): CurrencyView {
+        val from = period.from()
+        val till = LocalDate.now()
+        val history = rateRepository.findAllByPair(pair1, pair2, from, till)
+        val chart = fillChart(history.map { CurrencyHistoryView(date = it.date, price = it.price) },
+            from, till, period.step,
+                { s -> s.date },
+                { date, prev -> CurrencyHistoryView(date = date, price = prev?.price ?: P0) })
+        val view = CurrencyView(
+                pair1 = pair1,
+                pair2 = pair2,
+                history = chart
+        )
+        return view
+    }
+
     private fun addExchangeRate(date: LocalDate) {
-        val exchange: ExchangeRate by lazy { currenciesRepo.findCurrencyByDate(date) }
+        val exchange: ExchangeRate by lazy { currenciesClient.findCurrencyByDate(date) }
         for (currencyPurchased in Currency.values()) {
             val rates = rateRepository.findByDateAndBase(date, currencyPurchased)
             for (currencySale in Currency.values().filter { it != currencyPurchased }) {

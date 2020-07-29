@@ -28,4 +28,7 @@ interface InvestService {
     fun getSecurity(ticker: String,
                     period: Period,
                     currency: Currency = Currency.RUB): SecurityView
+
+    fun getCurrency(pair1: Currency, pair2: Currency,
+                    period: Period): CurrencyView
 }

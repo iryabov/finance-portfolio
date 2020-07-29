@@ -5,6 +5,7 @@
         <page page-id="accounts" label="Accounts" icon="fa fa-university"/>
         <sub-menu label="Admin">
             <page page-id="security" label="Securities"/>
+            <page page-id="currencies" label="Currencies"/>
         </sub-menu>
     </nav>
 </header>

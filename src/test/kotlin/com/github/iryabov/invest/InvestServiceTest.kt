@@ -11,6 +11,7 @@ import com.github.iryabov.invest.repository.CurrencyRateRepository
 import com.github.iryabov.invest.client.impl.CurrenciesClientCBRF
 import com.github.iryabov.invest.client.impl.CurrenciesClientECB
 import com.github.iryabov.invest.client.impl.SecuritiesClientMoex
+import com.github.iryabov.invest.etl.CurrencyRateLoader
 import com.github.iryabov.invest.service.InvestService
 import com.github.iryabov.invest.etl.DialsCsvLoader
 import com.github.iryabov.invest.relation.Period
@@ -51,7 +52,9 @@ class InvestServiceTest(
         @Autowired
         val securitiesClientMoex: SecuritiesClientMoex,
         @Autowired
-        val assetHistoryLoader: AssetHistoryLoader
+        val assetHistoryLoader: AssetHistoryLoader,
+        @Autowired
+        val currencyRateLoader: CurrencyRateLoader
 ) {
 
     @BeforeEach
@@ -200,10 +203,19 @@ class InvestServiceTest(
 
     @Test
     @Transactional
-    //@Disabled
+    @Disabled
     @Rollback(false)
     fun assetHistoryLoad() {
         assetHistoryLoader.load("YNDX", LocalDate.of(2019, 1, 1), LocalDate.of(2020, 1, 1))
+    }
+
+    @Test
+    @Transactional
+//    @Disabled
+    @Rollback(false)
+    fun currencyRateLoad() {
+        currencyRateLoader.load(LocalDate.of(2020, 1, 1),
+                LocalDate.of(2020, 2, 1))
     }
 
     @Test
@@ -212,5 +224,12 @@ class InvestServiceTest(
         val security = investService.getSecurity("YNDX", Period.WEEK)
         assertThat(security.history.size).isGreaterThan(0)
         assertThat(security.name).contains("Yandex")
+    }
+
+    @Test
+    @Disabled
+    fun currency() {
+        val currencyView = investService.getCurrency(Currency.RUB, Currency.USD, Period.FIVE_YEARS)
+        assertThat(currencyView.history.size).isGreaterThan(0)
     }
 }

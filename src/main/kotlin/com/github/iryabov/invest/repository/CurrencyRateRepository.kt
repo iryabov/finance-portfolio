@@ -18,4 +18,17 @@ interface CurrencyRateRepository : CrudRepository<CurrencyPair, Long> {
             """)
     fun findByDateAndBase(@Param("dt") date: LocalDate,
                           @Param("base") base: Currency): List<CurrencyPair>
+
+    @Query("""
+        select r.*
+        from rate r
+        where r.currency_purchase = :pair1 
+          and r.currency_sale = :pair2
+          and r.dt >= :from
+          and r.dt <= :till
+    """)
+    fun findAllByPair(@Param("pair1") pair1: Currency,
+                      @Param("pair2") pair2: Currency,
+                      @Param("from") from: LocalDate,
+                      @Param("till") till: LocalDate): List<CurrencyPair>
 }

@@ -21,7 +21,7 @@ class CurrenciesClientCBRF : CurrenciesClient {
     private val client: WebClient = WebClient.create("http://www.cbr.ru/scripts/XML_daily.asp")
 
     override fun findCurrencyByDate(date: LocalDate): ExchangeRate {
-        val dateStr = date.format(DateTimeFormatter.ofPattern("DD.MM.YYYY"))
+        val dateStr = date.format(DateTimeFormatter.ofPattern("dd.MM.YYYY"))
         val response = client.get().uri("?date_req=${dateStr}")
                 .accept(MediaType.APPLICATION_XML)
                 .acceptCharset(Charsets.UTF_8)
