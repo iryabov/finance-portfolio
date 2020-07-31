@@ -1,6 +1,7 @@
 package com.github.iryabov.invest.model
 
 import com.github.iryabov.invest.relation.AssetClass
+import com.github.iryabov.invest.service.impl.P0
 import org.springframework.data.relational.core.mapping.Embedded
 import java.math.BigDecimal
 import java.util.*
@@ -48,33 +49,32 @@ data class AssetView(
         /**
          * Средства выведенные со счета
          */
-        var withdrawals: BigDecimal = BigDecimal.ZERO) {
-    /**
-     * Рыночная стоимость по текущему курсу
-     */
-    lateinit var marketValue: BigDecimal
-    /**
-     * Процент прибыли курсовой (рыночная стоимость относительно себестоимости)
-     */
-    lateinit var valueProfit: BigDecimal
-    /**
-     * Процент прибыли фиксированной (себестоимость + доходы относительно расходов)
-     */
-    lateinit var fixedProfit: BigDecimal
-    /**
-     * Процент полной прибыли (рыночная стоимость + доходы относительно расходов)
-     */
-    lateinit var marketProfit: BigDecimal
-    /**
-     * Процент доли по себестоимости относительно других активов
-     */
-    lateinit var netInterest: BigDecimal
-    /**
-     * Процент доли по рыночной стоимости относительно других активов
-     */
-    lateinit var marketInterest: BigDecimal
-    /**
-     * Процент изменения доли по рыночной стоимости относительно других активов
-     */
-    lateinit var profitInterest: BigDecimal
-}
+        var withdrawals: BigDecimal = BigDecimal.ZERO,
+        /**
+         * Рыночная стоимость по текущему курсу
+         */
+        var marketValue: BigDecimal = P0,
+        /**
+         * Процент прибыли курсовой (рыночная стоимость относительно себестоимости)
+         */
+        var valueProfit: BigDecimal = P0,
+        /**
+         * Процент прибыли фиксированной (себестоимость + доходы относительно расходов)
+         */
+        var fixedProfit: BigDecimal = P0,
+        /**
+         * Процент полной прибыли (рыночная стоимость + доходы относительно расходов)
+         */
+        var marketProfit: BigDecimal = P0,
+        /**
+         * Процент доли по себестоимости относительно других активов
+         */
+        var netInterest: BigDecimal = P0,
+        /**
+         * Процент доли по рыночной стоимости относительно других активов
+         */
+        var marketInterest: BigDecimal = P0,
+        /**
+         * Процент изменения доли по рыночной стоимости относительно других активов
+         */
+        var profitInterest: BigDecimal = P0)

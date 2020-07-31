@@ -3,7 +3,20 @@
              name="New dial">
     <form object-id="dial">
         <fields>
-            <output-text id="account.id" param="account_id"/>
+            <date-time id="opened" label="Opened" required="true" default-value="{moment().format('YYYY-MM-DD')}"/>
+            <radio-group id="type" label="Dial type" param="type"
+                    required="true" inline="true">
+                <default-value id="PURCHASE"/>
+                <options>
+                    <option id="PURCHASE" name="Purchase"/>
+                    <option id="SALE" name="Sale"/>
+                    <option id="DEPOSIT" name="Deposit"/>
+                    <option id="WITHDRAWALS" name="Withdrawals"/>
+                    <option id="DIVIDEND" name="Dividend"/>
+                    <option id="TAX" name="Tax"/>
+                </options>
+            </radio-group>
+<!--            <output-text id="account.id" param="account_id"/>-->
 <!--            <input-select id="asset" label="Asset" query-id="assets" label-field-id="fullName">-->
 <!--                -->
 <!--            </input-select> -->
@@ -12,35 +25,52 @@
 <!--                           required="true">-->
 <!--            </auto-complete>-->
             <input-text id="asset.id" label="Ticker" param="asset_id"
-                        required="true"/>
-            <date-time id="opened" label="Opened" required="true" default-value="{moment()}"/>
-            <select id="type" label="Dial type" param="type"
-                    required="true">
-                <default-value id="PURCHASE"/>
-                <options>
-                    <option id="SALE" name="Sale"/>
-                    <option id="PURCHASE" name="Purchase"/>
-                    <option id="DEPOSIT" name="Deposit"/>
-                    <option id="WITHDRAWALS" name="Withdrawals"/>
-                    <option id="DIVIDEND" name="Dividend"/>
-                    <option id="TAX" name="Tax"/>
-                </options>
-            </select>
+                        required="true">
+                <dependencies>
+                    <visibility on="type">type.id != 'DEPOSIT' &amp;&amp; type.id != 'WITHDRAWALS'</visibility>
+                </dependencies>
+            </input-text>
+<!--            <output-text id="asset.name" label="Name">-->
+<!--                <dependencies>-->
+<!--                    <reset on="asset.id"/>-->
+<!--                    <fetch-value query-id="security" on="asset.id" value-field-id="name" apply-on-init="false">-->
+<!--                        <pre-filters>-->
+<!--                            <eq field-id="id" value="{asset.id}"/>-->
+<!--                        </pre-filters>-->
+<!--                    </fetch-value>-->
+<!--                    <visibility on="asset.name">asset.name != null</visibility>-->
+<!--                </dependencies>-->
+<!--            </output-text>-->
+            
             <radio-group id="currency" label="Currency" required="true" inline="true">
                 <default-value id="RUB"/>
                 <options>
                     <option id="RUB" name="RUB"/>
                     <option id="USD" name="USD"/>
-                    <option id="Euro" name="EUR"/>
+                    <option id="EUR" name="EUR"/>
                 </options>
             </radio-group>
-            <input-money id="volume" label="Volume" required="true" suffix=""/>
-            <input-text id="quantity" label="Quantity" required="true" domain="integer" min="0"/>
-            <output-text id="price" label="Price" format="number 1.0">
-                <dependencies>
-                    <set-value apply-on-init="false" on="volume,quantity">volume / quantity</set-value>
-                </dependencies>
-            </output-text>
+            <set>
+                <input-money id="volume" label="Volume" required="true">
+                </input-money>
+                <input-text id="quantity" label="Quantity" required="true" domain="integer" min="0">
+                    <dependencies>
+                        <visibility on="type">type.id != 'DEPOSIT'
+                            &amp;&amp; type.id != 'WITHDRAWALS'
+                            &amp;&amp; type.id != 'TAX'
+                            &amp;&amp; type.id != 'DIVIDEND'</visibility>
+                    </dependencies>
+                </input-text>
+                <output-text id="price" label="Price" format="number 1.0">
+                    <dependencies>
+                        <set-value apply-on-init="false" on="volume,quantity">volume / quantity</set-value>
+                        <visibility on="type">type.id != 'DEPOSIT'
+                            &amp;&amp; type.id != 'WITHDRAWALS'
+                            &amp;&amp; type.id != 'TAX'
+                            &amp;&amp; type.id != 'DIVIDEND'</visibility>
+                    </dependencies>
+                </output-text>
+            </set>
         </fields>
     </form>
 </simple-page>

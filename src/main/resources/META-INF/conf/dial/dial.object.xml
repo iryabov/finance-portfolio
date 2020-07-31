@@ -48,7 +48,7 @@
             </invocation>
             <in>
                 <field id="account.id" param="account_id" mapping="[0]"/>
-                <field id="id" mapping="[1]"/>
+                <field id="id" mapping="[1]" domain="long"/>
             </in>
         </operation>
         <operation id="deactivateDial">
@@ -63,7 +63,7 @@
             </invocation>
             <in>
                 <field id="account.id" param="account_id" mapping="[0]"/>
-                <field id="id" mapping="[1]"/>
+                <field id="id" mapping="[1]" domain="long"/>
             </in>
         </operation>
     </operations>

@@ -26,7 +26,7 @@
                     <column text-field-id="ticker"/>
                     <column text-field-id="name"/>
                     <column text-field-id="price">
-                        <text format="number 0,00"/>
+                        <text format="number 1.0"/>
                     </column>
                 </columns>
                 <rows>

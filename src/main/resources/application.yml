@@ -17,6 +17,16 @@ logging:
     org.springframework.jdbc.core.JdbcTemplate: debug
 n2o:
   header.id: invest
-
+  api:
+    control:
+      input:
+        money:
+          prefix:
+          suffix:
+    widget:
+      chart:
+        has-label:
+        axis:
+          has-label:
 portfolio:
   currency: RUB

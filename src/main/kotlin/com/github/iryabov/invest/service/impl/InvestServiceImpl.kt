@@ -74,7 +74,10 @@ class InvestServiceImpl(
     }
 
     override fun getAsset(accountId: Int, currency: Currency, ticker: String): AssetView {
-        val asset = dialRepo.findAssets(accountId, currency, ticker).first()
+        val assets = dialRepo.findAssets(accountId, currency, ticker)
+        if (assets.isEmpty())
+            return AssetView(assetTicker = ticker, quantity = 0, netValue = P0)
+        val asset = assets.first()
         asset.calc()
         asset.calcProportion(P0, P0)
         return asset
@@ -222,15 +225,18 @@ private fun AssetView.calcProportion(totalNetValue: BigDecimal, totalMarketValue
     profitInterest = marketInterest - netInterest
 }
 
-private fun DialForm.toEntityWith(accountId: Int) = Dial(
-        accountId = accountId,
-        type = type,
-        ticker = ticker,
-        date = opened ?: LocalDate.now(),
-        currency = currency,
-        volume = if (type.income) volume else volume.negate(),
-        quantity = if (type.income) quantity.negate() else quantity
-)
+private fun DialForm.toEntityWith(accountId: Int): Dial {
+    val quantity: Int = if (this.type.quantity) this.quantity else this.volume.toInt()
+    val ticker: String = if (!this.type.currency) this.ticker else this.currency.name
+    return Dial(
+            accountId = accountId,
+            type = type,
+            ticker = ticker,
+            date = opened ?: LocalDate.now(),
+            currency = currency,
+            volume = if (type.income) volume else volume.negate(),
+            quantity = if (type.income) quantity.negate() else quantity)
+}
 
 private fun AccountForm.toEntity() = Account(
         name = name,
