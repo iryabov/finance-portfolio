@@ -3,7 +3,7 @@
       name="{ticker}">
     <regions>
         <region>
-            <form id="security" object-id="security" query-id="security">
+            <form id="security" object-id="security" query-id="security" upload="defaults">
                 <pre-filters>
                     <eq field-id="id" param="ticker"/>
                 </pre-filters>
@@ -18,6 +18,7 @@
                     </button>
                 </toolbar>
                 <fields>
+                    <hidden id="id" default-value="1"/>
                     <row>
                         <output-text id="assetClass.id" label="Class"/>
                         <output-text id="sector.id" label="Sector"/>

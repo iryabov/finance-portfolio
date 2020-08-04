@@ -146,7 +146,7 @@ select
      else abs(coalesce((select r.price * d.volume from rate r where  r.dt = d.dt and  r.currency_purchase = d.currency and  r.currency_sale = :currency), 0)) 
      end 
     ) as volume,
-    (case when d.quantity > 0 then abs(d.volume / d.quantity)
+    (case when d.quantity <> 0 then abs(d.volume / d.quantity)
      else 0 
      end
     ) as price

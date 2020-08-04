@@ -195,10 +195,10 @@ class InvestServiceTest(
 
     @Test
     @Transactional
-    @Disabled
+    //@Disabled
     @Rollback(false)
     fun csvLoad() {
-        csvLoader.load(ClassPathResource("/csv/test.csv"))
+        csvLoader.load(ClassPathResource("/csv/test2.csv"))
     }
 
     @Test

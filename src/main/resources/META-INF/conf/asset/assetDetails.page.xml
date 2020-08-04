@@ -87,9 +87,13 @@
                     <column text-field-id="dt"/>
                     <column text-field-id="type"/>
                     <column text-field-id="currency"/>
-                    <column text-field-id="price"/>
+                    <column text-field-id="price">
+                        <text format="number 0.00"/>
+                    </column>
                     <column text-field-id="quantity"/>
-                    <column text-field-id="volume"/>
+                    <column text-field-id="volume">
+                        <text format="number 0.00"/>
+                    </column>
                     <column text-field-id="" width="20px">
                         <toolbar>
                             <button id="delete" icon="fa fa-trash">

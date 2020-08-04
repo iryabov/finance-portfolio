@@ -97,6 +97,8 @@ class DialsCsvLoader(
     private fun String.toAmount(): BigDecimal {
         return if (!this.isBlank())
             this.replace(" ", "")
+                    .replace("\"", "")
+                    .replace(" ", "")
                     .replace(",", ".")
                     .toBigDecimal()
         else BigDecimal.ZERO
@@ -104,7 +106,9 @@ class DialsCsvLoader(
 
     private fun String.toQuantity(): Int {
         return if (!this.isBlank())
-            this.toInt()
+            this.replace(" ", "")
+                    .replace("\"", "")
+                    .replace(" ", "").toInt()
         else 0
     }
 
