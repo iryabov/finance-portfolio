@@ -47,6 +47,9 @@ interface DialRepository : CrudRepository<Dial, Long> {
     @Query("""
 select 
     d.ticker as asset_ticker,
+    d.asset_name as asset_name,
+    d.asset_class as asset_class,
+    d.asset_price_now as asset_price_now,
     sum(d.quantity) as quantity,
     sum(case when d.quantity > 0 
         then  -1 * (d.volume_cur * (d.quantity - d.sold_quantity) / d.quantity)
@@ -102,9 +105,9 @@ union
 select 
     d.id,
     d.currency as ticker,
-    a.name as asset_name,
-    a.class as asset_class,
-    a.price_now as asset_price_now,
+    null as asset_name,
+    null as asset_class,
+    null as asset_price_now,
     d.dt as dt,
     d.volume as quantity,
     d.ticker as currency,
@@ -128,13 +131,12 @@ select
      else 0 end
     ) as sold_quantity
 from dial d
-left join asset a on a.ticker = d.ticker
 where d.account_id = :account_id
   and d.active = true
   and d.ticker != d.currency
 ) d  
 where (:ticker is null or d.ticker = :ticker)
-group by d.ticker
+group by d.ticker, d.asset_name, d.asset_class, d.asset_price_now
     """)
     fun findAssets(@Param("account_id") accountId: Int,
                    @Param("currency") currency: Currency,
