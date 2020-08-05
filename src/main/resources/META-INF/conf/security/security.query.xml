@@ -28,6 +28,9 @@
         <field id="name">
             <select mapping="name"/>
         </field>
+        <field id="currency.id">
+            <select mapping="currency"/>
+        </field>
         <field id="assetClass.id">
             <select mapping="assetClass"/>
         </field>

@@ -14,6 +14,7 @@ import com.github.iryabov.invest.etl.CsvColumn.*
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import kotlin.math.abs
 
 @Component
 class DialsCsvLoader(
@@ -100,15 +101,15 @@ class DialsCsvLoader(
                     .replace("\"", "")
                     .replace(" ", "")
                     .replace(",", ".")
-                    .toBigDecimal()
+                    .toBigDecimal().abs()
         else BigDecimal.ZERO
     }
 
     private fun String.toQuantity(): Int {
         return if (!this.isBlank())
-            this.replace(" ", "")
+            abs(this.replace(" ", "")
                     .replace("\"", "")
-                    .replace(" ", "").toInt()
+                    .replace(" ", "").toInt())
         else 0
     }
 

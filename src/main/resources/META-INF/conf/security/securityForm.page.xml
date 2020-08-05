@@ -23,6 +23,14 @@
                     <set-value on="security">security.price</set-value>
                 </dependencies>
             </input-money>
+            <select id="currency" label="Currency" param="currency">
+                <default-value id="RUB"/>
+                <options>
+                    <option id="RUB" name="RUB"/>
+                    <option id="USD" name="USD"/>
+                    <option id="EUR" name="EUR"/>
+                </options>
+            </select>
             <select id="assetClass" label="Class">
                 <options>
                     <option id="SHARE" name="Shares"/>

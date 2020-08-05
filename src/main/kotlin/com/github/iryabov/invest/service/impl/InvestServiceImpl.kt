@@ -147,12 +147,11 @@ class InvestServiceImpl(
             from, till, period.step,
                 { s -> s.date },
                 { date, prev -> CurrencyHistoryView(date = date, price = prev?.price ?: P0) })
-        val view = CurrencyView(
+        return CurrencyView(
                 pair1 = pair1,
                 pair2 = pair2,
                 history = chart
         )
-        return view
     }
 
     private fun addExchangeRate(date: LocalDate) {
@@ -239,7 +238,7 @@ private fun DialForm.toEntityWith(accountId: Int): Dial {
             date = opened ?: LocalDate.now(),
             currency = currency,
             volume = if (type.income) volume else volume.negate(),
-            quantity = if (type.income) quantity.negate() else quantity)
+            quantity = quantity)
 }
 
 private fun AccountForm.toEntity() = Account(

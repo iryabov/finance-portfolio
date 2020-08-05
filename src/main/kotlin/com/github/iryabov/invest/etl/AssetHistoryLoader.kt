@@ -10,6 +10,7 @@ import com.github.iryabov.invest.client.Security
 import com.github.iryabov.invest.relation.AssetClass
 import org.springframework.stereotype.Component
 import java.time.LocalDate
+import java.util.*
 
 @Component
 class AssetHistoryLoader(
@@ -19,7 +20,7 @@ class AssetHistoryLoader(
 ) {
     fun load(ticker: String, from: LocalDate, till: LocalDate) {
         val security = securitiesClient.findLastPrice(ticker)
-        assetRepo.save(security.toEntity(assetRepo.existsById(ticker), Currency.RUB))
+        assetRepo.save(security.toEntity(assetRepo.findById(ticker), Currency.RUB))
         var begin = from
         var end = from
         do {
@@ -42,13 +43,20 @@ private fun Security.toHistoryEntity(dest: SecurityHistory? = null): SecurityHis
             .copy(id = dest?.id)
 }
 
-private fun Security.toEntity(exists: Boolean, currency: Currency): Asset {
-    val asset = Asset(
-            ticker = this.ticker,
-            name = this.shortName,
-            priceNow = this.price,
-            assetClass = AssetClass.SHARE,
-            currency = currency)
-    asset.newEntity = !exists
-    return asset
+private fun Security.toEntity(exists: Optional<Asset>, currency: Currency): Asset {
+    return if (exists.isPresent) {
+        exists.get().copy(
+                ticker = this.ticker,
+                name = this.shortName,
+                priceNow = this.price)
+    } else {
+        val asset = Asset(
+                ticker = this.ticker,
+                name = this.shortName,
+                priceNow = this.price,
+                assetClass = AssetClass.SHARE,
+                currency = currency)
+        asset.newEntity = true
+        asset
+    }
 }

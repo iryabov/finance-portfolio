@@ -195,10 +195,10 @@ class InvestServiceTest(
 
     @Test
     @Transactional
-    //@Disabled
+    @Disabled
     @Rollback(false)
     fun csvLoad() {
-        csvLoader.load(ClassPathResource("/csv/test2.csv"))
+        csvLoader.load(ClassPathResource("/csv/test.csv"))
     }
 
     @Test
@@ -211,7 +211,7 @@ class InvestServiceTest(
 
     @Test
     @Transactional
-//    @Disabled
+    @Disabled
     @Rollback(false)
     fun currencyRateLoad() {
         currencyRateLoader.load(LocalDate.of(2020, 1, 1),

@@ -3,7 +3,7 @@
       name="{ticker}">
     <regions>
         <region>
-            <form id="security" object-id="security" query-id="security" upload="defaults">
+            <form id="security" object-id="security" query-id="security" upload="query">
                 <pre-filters>
                     <eq field-id="id" param="ticker"/>
                 </pre-filters>
@@ -13,17 +13,24 @@
                                    page-name="Edit"
                                    submit-operation-id="editSecurity" route="/edit"/>
                     </button>
-                    <button label="Load">
+                    <button label="Load" widget-id="filters">
                         <invoke operation-id="load" route="/load"/>
                     </button>
                 </toolbar>
                 <fields>
-                    <hidden id="id" default-value="1"/>
                     <row>
+                        <output-text id="name" label="Name"/>
+                        <output-text id="price" label="Price"/>
+                        <output-text id="currency.id" label="Currency"/>
                         <output-text id="assetClass.id" label="Class"/>
                         <output-text id="sector.id" label="Sector"/>
                         <output-text id="country.id" label="Country"/>
                     </row>
+                </fields>
+            </form>
+            <form id="filters" object-id="security">
+                <fields>
+                    <hidden id="id" default-value="1"/>
                     <row>
                         <radio-group id="period" label="Period" param="period" inline="true">
                             <default-value id="FIVE_YEARS"/>
@@ -50,16 +57,16 @@
         <region>
             <chart id="history" route="/history"
                    query-id="securityHistory" size="20"
-                   name="Security history" depends-on="security"
+                   name="Security history" depends-on="filters"
                    width="1000" height="500">
-                <lines x-field-id="date" y-field-id="price" grid-horizontal="false" grid-vertical="false"
+                <lines x-field-id="date" y-field-id="price" grid-horizontal="true" grid-vertical="false"
                        tooltip-separator=" ">
                     <line field-id="price" type="linear" color="#8884d8"/>
                 </lines>
                 <pre-filters>
                     <eq field-id="ticker" param="ticker"/>
-                    <eq field-id="period" value="{period.id}" ref-widget-id="security" ref-model="resolve"/>
-                    <eq field-id="currency" value="{currency.id}" ref-widget-id="security" ref-model="resolve"/>
+                    <eq field-id="period" value="{period.id}" ref-widget-id="filters" ref-model="resolve"/>
+                    <eq field-id="currency" value="{currency.id}" ref-widget-id="filters" ref-model="resolve"/>
                 </pre-filters>
             </chart>
         </region>
