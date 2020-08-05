@@ -73,6 +73,9 @@ from
 (select 
     d.id,
     d.ticker as ticker,
+    a.name as asset_name,
+    a.class as asset_class,
+    a.price_now as asset_price_now,
     d.dt as dt,
     d.quantity as quantity,
     d.currency as currency,
@@ -92,12 +95,16 @@ from
      else 0 end
     ) as sold_quantity
 from dial d
+left join asset a on a.ticker = d.ticker
 where  d.account_id = :account_id
   and d.active = true
 union 
 select 
     d.id,
     d.currency as ticker,
+    a.name as asset_name,
+    a.class as asset_class,
+    a.price_now as asset_price_now,
     d.dt as dt,
     d.volume as quantity,
     d.ticker as currency,
@@ -121,6 +128,7 @@ select
      else 0 end
     ) as sold_quantity
 from dial d
+left join asset a on a.ticker = d.ticker
 where d.account_id = :account_id
   and d.active = true
   and d.ticker != d.currency

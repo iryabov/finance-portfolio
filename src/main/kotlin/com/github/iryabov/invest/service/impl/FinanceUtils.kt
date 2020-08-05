@@ -10,11 +10,11 @@ val P0 = BigDecimal.ZERO
 val P1 = BigDecimal.ONE
 
 fun calcProfitPercent(a: BigDecimal, b: BigDecimal): BigDecimal {
-    return if (b.compareTo(P0) != 0) a / b * P100 - P100 else P0
+    return if (b.compareTo(P0) != 0) a.divide(b, 2, RoundingMode.HALF_UP) * P100 - P100 else P0
 }
 
 fun calcPercent(a: BigDecimal, b: BigDecimal): BigDecimal {
-    return if (b.compareTo(P0) != 0) a / b * P100 else P0
+    return if (b.compareTo(P0) != 0) a.divide(b, 2, RoundingMode.HALF_UP) * P100 else P0
 }
 
 inline fun <T> Iterable<T>.sumByBigDecimal(selector: (T) -> BigDecimal): BigDecimal {

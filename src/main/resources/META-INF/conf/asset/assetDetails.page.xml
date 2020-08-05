@@ -42,7 +42,7 @@
                    query-id="assetHistory"
                    name="History" depends-on="period"
                    width="1000" height="200">
-                <lines x-field-id="date" grid-horizontal="false" grid-vertical="false"
+                <lines x-field-id="date" grid-horizontal="true" grid-vertical="false"
                        tooltip-separator=" ">
                     <line field-id="securityPrice" color="#8884d8" type="linear"/>
                     <line field-id="purchasePrice" color="#00FF00" type="linear"/>

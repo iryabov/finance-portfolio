@@ -78,6 +78,9 @@ class InvestServiceImpl(
         if (assets.isEmpty())
             return AssetView(assetTicker = ticker, quantity = 0, netValue = P0)
         val asset = assets.first()
+        val security = assetRepo.findById(ticker)
+        if (security.isPresent)
+            asset.update(security.get())
         asset.calc()
         asset.calcProportion(P0, P0)
         return asset
@@ -208,6 +211,12 @@ private fun AccountView.calcProportion() {
     assert(assets.sumByBigDecimal { a -> a.netInterest }.eq(P100))
     assert(assets.sumByBigDecimal { a -> a.marketInterest }.eq(P100))
     assert(assets.sumByBigDecimal { a -> a.profitInterest }.eq(P0))
+}
+
+private fun AssetView.update(security: Asset) {
+    this.assetName = security.name
+    this.assetPriceNow = security.priceNow
+    this.assetClass = security.assetClass
 }
 
 private fun AssetView.calc() {
