@@ -56,5 +56,8 @@
         <field id="price" domain="numeric">
             <select mapping="price"/>
         </field>
+        <field id="soldQuantity" domain="integer">
+            <select mapping="soldQuantity" normalize="#this != null ? '-' + #this : null"/>
+        </field>
     </fields>
 </query>

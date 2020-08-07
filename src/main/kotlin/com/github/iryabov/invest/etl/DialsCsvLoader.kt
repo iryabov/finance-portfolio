@@ -85,6 +85,8 @@ class DialsCsvLoader(
             "b" -> DialType.PURCHASE
             "s" -> DialType.SALE
             "d" -> DialType.DIVIDEND
+            "p" -> DialType.PERCENT
+            "t" -> DialType.TAX
             "i" -> DialType.DEPOSIT
             "o" -> DialType.WITHDRAWALS
             else -> throw java.lang.IllegalArgumentException(this)

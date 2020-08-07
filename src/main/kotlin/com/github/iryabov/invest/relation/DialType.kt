@@ -3,12 +3,14 @@ package com.github.iryabov.invest.relation
 import java.lang.IllegalArgumentException
 
 enum class DialType(val income: Boolean = true, val quantity: Boolean = false, val currency: Boolean = false) {
-    SALE(quantity = true),
-    PURCHASE(income = false, quantity = true),
-    DIVIDEND,
-    TAX(false),
-    DEPOSIT(income = false, currency = true),
-    WITHDRAWALS(currency = true);
+    SALE(income = true, quantity = true, currency = false),
+    PURCHASE(income = false, quantity = true, currency = false),
+    DIVIDEND(income = true, quantity = false, currency = false),
+    COUPON(income = true, quantity = false, currency = false),
+    PERCENT(income = true, quantity = true, currency = false),
+    TAX(income = false, quantity = false, currency = false),
+    DEPOSIT(income = false, quantity = false, currency = true),
+    WITHDRAWALS(income = true, quantity = false, currency = true);
 
 
 

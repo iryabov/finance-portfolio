@@ -5,7 +5,6 @@ import com.github.iryabov.invest.client.ExchangeRate
 import com.github.iryabov.invest.entity.*
 import com.github.iryabov.invest.model.*
 import com.github.iryabov.invest.relation.Currency
-import com.github.iryabov.invest.relation.DialType
 import com.github.iryabov.invest.relation.Period
 import com.github.iryabov.invest.repository.*
 import com.github.iryabov.invest.service.InvestService
@@ -43,20 +42,26 @@ class InvestServiceImpl(
         val created = dialRepo.save(form.toEntityWith(accountId))
         if (created.volume != P0)
             addExchangeRate(created.date)
-        if (setOf(DialType.SALE, DialType.WITHDRAWALS).contains(created.type))
-            writeOffByFifo(created)
-        if (setOf(DialType.PURCHASE).contains(created.type))
-            writeOffByFifo(created.invert())
-
+        if (created.quantity != 0)
+            writeOffByFifoAndRecalculation(if (created.quantity < 0 ) created else created.invert())
         return created.id!!
     }
 
     override fun deleteDial(accountId: Int, id: Long) {
+        val deleted = dialRepo.findById(id).orElseThrow()
         dialRepo.deleteById(id)
+        if (deleted.quantity != 0)
+            writeOffByFifoAndRecalculation(if (deleted.quantity < 0 ) deleted else deleted.invert(), false)
     }
 
     override fun deactivateDial(accountId: Int, id: Long) {
+        val deactivated = dialRepo.findById(id).orElseThrow()
         dialRepo.deactivate(id)
+        if (deactivated.active)
+            writeOffRepo.deleteAllByDialId(deactivated.id!!)
+        if (deactivated.quantity != 0)
+            writeOffByFifoAndRecalculation(if (deactivated.quantity < 0 ) deactivated else deactivated.invert(),
+                    !deactivated.active)
     }
 
     override fun getAccount(accountId: Int, currency: Currency): AccountView {
@@ -167,6 +172,17 @@ class InvestServiceImpl(
                             price = exchange.getPairExchangePrice(currencyPurchased, currencySale)))
                 }
             }
+        }
+    }
+
+    private fun writeOffByFifoAndRecalculation(dial: Dial, calc: Boolean = true) {
+        if (dial.quantity >= 0) return
+        writeOffRepo.deleteAllLaterThan(dial.accountId, dial.ticker, dial.date)
+        if (calc)
+            writeOffByFifo(dial)
+        val lateDials = dialRepo.findAllSaleAndPurchaseLaterThan(dial.accountId, dial.ticker, dial.date)
+        for (lateDial in lateDials) {
+            writeOffByFifo(if (lateDial.quantity < 0) lateDial else lateDial.invert())
         }
     }
 

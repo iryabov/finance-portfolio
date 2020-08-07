@@ -105,9 +105,12 @@ union
 select 
     d.id,
     d.currency as ticker,
-    null as asset_name,
-    null as asset_class,
-    null as asset_price_now,
+    d.currency as asset_name,
+    'CACHE' as asset_class,
+    (case when d.currency = :currency then 1
+     else coalesce((select r.price from rate r where r.dt = d.dt and r.currency_purchase = d.currency and r.currency_sale = :currency), 0) 
+     end 
+    ) as asset_price_now,
     d.dt as dt,
     d.volume as quantity,
     d.ticker as currency,
@@ -159,7 +162,13 @@ select
     (case when d.quantity <> 0 then abs(d.volume / d.quantity)
      else 0 
      end
-    ) as price
+    ) as price,
+    (
+        select sum(w.quantity) as sold_quantity
+        from writeoff w
+        where w.dial_from = d.id
+          and d.quantity > 0
+    ) as sold_quantity
 from dial d
 left join asset a on a.ticker = d.ticker 
 where d.account_id = :account_id
@@ -169,4 +178,18 @@ order by d.dt desc
     fun findAllByAsset(@Param("account_id") accountId: Int,
                        @Param("asset_id") ticker: String,
                        @Param("currency") currency: Currency): List<DialView>
+
+    @Query("""
+        select *
+        from dial d
+        where d.active = true
+          and d.account_id = :account_id
+          and (d.ticker = :ticker or d.currency = :ticker)
+          and d.quantity <> 0
+          and d.dt > :date_from
+        order by d.dt  
+    """)
+    fun findAllSaleAndPurchaseLaterThan(@Param("account_id") accountId: Int,
+                                        @Param("ticker") ticker: String,
+                                        @Param("date_from") dateFrom: LocalDate): List<Dial>
 }

@@ -32,7 +32,7 @@ import java.time.LocalDate
 import java.time.Month
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE,
-        properties = ["spring.datasource.url=jdbc:postgresql://localhost:5432/invest_test"])
+        properties = ["spring.datasource.url=jdbc:postgresql://localhost:5432/invest"])
 @Sql("/schema.sql")
 class InvestServiceTest(
         @Autowired
@@ -195,10 +195,10 @@ class InvestServiceTest(
 
     @Test
     @Transactional
-    @Disabled
+    //@Disabled
     @Rollback(false)
     fun csvLoad() {
-        csvLoader.load(ClassPathResource("/csv/test.csv"))
+        csvLoader.load(ClassPathResource("/csv/test2.csv"))
     }
 
     @Test

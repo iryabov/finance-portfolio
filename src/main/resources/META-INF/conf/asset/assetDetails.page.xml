@@ -90,7 +90,9 @@
                     <column text-field-id="price">
                         <text format="number 0.00"/>
                     </column>
-                    <column text-field-id="quantity"/>
+                    <column text-field-id="soldQuantity">
+                        <badge text="{quantity}" color="danger"/>
+                    </column>
                     <column text-field-id="volume">
                         <text format="number 0.00"/>
                     </column>

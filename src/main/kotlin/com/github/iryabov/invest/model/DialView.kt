@@ -15,4 +15,5 @@ data class DialView(
         var quantity: Int?,
         var currency: Currency?,
         var volume: BigDecimal?,
-        var price: BigDecimal?)
+        var price: BigDecimal?,
+        var soldQuantity: Int?)

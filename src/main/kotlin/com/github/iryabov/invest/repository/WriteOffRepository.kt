@@ -2,6 +2,7 @@ package com.github.iryabov.invest.repository
 
 import com.github.iryabov.invest.entity.WriteOff
 import com.github.iryabov.invest.model.Balance
+import org.springframework.data.jdbc.repository.query.Modifying
 import org.springframework.data.jdbc.repository.query.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.query.Param
@@ -58,4 +59,29 @@ order by d.dt, d.dial_from
     fun findBalance(@Param("account_id") accountId: Int,
                     @Param("ticker") ticker: String,
                     @Param("date_from") dateFrom: LocalDate): List<Balance>
+
+
+    @Modifying
+    @Query("""
+        delete from writeoff w 
+        where exists (
+            select d.id
+            from dial d 
+            where d.id = w.dial_to 
+              and d.account_id = :account_id
+              and d.active = true
+              and (d.ticker = :ticker or d.currency = :ticker)
+              and d.dt > :date_from
+            ) 
+    """)
+    fun deleteAllLaterThan(@Param("account_id") accountId: Int,
+                           @Param("ticker") ticker: String,
+                           @Param("date_from") dateFrom: LocalDate)
+
+    @Modifying
+    @Query("""
+        delete from writeoff
+        where dial_from = :dial_id or dial_to = :dial_id
+    """)
+    fun deleteAllByDialId(@Param("dial_id") dialId: Long)
 }
