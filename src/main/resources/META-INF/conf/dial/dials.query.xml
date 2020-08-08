@@ -65,5 +65,8 @@
         <field id="profitColor" domain="string">
             <select mapping="profit" normalize="#this != null &amp;&amp; #this > 0 ? 'success' : 'danger'"/>
         </field>
+        <field id="activeAsset" domain="boolean">
+            <select mapping="quantity != null &amp;&amp; soldQuantity != null ? quantity > soldQuantity : true"/>
+        </field>
     </fields>
 </query>

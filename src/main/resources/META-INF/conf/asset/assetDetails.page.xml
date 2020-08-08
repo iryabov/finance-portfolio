@@ -75,7 +75,7 @@
                     </set>
                 </fields>
             </form>
-            <table id="dials" query-id="dials" route="/dials">
+            <table id="dials" query-id="dials" route="/dials" selection="none">
                 <columns>
                     <column text-field-id="active">
                         <checkbox>

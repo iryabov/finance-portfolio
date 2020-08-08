@@ -33,14 +33,19 @@
                     <eq field-id="id" param="account_id"/>
                 </pre-filters>
             </form>
-            <table id="assets" query-id="accountAsset" route="/assets">
+            <table id="assets" query-id="accountAsset" route="/assets" selection="none">
                 <columns>
                     <column text-field-id="asset.ticker"/>
                     <column text-field-id="quantity"/>
                     <column text-field-id="marketValue"/>
-                    <column text-field-id="marketProfit"/>
+                    <column text-field-id="marketProfitPercent">
+                        <badge text="{marketProfit}" text-format="number 0.00" color="{marketProfitColor}"/>
+                    </column>
                 </columns>
                 <rows>
+                    <switch value-field-id="assetActive">
+                        <case value="false">text-secondary</case>
+                    </switch>
                     <click>
                         <open-page page-id="assetDetails" route="/:asset_id/details">
                             <path-param name="asset_id" value="{id}"/>
