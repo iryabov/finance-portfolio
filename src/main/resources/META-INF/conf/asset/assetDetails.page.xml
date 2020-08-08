@@ -85,16 +85,25 @@
                     <!--            <column text-field-id="asset.ticker"/>-->
                     <!--            <column text-field-id="asset.name"/>-->
                     <column text-field-id="dt"/>
-                    <column text-field-id="type"/>
+                    <column text-field-id="type">
+                        <badge>
+                            <switch value-field-id="type">
+                                <case value="PURCHASE">success</case>
+                                <case value="SALE">danger</case>
+                                <case value="DIVIDEND">info</case>
+                            </switch>
+                        </badge>
+                    </column>
                     <column text-field-id="currency"/>
                     <column text-field-id="price">
                         <text format="number 0.00"/>
                     </column>
-                    <column text-field-id="soldQuantity">
+                    <column text-field-id="soldQuantity" label="Quantity">
                         <badge text="{quantity}" color="danger"/>
                     </column>
-                    <column text-field-id="volume">
-                        <text format="number 0.00"/>
+                    <column text-field-id="profit" label="Volume">
+<!--                        <text format="number 0.00"/>-->
+                        <badge text="{volume}" text-format="number 0.00" color="{profitColor}"/>
                     </column>
                     <column text-field-id="" width="20px">
                         <toolbar>

@@ -59,5 +59,11 @@
         <field id="soldQuantity" domain="integer">
             <select mapping="soldQuantity" normalize="#this != null ? '-' + #this : null"/>
         </field>
+        <field id="profit" domain="numeric">
+            <select mapping="profit" normalize="#this != null &amp;&amp; #this != 0 ? #this : null"/>
+        </field>
+        <field id="profitColor" domain="string">
+            <select mapping="profit" normalize="#this != null &amp;&amp; #this > 0 ? 'success' : 'danger'"/>
+        </field>
     </fields>
 </query>

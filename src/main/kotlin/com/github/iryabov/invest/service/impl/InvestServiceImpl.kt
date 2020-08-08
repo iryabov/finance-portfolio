@@ -193,7 +193,7 @@ class InvestServiceImpl(
             val balance = fifo.next()
             if (balance.balancedQuantity > 0) {
                 val writeOff = WriteOff(dialFrom = balance.dialFrom, dialTo = dial.id!!,
-                        quantity = min(needToSell, balance.balancedQuantity))
+                        quantity = min(needToSell, balance.balancedQuantity), ticker = dial.ticker)
                 writeOffRepo.save(writeOff)
                 needToSell -= writeOff.quantity
             }

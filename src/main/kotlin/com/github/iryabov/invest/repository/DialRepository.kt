@@ -159,6 +159,14 @@ select
      else abs(coalesce((select r.price * d.volume from rate r where  r.dt = d.dt and  r.currency_purchase = d.currency and  r.currency_sale = :currency), 0)) 
      end 
     ) as volume,
+    (select sum(case when df.currency = :currency then df.volume 
+                else coalesce((select r.price * df.volume from rate r where  r.dt = df.dt and  r.currency_purchase = df.currency and  r.currency_sale = :currency), 0)
+                end / df.quantity * w.quantity
+            ) 
+     from writeoff w
+     join dial df on df.id = w.dial_from
+     where w.dial_to = d.id and w.ticker = d.ticker
+    ) + d.volume as profit,
     (case when d.quantity <> 0 then abs(d.volume / d.quantity)
      else 0 
      end
@@ -173,7 +181,7 @@ from dial d
 left join asset a on a.ticker = d.ticker 
 where d.account_id = :account_id
   and d.ticker = :asset_id
-order by d.dt desc        
+order by d.dt desc       
     """)
     fun findAllByAsset(@Param("account_id") accountId: Int,
                        @Param("asset_id") ticker: String,

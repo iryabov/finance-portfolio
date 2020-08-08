@@ -13,5 +13,7 @@ data class WriteOff (
         @Column("dial_to")
         val dialTo: Long,
         @Column
+        val ticker: String,
+        @Column
         val quantity: Int = 0
 )
