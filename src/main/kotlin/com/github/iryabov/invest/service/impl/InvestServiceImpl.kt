@@ -5,6 +5,7 @@ import com.github.iryabov.invest.client.ExchangeRate
 import com.github.iryabov.invest.entity.*
 import com.github.iryabov.invest.model.*
 import com.github.iryabov.invest.relation.Currency
+import com.github.iryabov.invest.relation.DialType
 import com.github.iryabov.invest.relation.Period
 import com.github.iryabov.invest.repository.*
 import com.github.iryabov.invest.service.InvestService
@@ -42,16 +43,14 @@ class InvestServiceImpl(
         val created = dialRepo.save(form.toEntityWith(accountId))
         if (created.volume != P0)
             addExchangeRate(created.date)
-        if (created.quantity != 0)
-            writeOffByFifoAndRecalculation(if (created.quantity < 0 ) created else created.invert())
+        writeOffByFifoAndRecalculation(if (created.quantity < 0) created else created.invert(), needWriteOff(created))
         return created.id!!
     }
 
     override fun deleteDial(accountId: Int, id: Long) {
         val deleted = dialRepo.findById(id).orElseThrow()
         dialRepo.deleteById(id)
-        if (deleted.quantity != 0)
-            writeOffByFifoAndRecalculation(if (deleted.quantity < 0 ) deleted else deleted.invert(), false)
+        writeOffByFifoAndRecalculation(if (deleted.quantity < 0) deleted else deleted.invert(), false)
     }
 
     override fun deactivateDial(accountId: Int, id: Long) {
@@ -59,9 +58,8 @@ class InvestServiceImpl(
         dialRepo.deactivate(id)
         if (deactivated.active)
             writeOffRepo.deleteAllByDialId(deactivated.id!!)
-        if (deactivated.quantity != 0)
-            writeOffByFifoAndRecalculation(if (deactivated.quantity < 0 ) deactivated else deactivated.invert(),
-                    !deactivated.active)
+        writeOffByFifoAndRecalculation(if (deactivated.quantity < 0) deactivated else deactivated.invert(),
+                needWriteOff(deactivated) && !deactivated.active)
     }
 
     override fun getAccount(accountId: Int, currency: Currency): AccountView {
@@ -149,7 +147,7 @@ class InvestServiceImpl(
         val till = LocalDate.now()
         val history = rateRepository.findAllByPair(pair1, pair2, from, till)
         val chart = fillChart(history.map { CurrencyHistoryView(date = it.date, price = it.price) },
-            from, till, period.step,
+                from, till, period.step,
                 { s -> s.date },
                 { date, prev -> CurrencyHistoryView(date = date, price = prev?.price ?: P0) })
         return CurrencyView(
@@ -198,6 +196,8 @@ class InvestServiceImpl(
                 needToSell -= writeOff.quantity
             }
         }
+        if (needToSell > 0)
+            throw IllegalStateException("Need to sell $needToSell ${dial.ticker}, but they haven't")
     }
 
 }
@@ -243,7 +243,7 @@ private fun AssetView.calcProportion(totalNetValue: BigDecimal, totalMarketValue
 private fun DialForm.toEntityWith(accountId: Int): Dial {
     val quantity: Int = when {
         this.type.quantity -> if (!this.type.income) this.quantity else this.quantity.negate()
-        this.type.currency -> this.volume.toInt()
+        this.type.currency -> if (!this.type.income) this.volume.toInt() else this.volume.toInt().negate()
         else -> 0
     }
     val ticker: String = if (!this.type.currency) this.ticker else this.currency.name
@@ -312,3 +312,7 @@ private fun reduce(a: AssetHistoryView, b: AssetHistoryView): AssetHistoryView {
     result.salePrice = max(a.salePrice, b.salePrice)
     return result
 }
+
+private fun needWriteOff(created: Dial) =
+        (created.quantity != 0 || created.volume.notZero())
+                && setOf(DialType.PURCHASE, DialType.SALE, DialType.WITHDRAWALS, DialType.TAX).contains(created.type)

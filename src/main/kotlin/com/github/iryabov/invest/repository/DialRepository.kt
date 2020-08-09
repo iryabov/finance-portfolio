@@ -46,100 +46,103 @@ interface DialRepository : CrudRepository<Dial, Long> {
 
     @Query("""
 select 
-    d.ticker as asset_ticker,
-    d.asset_name as asset_name,
-    d.asset_class as asset_class,
-    d.asset_price_now as asset_price_now,
-    sum(d.quantity) as quantity,
-    sum(case when d.quantity > 0 
-        then  -1 * (d.volume_cur * (d.quantity - d.sold_quantity) / d.quantity)
-        else  0 
-        end  
-    ) as net_value,
-    sum(case  
-      when  d.type = 'DEPOSIT' then  -1*d.volume_cur
-      else  0 
-       end) as deposit,
-    sum(case  
-       when  d.type = 'WITHDRAWALS' then  d.volume_cur
-       else   0 
-       end) as withdrawals,
-    sum(case 
-       when  d.volume_cur < 0 then  -1*d.volume_cur
-       else  0 
-       end) as expenses,
-    sum(case 
-       when  d.volume_cur > 0 then  d.volume_cur
-       else   0 
-       end) as proceeds 
-from
-(select 
-    d.id,
-    d.ticker as ticker,
-    a.name as asset_name,
-    a.class as asset_class,
-    a.price_now as asset_price_now,
-    d.dt as dt,
-    d.quantity as quantity,
-    d.currency as currency,
-    d.volume as volume,
-    d.type as type,
-    (case when d.currency = :currency then  d.volume
-     else coalesce((select r.price * d.volume from rate r where  r.dt = d.dt and  r.currency_purchase = d.currency and  r.currency_sale = :currency), 0) 
-     end 
-    ) as volume_cur,
-    (case when d.quantity > 0 
-     then (
-         select coalesce(sum(w.quantity),0) as sold_quantity
-         FROM writeoff w
-         JOIN dial d2 ON d2.id = w.dial_to
-         WHERE w.dial_from = d.id
-     )
-     else 0 end
-    ) as sold_quantity
-from dial d
-left join asset a on a.ticker = d.ticker
-where  d.account_id = :account_id
-  and d.active = true
-union 
-select 
-    d.id,
-    d.currency as ticker,
-    d.currency as asset_name,
-    'CACHE' as asset_class,
-    (case when d.currency = :currency then 1
-     else coalesce((select r.price from rate r where r.dt = d.dt and r.currency_purchase = d.currency and r.currency_sale = :currency), 0) 
-     end 
-    ) as asset_price_now,
-    d.dt as dt,
-    d.volume as quantity,
-    d.ticker as currency,
-    d.quantity as volume,
-    (case 
-        when d.type = 'SALE' then 'PURCHASE'
-        when d.type = 'PURCHASE' then 'SALE'
-        else d.type
-     end) as type,
-    (case when d.currency = :currency then -1*d.volume
-     else -1*coalesce((select r.price * d.volume from rate r where  r.dt = d.dt and  r.currency_purchase = d.currency and  r.currency_sale = :currency), 0) 
-     end 
-    ) as volume_cur,
-    (case when d.volume > 0 
-     then (
-         select coalesce(sum(w.quantity),0) as sold_quantity
-         FROM writeoff w
-         JOIN dial d2 ON d2.id = w.dial_to
-         WHERE w.dial_from = d.id
-     )
-     else 0 end
-    ) as sold_quantity
-from dial d
-where d.account_id = :account_id
-  and d.active = true
-  and d.ticker != d.currency
-) d  
-where (:ticker is null or d.ticker = :ticker)
-group by d.ticker, d.asset_name, d.asset_class, d.asset_price_now
+    a.asset_ticker,
+    s.name as asset_name,
+    s.class as asset_class,
+    s.price_now as asset_price_now,
+    a.quantity,
+    a.volume_cur,
+    a.net_value,
+    a.deposit,
+    a.withdrawals,
+    a.expenses,
+    a.proceeds 
+from (
+    select 
+        d.ticker as asset_ticker,
+        sum(d.quantity) as quantity,
+        sum(volume_cur) as volume_cur,
+        sum(case when d.quantity > 0 
+            then  -1 * (d.volume_cur * (d.quantity - d.sold_quantity) / d.quantity)
+            else  0 
+            end  
+        ) as net_value,
+        sum(case  
+          when  d.type = 'DEPOSIT' then  -1*d.volume_cur
+          else  0 
+           end) as deposit,
+        sum(case  
+           when  d.type = 'WITHDRAWALS' then  d.volume_cur
+           else   0 
+           end) as withdrawals,
+        sum(case 
+           when  d.volume_cur < 0 then  -1*d.volume_cur
+           else  0 
+           end) as expenses,
+        sum(case 
+           when  d.volume_cur > 0 then  d.volume_cur
+           else   0 
+           end) as proceeds 
+    from
+        (select 
+            d.id,
+            d.ticker as ticker,
+            d.dt as dt,
+            (case when active = true then d.quantity else 0 end) as quantity,
+            d.currency as currency,
+            (case when active = true then d.volume else 0 end) as volume,
+            d.type as type,
+            (case when active = true then 
+            (case when d.currency = :currency then  d.volume
+             else coalesce((select r.price * d.volume from rate r where  r.dt = d.dt and  r.currency_purchase = d.currency and  r.currency_sale = :currency), 0) 
+             end 
+            ) else 0 end) as volume_cur,
+            (case when d.quantity > 0 
+             then (
+                 select coalesce(sum(w.quantity),0) as sold_quantity
+                 FROM writeoff w
+                 JOIN dial d2 ON d2.id = w.dial_to
+                 WHERE w.dial_from = d.id
+             )
+             else 0 end
+            ) as sold_quantity
+        from dial d
+        where d.account_id = :account_id
+        union 
+        select 
+            d.id,
+            d.currency as ticker,
+            d.dt as dt,
+            d.volume as quantity,
+            d.ticker as currency,
+            d.quantity as volume,
+            (case 
+                when d.type = 'SALE' then 'PURCHASE'
+                when d.type = 'PURCHASE' then 'SALE'
+                else d.type
+             end) as type,
+            (case when d.currency = :currency then -1*d.volume
+             else -1*coalesce((select r.price * d.volume from rate r where  r.dt = d.dt and  r.currency_purchase = d.currency and  r.currency_sale = :currency), 0) 
+             end 
+            ) as volume_cur,
+            (case when d.volume > 0 
+             then (
+                 select coalesce(sum(w.quantity),0) as sold_quantity
+                 FROM writeoff w
+                 JOIN dial d2 ON d2.id = w.dial_to
+                 WHERE w.dial_from = d.id
+             )
+             else 0 end
+            ) as sold_quantity
+        from dial d
+        where d.account_id = :account_id
+          and d.active = true
+          and d.ticker != d.currency
+        ) d  
+    where (:ticker is null or d.ticker = :ticker)
+    group by d.ticker
+) a
+left join asset s on s.ticker = a.asset_ticker
     """)
     fun findAssets(@Param("account_id") accountId: Int,
                    @Param("currency") currency: Currency,
@@ -164,7 +167,7 @@ select
                 end / df.quantity * w.quantity
             ) 
      from writeoff w
-     join dial df on df.id = w.dial_from
+     join dial df on df.id = w.dial_from and df.ticker = w.ticker
      where w.dial_to = d.id and w.ticker = d.ticker
     ) + d.volume as profit,
     (case when d.quantity <> 0 then abs(d.volume / d.quantity)
@@ -177,10 +180,18 @@ select
         where w.dial_from = d.id
           and d.quantity > 0
     ) as sold_quantity
-from dial d
-left join asset a on a.ticker = d.ticker 
-where d.account_id = :account_id
-  and d.ticker = :asset_id
+from (
+    select 
+    from dial d
+    where d.account_id = :account_id
+        and d.ticker = :asset_id
+    union
+    select 
+    from dial d
+    where d.account_id = :account_id
+        and d.ticker = :asset_id    
+) d
+left join asset a on a.ticker = d.ticker
 order by d.dt desc       
     """)
     fun findAllByAsset(@Param("account_id") accountId: Int,

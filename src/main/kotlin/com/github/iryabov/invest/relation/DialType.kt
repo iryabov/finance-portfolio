@@ -20,6 +20,8 @@ enum class DialType(val income: Boolean = true, val quantity: Boolean = false, v
             this == PURCHASE -> SALE
             this == WITHDRAWALS -> DEPOSIT
             this == DEPOSIT -> WITHDRAWALS
+            this == DIVIDEND -> DIVIDEND
+            this == TAX -> TAX
             else -> throw IllegalArgumentException("$this is not inverted")
         }
     }
