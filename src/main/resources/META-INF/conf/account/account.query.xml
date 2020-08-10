@@ -33,6 +33,12 @@
         <field id="name">
             <select mapping="name"/>
         </field>
+        <field id="totalDeposit">
+            <select mapping="totalDeposit"/>
+        </field>
+        <field id="totalWithdrawals">
+            <select mapping="totalWithdrawals"/>
+        </field>
         <field id="totalNetValue">
             <select mapping="totalNetValue"/>
         </field>
@@ -43,22 +49,19 @@
             <select mapping="totalValueProfit"/>
         </field>
         <field id="totalValueProfitPercent">
-            <select mapping="totalValueProfitPercent"/>
+            <select mapping="totalValueProfitPercent" normalize="#this + '%'"/>
         </field>
         <field id="totalFixedProfit">
             <select mapping="totalFixedProfit"/>
         </field>
         <field id="totalFixedProfitPercent">
-            <select mapping="totalFixedProfitPercent"/>
+            <select mapping="totalFixedProfitPercent" normalize="#this + '%'"/>
         </field>
         <field id="totalMarketProfit">
             <select mapping="totalMarketProfit"/>
         </field>
         <field id="totalMarketProfitPercent">
-            <select mapping="totalMarketProfitPercent"/>
-        </field>
-        <field id="totalDeposit">
-            <select mapping="totalDeposit"/>
+            <select mapping="totalMarketProfitPercent" normalize="#this + '%'"/>
         </field>
 
     </fields>

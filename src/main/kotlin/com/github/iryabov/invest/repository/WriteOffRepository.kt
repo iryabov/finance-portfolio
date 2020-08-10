@@ -2,6 +2,7 @@ package com.github.iryabov.invest.repository
 
 import com.github.iryabov.invest.entity.WriteOff
 import com.github.iryabov.invest.model.Balance
+import com.github.iryabov.invest.relation.Currency
 import org.springframework.data.jdbc.repository.query.Modifying
 import org.springframework.data.jdbc.repository.query.Query
 import org.springframework.data.repository.CrudRepository
@@ -68,9 +69,8 @@ order by d.dt, d.dial_from
             select d.id
             from dial d 
             where d.id = w.dial_to 
-              and d.account_id = :account_id
               and d.active = true
-              and (d.ticker = :ticker or d.currency = :ticker)
+              and d.account_id = :account_id
               and d.dt > :date_from
             ) 
     """)

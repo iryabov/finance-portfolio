@@ -51,15 +51,23 @@ data class AccountView(
      */
     lateinit var totalFixedProfit: BigDecimal
     /**
-     * Процент фиксированной прибыли
+     * Процент фиксированной прибыли относительно депозита
      */
     lateinit var totalFixedProfitPercent: BigDecimal
+    /**
+     * Процент фиксированной прибыли относительно оборота
+     */
+    lateinit var totalFixedTurnoverProfitPercent: BigDecimal
     /**
      * Полная "бумажная" прибыль
      */
     lateinit var totalMarketProfit: BigDecimal
     /**
-     * Процент полной прибыли
+     * Процент полной прибыли относительно депозита
      */
     lateinit var totalMarketProfitPercent: BigDecimal
+    /**
+     * Процент полной прибыли относительно оборота
+     */
+    lateinit var totalMarketTurnoverProfitPercent: BigDecimal
 }

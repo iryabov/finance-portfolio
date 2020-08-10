@@ -180,19 +180,11 @@ select
         where w.dial_from = d.id
           and d.quantity > 0
     ) as sold_quantity
-from (
-    select 
-    from dial d
-    where d.account_id = :account_id
-        and d.ticker = :asset_id
-    union
-    select 
-    from dial d
-    where d.account_id = :account_id
-        and d.ticker = :asset_id    
-) d
+from dial d
 left join asset a on a.ticker = d.ticker
-order by d.dt desc       
+where d.account_id = :account_id
+  and d.ticker = :asset_id   
+order by d.dt desc     
     """)
     fun findAllByAsset(@Param("account_id") accountId: Int,
                        @Param("asset_id") ticker: String,
@@ -203,8 +195,6 @@ order by d.dt desc
         from dial d
         where d.active = true
           and d.account_id = :account_id
-          and (d.ticker = :ticker or d.currency = :ticker)
-          and d.quantity <> 0
           and d.dt > :date_from
         order by d.dt  
     """)

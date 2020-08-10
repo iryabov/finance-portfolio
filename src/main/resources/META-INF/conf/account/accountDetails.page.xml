@@ -18,14 +18,23 @@
         <region>
             <form id="account" query-id="account" route="/">
                 <fields>
-                    <set field-label-location="left">
+                    <set field-label-location="left" field-label-align="right">
                         <row>
-                            <output-text id="totalMarketValue"/>
-                            <output-text id="totalNetValue"/>
-                            <output-text id="totalValueProfit"/>
-                            <output-text id="totalValueProfitPercent"/>
-                            <output-text id="totalMarketProfit"/>
-                            <output-text id="totalMarketProfitPercent"/>
+                            <col>
+                                <output-text id="totalMarketValue"/>
+                            </col>
+                            <col>
+                                <output-text id="totalValueProfit" no-label="true" class="text-success"/>
+                            </col>
+                            <col>
+                                <output-text id="totalValueProfitPercent"/>
+                            </col>
+                            <col>
+                                <output-text id="totalMarketProfit"/>
+                            </col>
+                            <col>
+                                <output-text id="totalMarketProfitPercent" no-label="true"/>
+                            </col>
                         </row>
                     </set>
                 </fields>

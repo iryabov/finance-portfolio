@@ -214,9 +214,11 @@ private fun AccountView.calc() {
     totalValueProfit = totalMarketValue - totalNetValue
     totalValueProfitPercent = calcProfitPercent(totalMarketValue, totalNetValue)
     totalFixedProfit = (totalNetValue + totalProceeds) - totalExpenses
-    totalFixedProfitPercent = calcProfitPercent(totalNetValue + totalProceeds, totalExpenses)
+    totalFixedTurnoverProfitPercent = calcProfitPercent(totalNetValue + totalProceeds, totalExpenses)
+    totalFixedProfitPercent = calcPercent(totalNetValue + (totalProceeds - totalExpenses), totalDeposit)
     totalMarketProfit = (totalMarketValue + totalProceeds) - totalExpenses
-    totalMarketProfitPercent = calcProfitPercent(totalMarketValue + totalProceeds, totalExpenses)
+    totalMarketTurnoverProfitPercent = calcProfitPercent(totalMarketValue + totalProceeds, totalExpenses)
+    totalMarketProfitPercent = calcPercent(totalMarketValue + (totalProceeds - totalExpenses), totalDeposit)
 }
 
 private fun AccountView.calcProportion() {
