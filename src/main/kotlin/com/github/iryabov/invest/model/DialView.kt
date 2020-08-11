@@ -2,6 +2,7 @@ package com.github.iryabov.invest.model
 
 import com.github.iryabov.invest.relation.Currency
 import com.github.iryabov.invest.relation.DialType
+import com.github.iryabov.invest.service.impl.P0
 import java.math.BigDecimal
 import java.time.LocalDate
 
@@ -17,4 +18,7 @@ data class DialView(
         var volume: BigDecimal?,
         var price: BigDecimal?,
         var soldQuantity: Int?,
-        var profit: BigDecimal?)
+        var profit: BigDecimal?,
+        var oldQuantity: Int?) {
+    var dividendProfit: BigDecimal = P0
+}

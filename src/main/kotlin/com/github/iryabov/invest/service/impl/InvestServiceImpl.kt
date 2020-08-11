@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.lang.Integer.min
 import java.math.BigDecimal
+import java.math.RoundingMode
 import java.time.LocalDate
 import java.util.*
 import kotlin.collections.ArrayList
@@ -106,7 +107,10 @@ class InvestServiceImpl(
     }
 
     override fun getDials(accountId: Int, ticker: String, currency: Currency): List<DialView> {
-        return dialRepo.findAllByAsset(accountId, ticker, currency)
+        val dials = dialRepo.findAllByAsset(accountId, ticker, currency)
+        val old: MutableList<DialView> = ArrayList()
+        dials.asReversed().forEach { it.calcDividend(old) }
+        return dials
     }
 
     override fun getSecurities(): List<SecurityView> {
@@ -215,10 +219,10 @@ private fun AccountView.calc() {
     totalValueProfitPercent = calcProfitPercent(totalMarketValue, totalNetValue)
     totalFixedProfit = (totalNetValue + totalProceeds) - totalExpenses
     totalFixedTurnoverProfitPercent = calcProfitPercent(totalNetValue + totalProceeds, totalExpenses)
-    totalFixedProfitPercent = calcPercent(totalNetValue + (totalProceeds - totalExpenses), totalDeposit)
+    totalFixedProfitPercent = calcPercent(totalNetValue + (totalProceeds - totalExpenses), totalNetValue)
     totalMarketProfit = (totalMarketValue + totalProceeds) - totalExpenses
     totalMarketTurnoverProfitPercent = calcProfitPercent(totalMarketValue + totalProceeds, totalExpenses)
-    totalMarketProfitPercent = calcPercent(totalMarketValue + (totalProceeds - totalExpenses), totalDeposit)
+    totalMarketProfitPercent = calcPercent(totalMarketValue + (totalProceeds - totalExpenses), totalNetValue)
 }
 
 private fun AccountView.calcProportion() {
@@ -280,8 +284,19 @@ private fun Dial.invert(): Dial {
             tax = tax)
 }
 
-private fun isCurrency(ticker: String): Boolean {
-    return Currency.values().any { c -> c.name == ticker }
+private fun DialView.calcDividend(old : MutableList<DialView>) {
+    if (type == DialType.DIVIDEND && (oldQuantity ?: 0) > 0) {
+        val dividendPerAsset = (volume ?: P0).divide((oldQuantity ?: 0).toBigDecimal(), 2, RoundingMode.HALF_UP)
+        old.forEach {
+            it.dividendProfit += ((it.oldQuantity ?: 0).toBigDecimal() * dividendPerAsset).round(0)
+        }
+    }
+    if ((quantity ?: 0) > 0)
+        old.add(this)
+}
+
+private fun String.isCurrency(): Boolean {
+    return Currency.values().any { c -> c.name == this }
 }
 
 private fun currencyOf(ticker: String): Currency? {

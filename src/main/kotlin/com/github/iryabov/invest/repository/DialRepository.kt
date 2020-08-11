@@ -156,7 +156,7 @@ select
     d.ticker as asset_ticker,
     a.name as asset_name,
     d.type as type,
-    abs(d.quantity) as quantity,
+    d.quantity as quantity,
     d.currency as currency,
     (case when d.currency = :currency then abs(d.volume)
      else abs(coalesce((select r.price * d.volume from rate r where  r.dt = d.dt and  r.currency_purchase = d.currency and  r.currency_sale = :currency), 0)) 
@@ -179,7 +179,14 @@ select
         from writeoff w
         where w.dial_from = d.id
           and d.quantity > 0
-    ) as sold_quantity
+    ) as sold_quantity,
+    (
+        select sum(od.quantity)
+        from dial od
+        where od.account_id = :account_id
+          and od.ticker = :asset_id 
+          and od.dt < d.dt
+    ) as old_quantity
 from dial d
 left join asset a on a.ticker = d.ticker
 where d.account_id = :account_id

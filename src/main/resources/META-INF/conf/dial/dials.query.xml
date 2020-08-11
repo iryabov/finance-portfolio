@@ -51,22 +51,25 @@
             <select mapping="volume"/>
         </field>
         <field id="quantity" domain="integer">
-            <select mapping="quantity"/>
+            <select mapping="quantity" normalize="#this == 0 ? null : #this"/>
         </field>
         <field id="price" domain="numeric">
-            <select mapping="price"/>
+            <select mapping="price" normalize="#this == 0 ? null : #this"/>
         </field>
         <field id="soldQuantity" domain="integer">
             <select mapping="soldQuantity" normalize="#this != null ? '-' + #this : null"/>
         </field>
         <field id="profit" domain="numeric">
-            <select mapping="profit" normalize="#this != null &amp;&amp; #this != 0 ? #this : null"/>
+            <select mapping="profit" normalize="#this != null &amp;&amp; #this != 0 ? #this : #data['dividendProfit'] > 0 ? #data['dividendProfit'] : null"/>
         </field>
         <field id="profitColor" domain="string">
-            <select mapping="profit" normalize="#this != null &amp;&amp; #this > 0 ? 'success' : 'danger'"/>
+            <select mapping="profit" normalize="#this != null &amp;&amp; #this != 0 ? #this > 0 ? 'success' : 'danger' : #data['dividendProfit'] > 0 ? 'info' : null"/>
         </field>
         <field id="activeAsset" domain="boolean">
             <select mapping="quantity != null &amp;&amp; soldQuantity != null ? quantity > soldQuantity : true"/>
+        </field>
+        <field id="dividendProfit" domain="numeric">
+            <select mapping="dividendProfit"/>
         </field>
     </fields>
 </query>
