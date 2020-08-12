@@ -12,7 +12,7 @@ data class DialForm(
         var type: DialType,
         var currency: Currency,
         var volume: BigDecimal,
-        var quantity: Int
+        var quantity: Int? = null
 ) {
     constructor() : this("", null, DialType.PURCHASE, Currency.RUB, P0, 0)
 }

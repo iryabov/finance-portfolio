@@ -248,7 +248,7 @@ private fun AssetView.calcProportion(totalNetValue: BigDecimal, totalMarketValue
 
 private fun DialForm.toEntityWith(accountId: Int): Dial {
     val quantity: Int = when {
-        this.type.quantity -> if (!this.type.income) this.quantity else this.quantity.negate()
+        this.type.quantity -> if (!this.type.income) this.quantity!! else this.quantity!!.negate()
         this.type.currency -> if (!this.type.income) this.volume.toInt() else this.volume.toInt().negate()
         else -> 0
     }

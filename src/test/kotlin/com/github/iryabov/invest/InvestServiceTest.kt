@@ -32,7 +32,7 @@ import java.time.LocalDate
 import java.time.Month
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE,
-        properties = ["spring.datasource.url=jdbc:postgresql://localhost:5432/invest"])
+        properties = ["spring.datasource.url=jdbc:postgresql://localhost:5432/invest_test"])
 @Sql("/schema.sql")
 class InvestServiceTest(
         @Autowired
@@ -64,13 +64,23 @@ class InvestServiceTest(
     }
 
     @Test
-    @Disabled
+    //@Disabled
     fun test() {
         //account creating
         val accountId = investService.createAccount(AccountForm("MyBrocker", "12345"))
         assertThat(accountRepo.findById(accountId)).isPresent
 
-        //dial creating
+        //dial deposit
+        val deposit = investService.addDial(accountId, DialForm(type = DialType.DEPOSIT,
+                ticker = "RUB",
+                volume = BigDecimal(100),
+                currency = Currency.RUB))
+        assertThat(dialRepo.findById(deposit).get()).matches { d ->
+            d.ticker == "RUB" && d.accountId == accountId && d.active
+                    && d.quantity == 100 && d.volume == BigDecimal(-100)
+        }
+
+        //dial purchase
         val purchase = investService.addDial(accountId, DialForm(type = DialType.PURCHASE,
                 ticker = "TEST",
                 volume = BigDecimal(100),
@@ -109,8 +119,8 @@ class InvestServiceTest(
 
         account = investService.getAccount(accountId)
         assertThat(account).matches {
-            it.totalNetValue.eq(BigDecimal(80))
-            it.assets.find { a -> a.assetTicker == "TEST" }!!.netValue.eq(BigDecimal(80))
+            it.totalNetValue.eq(BigDecimal(100))
+            it.assets.find { a -> a.assetTicker == "TEST" }!!.netValue.eq(BigDecimal(100))
         }
 
         //dial activating
@@ -195,7 +205,7 @@ class InvestServiceTest(
 
     @Test
     @Transactional
-    //@Disabled
+    @Disabled
     @Rollback(false)
     fun csvLoad() {
         csvLoader.load(ClassPathResource("/csv/test2.csv"))
