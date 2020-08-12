@@ -36,7 +36,7 @@ interface DialRepository : CrudRepository<Dial, Long> {
       and d.type in ('PURCHASE', 'SALE') 
       and d.dt >= :from 
       and d.dt <= :till
-    order by d.dt  
+    order by d.dt, d.id  
     """)
     fun findAllByPeriod(@Param("account_id") accountId: Int,
                         @Param("ticker") ticker: String,
@@ -185,13 +185,14 @@ select
         from dial od
         where od.account_id = :account_id
           and od.ticker = :asset_id 
+          and od.active = true
           and od.dt < d.dt
     ) as old_quantity
 from dial d
 left join asset a on a.ticker = d.ticker
 where d.account_id = :account_id
   and d.ticker = :asset_id   
-order by d.dt desc     
+order by d.dt desc, d.id desc     
     """)
     fun findAllByAsset(@Param("account_id") accountId: Int,
                        @Param("asset_id") ticker: String,
@@ -203,7 +204,7 @@ order by d.dt desc
         where d.active = true
           and d.account_id = :account_id
           and d.dt > :date_from
-        order by d.dt  
+        order by d.dt, d.id
     """)
     fun findAllSaleAndPurchaseLaterThan(@Param("account_id") accountId: Int,
                                         @Param("ticker") ticker: String,

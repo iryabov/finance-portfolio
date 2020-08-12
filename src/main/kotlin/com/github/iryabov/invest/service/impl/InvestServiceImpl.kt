@@ -285,14 +285,24 @@ private fun Dial.invert(): Dial {
 }
 
 private fun DialView.calcDividend(old : MutableList<DialView>) {
+    if (!this.active)
+        return
     if (type == DialType.DIVIDEND && (oldQuantity ?: 0) > 0) {
         val dividendPerAsset = (volume ?: P0).divide((oldQuantity ?: 0).toBigDecimal(), 2, RoundingMode.HALF_UP)
+        var remainQuantity = oldQuantity!!
         old.forEach {
-            it.dividendProfit += ((it.oldQuantity ?: 0).toBigDecimal() * dividendPerAsset).round(0)
+            remainQuantity -= it.quantity!!
+            val quantityByDividendDate = if (remainQuantity < 0) {
+                it.quantity!! + remainQuantity
+            } else {
+                it.quantity!!
+            }
+            if (quantityByDividendDate > 0)
+                it.dividendProfit += (quantityByDividendDate.toBigDecimal() * dividendPerAsset).round(0)
         }
     }
     if ((quantity ?: 0) > 0)
-        old.add(this)
+        old.add(0, this)
 }
 
 private fun String.isCurrency(): Boolean {
