@@ -19,6 +19,6 @@ data class DialView(
         var price: BigDecimal?,
         var soldQuantity: Int?,
         var profit: BigDecimal?,
-        var oldQuantity: Int?) {
+        var dividendQuantity: Int?) {
     var dividendProfit: BigDecimal = P0
 }

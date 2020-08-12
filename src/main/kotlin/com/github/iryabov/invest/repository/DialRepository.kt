@@ -180,19 +180,20 @@ select
         where w.dial_from = d.id
           and d.quantity > 0
     ) as sold_quantity,
-    (
-        select sum(od.quantity)
+    (case when d.type = 'DIVIDEND' then
+        (select sum(od.quantity)
         from dial od
         where od.account_id = :account_id
           and od.ticker = :asset_id 
           and od.active = true
-          and od.dt < d.dt
-    ) as old_quantity
+          and od.dt < d.dt)
+     else null end     
+    ) as dividend_quantity
 from dial d
 left join asset a on a.ticker = d.ticker
 where d.account_id = :account_id
   and d.ticker = :asset_id   
-order by d.dt desc, d.id desc     
+order by d.dt desc, d.id desc   
     """)
     fun findAllByAsset(@Param("account_id") accountId: Int,
                        @Param("asset_id") ticker: String,
