@@ -2,12 +2,18 @@ package com.github.iryabov.invest.service.impl
 
 import java.math.BigDecimal
 import java.math.RoundingMode
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import kotlin.math.abs
 
 val N1 = BigDecimal(-1)
 val P100 = BigDecimal(100)
 val P0 = BigDecimal.ZERO
 val P1 = BigDecimal.ONE
+
+fun money(value: Int) = BigDecimal(value)
+fun money(value: Double) = BigDecimal(value)
+fun date(value: String) = LocalDate.parse(value, DateTimeFormatter.ISO_LOCAL_DATE)
 
 fun calcProfitPercent(a: BigDecimal, b: BigDecimal): BigDecimal {
     return if (b.compareTo(P0) != 0) a.divide(b, 2, RoundingMode.HALF_UP) * P100 - P100 else P0

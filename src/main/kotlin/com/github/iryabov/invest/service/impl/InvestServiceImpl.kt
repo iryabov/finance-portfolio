@@ -201,7 +201,7 @@ class InvestServiceImpl(
             }
         }
         if (needToSell > 0)
-            throw IllegalStateException("Need to sell $needToSell ${dial.ticker}, but they haven't")
+            throw NotEnoughFundsException("Need to sell $needToSell ${dial.ticker}, but they haven't")
     }
 
 }
