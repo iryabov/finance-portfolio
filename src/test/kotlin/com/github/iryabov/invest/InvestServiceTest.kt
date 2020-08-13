@@ -120,7 +120,7 @@ class InvestServiceTest(
         account = investService.getAccount(accountId)
         assertThat(account).matches {
             it.totalNetValue.eq(BigDecimal(105)) &&
-            it.assets.find { a -> a.assetTicker == "TEST" }!!.netValue.eq(BigDecimal(80))
+                    it.assets.find { a -> a.assetTicker == "TEST" }!!.netValue.eq(BigDecimal(80))
         }
 
         //dial deactivating
@@ -130,7 +130,7 @@ class InvestServiceTest(
         account = investService.getAccount(accountId)
         assertThat(account).matches {
             it.totalNetValue.eq(BigDecimal(100)) &&
-            it.assets.find { a -> a.assetTicker == "TEST" }!!.netValue.eq(BigDecimal(100))
+                    it.assets.find { a -> a.assetTicker == "TEST" }!!.netValue.eq(BigDecimal(100))
         }
 
         //dial activating
@@ -140,7 +140,7 @@ class InvestServiceTest(
         account = investService.getAccount(accountId)
         assertThat(account).matches {
             it.totalNetValue.eq(BigDecimal(105)) &&
-            it.assets.find { a -> a.assetTicker == "TEST" }!!.netValue.eq(BigDecimal(80))
+                    it.assets.find { a -> a.assetTicker == "TEST" }!!.netValue.eq(BigDecimal(80))
         }
 
         //dial deleting
@@ -160,7 +160,7 @@ class InvestServiceTest(
         assertThat(accountRepo.findById(accountId)).isPresent
 
         assertThatThrownBy {
-            investService.addDial(accountId, DialForm("AAA", date("2020-04-07"), PURCHASE, RUB, money(500),5))
+            investService.addDial(accountId, DialForm("AAA", date("2020-04-07"), PURCHASE, RUB, money(500), 5))
         }.isInstanceOf(NotEnoughFundsException::class.java)
 
         val deposit2000 = investService.addDial(accountId, DialForm("RUB", date("2020-02-09"),
@@ -181,28 +181,57 @@ class InvestServiceTest(
         val sale5For450 = investService.addDial(accountId, DialForm("AAA", date("2020-07-07"),
                 SALE, RUB, money(450), 5))
 
-        assertThatAsset(accountId, "AAA") {
-            it.quantity == 15 && it.netValue.eq(money(1450))
-        }
-        assertThatDial(purchase5For500) {it.soldQuantity == 5 }
+        assertThatAsset(accountId, "AAA") { it.quantity == 15 && it.netValue.eq(money(1450)) }
+        assertThatDial(purchase5For500) { it.soldQuantity == 5 }
+        assertThatDial(purchase10For1000) { it.soldQuantity == 5 }
+        assertThatDial(purchase10For950) { it.soldQuantity == null }
+        assertThatDial(sale5For450) { it.profit!!.eq(money(-50)) }
+
+        investService.deactivateDial(accountId, purchase10For1000)
+        assertThatAsset(accountId, "AAA") { it.quantity == 5 && it.netValue.eq(money(475)) }
+        assertThatDial(purchase5For500) { it.soldQuantity == 5 }
+        assertThatDial(purchase10For1000) { it.soldQuantity == null }
+        assertThatDial(purchase10For950) { it.soldQuantity == 5 }
+        assertThatDial(sale5For450) { it.profit!!.eq(money(-25)) }
 
         val dividend25 = investService.addDial(accountId, DialForm("AAA", date("2020-07-30"),
                 DIVIDEND, RUB, money(25)))
+        assertThatDial(purchase10For950) { it.dividendProfit.eq(money(25)) }
 
-        val sale5For600 = investService.addDial(accountId, DialForm("AAA", date("2020-08-08"),
-                SALE, RUB, money(600), 5))
+        investService.deactivateDial(accountId, purchase10For1000)
+        assertThatAsset(accountId, "AAA") { it.quantity == 15 && it.netValue.eq(money(1450)) }
+        assertThatDial(purchase5For500) { it.soldQuantity == 5 }
+        assertThatDial(purchase10For1000) { it.soldQuantity == 5 }
+        assertThatDial(purchase10For1000) { it.dividendProfit.eq(money(8)) }
+        assertThatDial(purchase10For950) { it.soldQuantity == null }
+        assertThatDial(purchase10For950) { it.dividendProfit.eq(money(17)) }
+        assertThatDial(sale5For450) { it.profit!!.eq(money(-50)) }
 
         val dividend20 = investService.addDial(accountId, DialForm("AAA", date("2020-08-20"),
                 DIVIDEND, RUB, money(20)))
+        assertThatDial(purchase10For1000) { it.dividendProfit.eq(money(15)) }
+        assertThatDial(purchase10For950) { it.dividendProfit.eq(money(30)) }
+
+        val sale5For600 = investService.addDial(accountId, DialForm("AAA", date("2020-08-08"),
+                SALE, RUB, money(600), 5))
+        assertThatAsset(accountId, "AAA") { it.quantity == 10 && it.netValue.eq(money(950)) }
+        assertThatDial(purchase10For1000) { it.dividendProfit.eq(money(8)) }
+        assertThatDial(purchase10For950) { it.dividendProfit.eq(money(37)) }
+        assertThatDial(sale5For600) { it.profit!!.eq(money(100)) }
+        assertThatDial(purchase10For1000) { it.soldQuantity == 10 }
 
         val sale10For1000 = investService.addDial(accountId, DialForm("AAA", date("2020-09-10"),
                 SALE, RUB, money(1000), 10))
+        assertThatAsset(accountId, "AAA") { it.quantity == 0 && it.netValue.eq(money(0)) }
+        assertThatDial(sale10For1000) { it.profit!!.eq(money(50)) }
 
         val withdrawals = investService.addDial(accountId, DialForm("RUB", date("2020-10-01"),
                 WITHDRAWALS, RUB, money(2050)))
+        assertThatAsset(accountId, "RUB") { it.quantity == 95 && it.netValue.eq(money(95)) }
 
         val tax10 = investService.addDial(accountId, DialForm("AAA", date("2021-01-10"),
                 TAX, RUB, money(10)))
+        assertThatAsset(accountId, "RUB") { it.quantity == 85 && it.netValue.eq(money(85)) }
 
         //account deleting
         investService.deleteAccount(accountId)
