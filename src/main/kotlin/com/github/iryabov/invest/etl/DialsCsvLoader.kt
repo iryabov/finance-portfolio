@@ -76,7 +76,7 @@ class DialsCsvLoader(
     }
 
     private fun String.toDate(): LocalDate {
-        val formatter = DateTimeFormatter.ofPattern("dd.MM.yy")
+        val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
         return LocalDate.parse(this, formatter)
     }
 

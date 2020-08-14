@@ -204,10 +204,11 @@ order by d.dt desc, d.id desc
         from dial d
         where d.active = true
           and d.account_id = :account_id
-          and d.dt > :date_from
+          and (d.dt > :date_from or (d.dt = :date_from and d.id > :id))
         order by d.dt, d.id
     """)
     fun findAllSaleAndPurchaseLaterThan(@Param("account_id") accountId: Int,
                                         @Param("ticker") ticker: String,
-                                        @Param("date_from") dateFrom: LocalDate): List<Dial>
+                                        @Param("date_from") dateFrom: LocalDate,
+                                        @Param("id") dialId: Long): List<Dial>
 }

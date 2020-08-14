@@ -53,13 +53,14 @@ where d.active = true
   and d.ticker != d.currency
   and d.account_id = :account_id
   and d.currency = :ticker   
-  and d.dt <= :date_from
+  and (d.dt < :date_from or (d.dt = :date_from and d.id < :id))
 ) d
 order by d.dt, d.dial_from
     """)
     fun findBalance(@Param("account_id") accountId: Int,
                     @Param("ticker") ticker: String,
-                    @Param("date_from") dateFrom: LocalDate): List<Balance>
+                    @Param("date_from") dateFrom: LocalDate,
+                    @Param("id") dialId: Long): List<Balance>
 
 
     @Modifying
@@ -71,12 +72,13 @@ order by d.dt, d.dial_from
             where d.id = w.dial_to 
               and d.active = true
               and d.account_id = :account_id
-              and d.dt > :date_from
+              and (d.dt > :date_from or (d.dt = :date_from and d.id > :id))
             ) 
     """)
     fun deleteAllLaterThan(@Param("account_id") accountId: Int,
                            @Param("ticker") ticker: String,
-                           @Param("date_from") dateFrom: LocalDate)
+                           @Param("date_from") dateFrom: LocalDate,
+                           @Param("id") dialId: Long)
 
     @Modifying
     @Query("""

@@ -179,17 +179,17 @@ class InvestServiceImpl(
 
     private fun writeOffByFifoAndRecalculation(dial: Dial, calc: Boolean = true) {
         if (dial.quantity >= 0) return
-        writeOffRepo.deleteAllLaterThan(dial.accountId, dial.ticker, dial.date)
+        writeOffRepo.deleteAllLaterThan(dial.accountId, dial.ticker, dial.date, dial.id!!)
         if (calc)
             writeOffByFifo(dial)
-        val lateDials = dialRepo.findAllSaleAndPurchaseLaterThan(dial.accountId, dial.ticker, dial.date)
+        val lateDials = dialRepo.findAllSaleAndPurchaseLaterThan(dial.accountId, dial.ticker, dial.date, dial.id!!)
         for (lateDial in lateDials) {
             writeOffByFifo(if (lateDial.quantity < 0) lateDial else lateDial.invert())
         }
     }
 
     private fun writeOffByFifo(dial: Dial) {
-        val fifo = writeOffRepo.findBalance(dial.accountId, dial.ticker, dial.date).listIterator()
+        val fifo = writeOffRepo.findBalance(dial.accountId, dial.ticker, dial.date, dial.id!!).listIterator()
         var needToSell = -1 * dial.quantity
         while (needToSell > 0 && fifo.hasNext()) {
             val balance = fifo.next()
@@ -201,7 +201,7 @@ class InvestServiceImpl(
             }
         }
         if (needToSell > 0)
-            throw NotEnoughFundsException("Need to sell $needToSell ${dial.ticker}, but they haven't")
+            throw NotEnoughFundsException("Need to sell $needToSell ${dial.ticker}, but they haven't on ${dial.date}")
     }
 
 }

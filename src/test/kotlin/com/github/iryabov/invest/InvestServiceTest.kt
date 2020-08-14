@@ -74,7 +74,7 @@ class InvestServiceTest(
     }
 
     @Test
-    @Disabled
+    //@Disabled
     fun test() {
         //account creating
         val accountId = investService.createAccount(AccountForm("MyBrocker", "12345"))
@@ -144,8 +144,8 @@ class InvestServiceTest(
         }
 
         //dial deleting
-        investService.deleteDial(accountId, purchase)
-        assertThat(dialRepo.findById(purchase).isEmpty).isTrue()
+        investService.deleteDial(accountId, sale)
+        assertThat(dialRepo.findById(sale).isEmpty).isTrue()
 
         //account deleting
         investService.deleteAccount(accountId)
@@ -153,7 +153,7 @@ class InvestServiceTest(
     }
 
     @Test
-//    @Disabled
+    //@Disabled
     fun writeoff() {
         //account creating
         val accountId = investService.createAccount(AccountForm("WriteOffTest", "12345"))
@@ -238,6 +238,46 @@ class InvestServiceTest(
         assertThat(accountRepo.findById(accountId).isEmpty).isTrue()
     }
 
+    @Test
+    fun writeoffIntraday() {
+        val accountId = investService.createAccount(AccountForm("WriteOffIntradayTest", "12345"))
+        assertThat(accountRepo.findById(accountId)).isPresent
+
+        //RUB=1500
+        val dial1 = investService.addDial(accountId, DialForm("RUB", date("2020-08-01"), DEPOSIT, RUB, money(1500)))
+        //RUB=500, AAA=1000
+        val dial2 = investService.addDial(accountId, DialForm("AAA", date("2020-08-01"), PURCHASE, RUB, money(1000), 10))
+        //RUB=0, AAA=1500
+        val dial3 = investService.addDial(accountId, DialForm("AAA", date("2020-08-01"), PURCHASE, RUB, money(500), 5))
+        //RUB=1000, AAA=500
+        val dial4 = investService.addDial(accountId, DialForm("AAA", date("2020-08-01"), SALE, RUB, money(1000), 10))
+        //RUB=0, AAA=500, BBB=1000
+        val dial5 = investService.addDial(accountId, DialForm("BBB", date("2020-08-01"), PURCHASE, RUB, money(1000), 1))
+        assertThatAsset(accountId, "RUB") { it.quantity == 0 && it.netValue.eq(money(0)) }
+        assertThatAsset(accountId, "AAA") { it.quantity == 5 && it.netValue.eq(money(500)) }
+        assertThatAsset(accountId, "BBB") { it.quantity == 1 && it.netValue.eq(money(1000)) }
+
+        assertThatThrownBy {
+            //RUB=-1000, AAA=1500, BBB=1000
+            investService.deactivateDial(accountId, dial4)
+        }.isInstanceOf(NotEnoughFundsException::class.java)
+        //RUB=1000, AAA=500, BBB=0
+        investService.deactivateDial(accountId, dial5)
+        //RUB=0, AAA=1500, BBB=0
+        investService.deactivateDial(accountId, dial4)
+        //RUB=1000, AAA=500, BBB=0
+        investService.deactivateDial(accountId, dial2)
+        //RUB=0, AAA=500, BBB=1000
+        investService.deactivateDial(accountId, dial5)
+        assertThatAsset(accountId, "RUB") { it.quantity == 0 && it.netValue.eq(money(0)) }
+        assertThatAsset(accountId, "AAA") { it.quantity == 5 && it.netValue.eq(money(500)) }
+        assertThatAsset(accountId, "BBB") { it.quantity == 1 && it.netValue.eq(money(1000)) }
+
+        //account deleting
+        investService.deleteAccount(accountId)
+        assertThat(accountRepo.findById(accountId).isEmpty).isTrue()
+    }
+
     @Test()
     @Disabled
     fun getAccountView() {
@@ -302,9 +342,8 @@ class InvestServiceTest(
     @Test
     @Transactional
     @Disabled
-    @Rollback(false)
     fun csvLoad() {
-        csvLoader.load(ClassPathResource("/csv/test2.csv"))
+        csvLoader.load(ClassPathResource("/csv/test.csv"))
     }
 
     @Test
