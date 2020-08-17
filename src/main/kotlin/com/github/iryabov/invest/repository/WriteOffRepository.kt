@@ -27,14 +27,14 @@ select
         FROM writeoff w
         JOIN dial d2 ON d2.id = w.dial_to
         WHERE w.dial_from = d.id
-          AND d2.dt <= :date_from
+          AND (d2.dt < :date_from or (d2.dt = :date_from and d2.id < :id))
     ) as sold_quantity    
 from dial d
 where d.active = true
   and d.quantity > 0
   and d.ticker = :ticker         
   and d.account_id = :account_id
-  and d.dt <= :date_from
+  and (d.dt < :date_from or (d.dt = :date_from and d.id < :id))
 union 
 select 
     d.id as dial_from,
@@ -45,7 +45,7 @@ select
     FROM writeoff w
     JOIN dial d2 ON d2.id = w.dial_to
     WHERE w.dial_from = d.id
-      AND d2.dt <= :date_from
+      AND (d2.dt < :date_from or (d2.dt = :date_from and d2.id < :id))
     ) as sold_quantity   
 from dial d
 where d.active = true

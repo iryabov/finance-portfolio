@@ -276,7 +276,7 @@ private fun Dial.invert(): Dial {
             accountId = accountId,
             ticker = currency!!.name,
             currency = currencyOf(ticker),
-            quantity = volume.intValueExact(),
+            quantity = volume.round(0).intValueExact(),
             volume = BigDecimal(quantity),
             type = type.invert(),
             note = note,

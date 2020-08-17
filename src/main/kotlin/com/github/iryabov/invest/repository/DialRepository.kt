@@ -49,7 +49,16 @@ select
     a.asset_ticker,
     s.name as asset_name,
     s.class as asset_class,
-    s.price_now as asset_price_now,
+    (case when s.currency = :currency then s.price_now
+     else coalesce(
+        (select r.price
+         from rate r 
+         where r.currency_purchase = s.currency 
+           and r.currency_sale = :currency
+           and r.dt <= current_date
+         order by r.dt desc limit 1) * s.price_now, 
+        null) 
+     end) as asset_price_now,
     a.quantity,
     a.volume_cur,
     a.net_value,

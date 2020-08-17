@@ -11,6 +11,7 @@ import org.springframework.core.io.Resource
 import org.springframework.stereotype.Component
 import java.util.*
 import com.github.iryabov.invest.etl.CsvColumn.*
+import com.github.iryabov.invest.service.impl.round
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -28,14 +29,19 @@ class DialsCsvLoader(
     fun load(csv: Resource) {
         val records = readRecords(csv)
         for (record in records) {
-            val dial = DialForm(
-                    ticker = record[TICKER.idx].toTicker(),
-                    opened = record[OPENED.idx].toDate(),
-                    currency = record[CURRENCY.idx].toCurrency(),
-                    volume = record[AMOUNT.idx].toAmount(),
-                    quantity = record[QUANTITY.idx].toQuantity(),
-                    type = record[TYPE.idx].toType())
-            service.addDial(record[ACCOUNT.idx].toAccountId(), dial)
+            try {
+                val dial = DialForm(
+                        ticker = record[TICKER.idx].toTicker(),
+                        opened = record[OPENED.idx].toDate(),
+                        currency = record[CURRENCY.idx].toCurrency(),
+                        volume = record[AMOUNT.idx].toAmount(),
+                        quantity = if (record.size > QUANTITY.idx) record[QUANTITY.idx].toQuantity() else null,
+                        type = record[TYPE.idx].toType())
+                service.addDial(record[ACCOUNT.idx].toAccountId(), dial)
+            } catch (e: Exception) {
+                print(record)
+                throw e
+            }
         }
     }
 
@@ -55,8 +61,17 @@ class DialsCsvLoader(
         val values: MutableList<String> = ArrayList()
         Scanner(line).use { row ->
             row.useDelimiter(delimiter)
+            var part: String? = null
             while (row.hasNext()) {
-                values.add(row.next())
+                val cur = row.next().trim()
+                if (part != null && cur.endsWith("\"") && !cur.startsWith("\"")) {
+                    values.add("$part,$cur")
+                    part = null
+                } else if (part == null && cur.startsWith("\"") && !cur.endsWith("\"")) {
+                    part = cur
+                } else {
+                    values.add(cur)
+                }
             }
         }
         return values
@@ -68,9 +83,9 @@ class DialsCsvLoader(
 
     private fun String.toCurrency(): Currency {
         return when (this) {
-            "р" -> Currency.RUB
-            "$" -> Currency.USD
-            "e" -> Currency.EUR
+            "р", "RUB" -> Currency.RUB
+            "$", "USD" -> Currency.USD
+            "e", "EUR" -> Currency.EUR
             else -> throw IllegalArgumentException(this)
         }
     }
@@ -82,13 +97,13 @@ class DialsCsvLoader(
 
     private fun String.toType(): DialType {
         return when (this) {
-            "b" -> DialType.PURCHASE
-            "s" -> DialType.SALE
-            "d" -> DialType.DIVIDEND
-            "p" -> DialType.PERCENT
-            "t" -> DialType.TAX
-            "i" -> DialType.DEPOSIT
-            "o" -> DialType.WITHDRAWALS
+            "b", "PURCHASE" -> DialType.PURCHASE
+            "s", "SALE" -> DialType.SALE
+            "d", "DIVIDEND" -> DialType.DIVIDEND
+            "p", "PERCENT" -> DialType.PERCENT
+            "t", "TAX" -> DialType.TAX
+            "i", "DEPOSIT" -> DialType.DEPOSIT
+            "o", "WITHDRAWALS" -> DialType.WITHDRAWALS
             else -> throw java.lang.IllegalArgumentException(this)
         }
     }
@@ -111,7 +126,9 @@ class DialsCsvLoader(
         return if (!this.isBlank())
             abs(this.replace(" ", "")
                     .replace("\"", "")
-                    .replace(" ", "").toInt())
+                    .replace(" ", "")
+                    .replace(",", ".")
+                    .toBigDecimal().round(0).toInt())
         else 0
     }
 
