@@ -10,6 +10,7 @@ import com.github.iryabov.invest.relation.Period
 import com.github.iryabov.invest.repository.*
 import com.github.iryabov.invest.service.InvestService
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.lang.Integer.min
@@ -114,7 +115,7 @@ class InvestServiceImpl(
     }
 
     override fun getSecurities(): List<SecurityView> {
-        return assetRepo.findAll().map { it.toView() }
+        return assetRepo.findAll(Sort.by("ticker")).map { it.toView() }
     }
 
     override fun addSecurity(form: Asset) {

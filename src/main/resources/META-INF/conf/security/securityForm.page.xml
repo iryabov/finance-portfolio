@@ -41,6 +41,7 @@
             </select>
             <select id="sector" label="Sector">
                 <options>
+                    <option id="FOND" name="Fond"/>
                     <option id="GOVERNMENT" name="Government"/>
                     <option id="FINANCE" name="Finances"/>
                     <option id="TECHNOLOGY" name="Technology"/>
@@ -49,6 +50,7 @@
                     <option id="ENERGY" name="Energy"/>
                     <option id="RETAIL" name="Retail"/>
                     <option id="GOLD" name="Gold"/>
+                    <option id="REALTY" name="Realty"/>
                 </options>
             </select>
             <select id="country" label="Country">

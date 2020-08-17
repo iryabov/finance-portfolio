@@ -1,6 +1,7 @@
 package com.github.iryabov.invest.relation
 
 enum class Sector {
+    FOND,
     GOVERNMENT,
     FINANCE,
     TECHNOLOGY,
@@ -8,5 +9,6 @@ enum class Sector {
     METAL,
     ENERGY,
     RETAIL,
-    GOLD
+    GOLD,
+    REALTY
 }

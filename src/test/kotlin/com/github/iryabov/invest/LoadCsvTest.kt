@@ -56,7 +56,7 @@ class LoadCsvTest(
     //@Disabled
     @Rollback(false)
     fun csvLoad() {
-        csvLoader.load(FileSystemResource("excel/test3.csv"))
+        csvLoader.load(FileSystemResource("excel/test4.csv"))
     }
 
 }
