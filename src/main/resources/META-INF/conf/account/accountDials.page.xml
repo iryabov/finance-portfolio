@@ -3,7 +3,7 @@
       name="Dials history">
     <regions>
         <region>
-            <table query-id="dials">
+            <table query-id="dials" selection="none">
                 <columns>
                     <column text-field-id="active" label="A">
                         <checkbox>
@@ -38,7 +38,7 @@
                     </column>
                     <column text-field-id="" width="20px">
                         <toolbar>
-                            <button id="delete" icon="fa fa-trash">
+                            <button id="delete" icon="fa fa-trash" confirm="true">
                                 <invoke operation-id="deleteDial" route="/delete"/>
                             </button>
                         </toolbar>
