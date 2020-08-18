@@ -24,7 +24,7 @@ interface InvestService {
 
     fun getAssetHistory(accountId: Int, ticker: String, period: Period, currency: Currency = Currency.RUB): List<AssetHistoryView>
 
-    fun getDials(accountId: Int, ticker: String, currency: Currency = Currency.RUB): List<DialView>
+    fun getDials(accountId: Int, currency: Currency = Currency.RUB, ticker: String? = null): List<DialView>
 
     fun getSecurities(): List<SecurityView>
 

@@ -193,7 +193,7 @@ select
         (select sum(od.quantity)
         from dial od
         where od.account_id = :account_id
-          and od.ticker = :asset_id 
+          and od.ticker = d.ticker 
           and od.active = true
           and od.dt < d.dt)
      else null end     
@@ -201,12 +201,12 @@ select
 from dial d
 left join asset a on a.ticker = d.ticker
 where d.account_id = :account_id
-  and d.ticker = :asset_id   
+  and (:ticker is null or d.ticker = :ticker)   
 order by d.dt desc, d.id desc   
     """)
     fun findAllByAsset(@Param("account_id") accountId: Int,
-                       @Param("asset_id") ticker: String,
-                       @Param("currency") currency: Currency): List<DialView>
+                       @Param("currency") currency: Currency,
+                       @Param("ticker") ticker: String?): List<DialView>
 
     @Query("""
         select *

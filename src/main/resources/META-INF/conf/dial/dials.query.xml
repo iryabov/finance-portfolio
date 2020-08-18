@@ -6,8 +6,18 @@
             <spring/>
             <arguments>
                 <argument type="primitive" name="accountId"/>
-                <argument type="primitive" name="ticker"/>
                 <argument type="primitive" name="currency"/>
+                <argument type="primitive" name="ticker"/>
+            </arguments>
+        </java>
+    </list>
+    <list result-mapping="#this" filters="accountId,currency" count-mapping="size()">
+        <java method="getDials" class="com.github.iryabov.invest.service.InvestService">
+            <spring/>
+            <arguments>
+                <argument type="primitive" name="accountId"/>
+                <argument type="primitive" name="currency"/>
+                <argument type="primitive" name="ticker" default-value="null"/>
             </arguments>
         </java>
     </list>
@@ -30,11 +40,15 @@
         <field id="asset.ticker" domain="string">
             <select mapping="assetTicker"/>
             <filters>
-                <eq filter-id="ticker" mapping="[1]"/>
+                <eq filter-id="ticker" mapping="[2]"/>
             </filters>
         </field>
         <field id="asset.name" domain="string">
             <select mapping="assetName"/>
+        </field>
+        <field id="asset.fullName" domain="string">
+            <select mapping="assetTicker"
+                    normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).fullName(#data['asset.name'], #this)"/>
         </field>
         <field id="type" domain="string">
             <select mapping="type"/>
@@ -44,7 +58,7 @@
             <filters>
                 <eq filter-id="currency" default-value="${portfolio.currency}"
                     normalize="T(com.github.iryabov.invest.relation.Currency).valueOf(#this)"
-                    mapping="[2]"/>
+                    mapping="[1]"/>
             </filters>
         </field>
         <field id="volume" domain="numeric">
@@ -60,16 +74,21 @@
             <select mapping="soldQuantity" normalize="#this != null ? '-' + #this : null"/>
         </field>
         <field id="profit" domain="numeric">
-            <select mapping="profit" normalize="#this != null &amp;&amp; #this != 0 ? #this : #data['dividendProfit'] > 0 ? #data['dividendProfit'] : null"/>
+            <select mapping="profit"
+                    normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).round(#this, #data['dividendProfit'])"/>
         </field>
         <field id="profitColor" domain="string">
-            <select mapping="profit" normalize="#this != null &amp;&amp; #this != 0 ? #this > 0 ? 'success' : 'danger' : #data['dividendProfit'] > 0 ? 'info' : null"/>
+            <select mapping="profit"
+                    normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).color(#this, #data['dividendProfit'])"/>
         </field>
         <field id="activeAsset" domain="boolean">
             <select mapping="quantity != null &amp;&amp; soldQuantity != null ? quantity > soldQuantity : true"/>
         </field>
         <field id="dividendProfit" domain="numeric">
             <select mapping="dividendProfit"/>
+        </field>
+        <field id="soldOut" domain="boolean">
+            <select mapping="soldQuantity" normalize="#this > 0 &amp;&amp; #this >= #data['quantity']"/>
         </field>
     </fields>
 </query>

@@ -385,14 +385,14 @@ class InvestServiceTest(
     }
 
     private fun assertThatDial(accountId: Int, ticker: String, date: LocalDate, predicate: (DialView) -> Boolean): AssertContinue<DialView> {
-        val found = investService.getDials(accountId, ticker).find { it.dt == date }!!
+        val found = investService.getDials(accountId, RUB, ticker).find { it.dt == date }!!
         assertThat(found).matches(predicate)
         return AssertContinue(found)
     }
 
     private fun assertThatDial(dialId: Long, predicate: (DialView) -> Boolean): AssertContinue<DialView> {
         val dial = dialRepo.findByIdOrNull(dialId)!!
-        val found = investService.getDials(dial.accountId, dial.ticker).find {
+        val found = investService.getDials(dial.accountId, RUB, dial.ticker).find {
             it.dt == dial.date && it.type == dial.type && it.active == dial.active
         }!!
         assertThat(found).matches(predicate)

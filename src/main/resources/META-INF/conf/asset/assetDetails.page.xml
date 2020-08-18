@@ -77,15 +77,15 @@
             </form>
             <table id="dials" query-id="dials" route="/dials" selection="none">
                 <columns>
-                    <column text-field-id="active">
+                    <column text-field-id="active" label="A">
                         <checkbox>
                             <invoke operation-id="deactivateDial" message-on-success="false"/>
                         </checkbox>
                     </column>
                     <!--            <column text-field-id="asset.ticker"/>-->
                     <!--            <column text-field-id="asset.name"/>-->
-                    <column text-field-id="dt"/>
-                    <column text-field-id="type">
+                    <column text-field-id="dt" label="Date"/>
+                    <column text-field-id="type" label="Type">
                         <badge>
                             <switch value-field-id="type">
                                 <case value="PURCHASE">success</case>
@@ -97,12 +97,11 @@
                             </switch>
                         </badge>
                     </column>
-                    <column text-field-id="currency"/>
-                    <column text-field-id="price">
+                    <column text-field-id="currency" label="Currency"/>
+                    <column text-field-id="price" label="Price">
                         <text format="number 0.00"/>
                     </column>
-                    <column text-field-id="soldQuantity" label="Quantity">
-                        <badge text="{quantity}" color="danger"/>
+                    <column text-field-id="quantity" label="Quantity">
                     </column>
                     <column text-field-id="profit" label="Volume">
 <!--                        <text format="number 0.00"/>-->
@@ -116,6 +115,11 @@
                         </toolbar>
                     </column>
                 </columns>
+                <rows>
+                    <switch value-field-id="soldOut">
+                        <case value="true">text-secondary</case>
+                    </switch>
+                </rows>
                 <pre-filters>
                     <eq field-id="account.id" param="account_id"/>
                     <eq field-id="asset.ticker" param="asset_id"/>

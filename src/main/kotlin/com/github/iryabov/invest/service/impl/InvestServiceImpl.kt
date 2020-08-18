@@ -107,8 +107,8 @@ class InvestServiceImpl(
                 ::reduce)
     }
 
-    override fun getDials(accountId: Int, ticker: String, currency: Currency): List<DialView> {
-        val dials = dialRepo.findAllByAsset(accountId, ticker, currency)
+    override fun getDials(accountId: Int, currency: Currency, ticker: String?): List<DialView> {
+        val dials = dialRepo.findAllByAsset(accountId, currency, ticker)
         val old: MutableList<DialView> = ArrayList()
         dials.asReversed().forEach { it.calcDividend(old) }
         return dials
@@ -291,7 +291,7 @@ private fun DialView.calcDividend(old : MutableList<DialView>) {
     if (type == DialType.DIVIDEND && (dividendQuantity ?: 0) > 0) {
         val dividendPerAsset = (volume ?: P0).divide((dividendQuantity ?: 0).toBigDecimal(), 2, RoundingMode.HALF_UP)
         var remainQuantity = dividendQuantity!!
-        old.forEach {
+        old.filter { it.assetTicker == this.assetTicker }.forEach {
             remainQuantity -= it.quantity!!
             val quantityByDividendDate = if (remainQuantity < 0) {
                 it.quantity!! + remainQuantity
