@@ -55,8 +55,8 @@ fun maxAbs(a: Int, b: Int): Int {
     }
 }
 
-fun BigDecimal.notZero(): Boolean {
-    return !this.eq(P0)
+fun BigDecimal?.notZero(): Boolean {
+    return if (this != null) !this.eq(P0) else false
 }
 
 fun BigDecimal.eq(other: BigDecimal, scale: Int = 0): Boolean {

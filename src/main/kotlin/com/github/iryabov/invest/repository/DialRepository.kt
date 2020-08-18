@@ -178,7 +178,7 @@ select
      from writeoff w
      join dial df on df.id = w.dial_from and df.ticker = w.ticker
      where w.dial_to = d.id and w.ticker = d.ticker
-    ) + d.volume as profit,
+    ) as sold_volume,
     (case when d.quantity <> 0 then abs(d.volume / d.quantity)
      else 0 
      end
