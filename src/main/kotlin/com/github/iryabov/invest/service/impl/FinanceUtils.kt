@@ -59,6 +59,10 @@ fun BigDecimal?.notZero(): Boolean {
     return if (this != null) !this.eq(P0) else false
 }
 
+fun BigDecimal?.isZero(): Boolean {
+    return !notZero()
+}
+
 fun BigDecimal.eq(other: BigDecimal, scale: Int = 0): Boolean {
     return this.setScale(scale, RoundingMode.HALF_UP).compareTo(other.setScale(scale, RoundingMode.HALF_UP)) == 0
 }

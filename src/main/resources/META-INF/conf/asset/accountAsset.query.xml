@@ -59,13 +59,13 @@
             <select mapping="marketValue"/>
         </field>
         <field id="valueProfit">
-            <select mapping="valueProfit"/>
+            <select mapping="valueProfit" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitFormat(#this)"/>
         </field>
         <field id="fixedProfit">
-            <select mapping="fixedProfit"/>
+            <select mapping="fixedProfit" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitFormat(#this)"/>
         </field>
         <field id="marketProfitPercent">
-            <select mapping="marketProfit" normalize="#this == 0 ? null : #this + '%'"/>
+            <select mapping="marketProfit" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).percentFormat(#this)"/>
         </field>
         <field id="marketProfit">
             <select mapping="marketValue + proceeds - expenses"/>
@@ -80,7 +80,7 @@
             <select mapping="marketInterest"/>
         </field>
         <field id="profitInterest">
-            <select mapping="profitInterest"/>
+            <select mapping="profitInterest" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).percentFormat(#this)"/>
         </field>
         <field id="assetActive" domain="boolean">
             <select mapping="quantity > 0"/>

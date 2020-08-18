@@ -11,7 +11,8 @@ fun fullName(name: String?, code: String?): String {
         "$code"
 }
 
-fun color(profit: BigDecimal?, dividendProfit: BigDecimal?): String {
+@JvmOverloads
+fun color(profit: BigDecimal?, dividendProfit: BigDecimal? = null): String {
     return if (profit != null && profit.notZero())
         if (profit.greater(P0))
             "success"
@@ -24,11 +25,30 @@ fun color(profit: BigDecimal?, dividendProfit: BigDecimal?): String {
             ""
 }
 
-fun round(profit: BigDecimal?, dividendProfit: BigDecimal?): BigDecimal? {
+@JvmOverloads
+fun round(profit: BigDecimal?, dividendProfit: BigDecimal? = null): String? {
     return if (profit != null && profit.notZero())
-        profit.round(0)
+        profitFormat(profit)
     else if (dividendProfit != null && dividendProfit.notZero())
-        dividendProfit.round(0)
+        profitFormat(dividendProfit)
     else
         null
+}
+
+@JvmOverloads
+fun profitFormat(value: BigDecimal?, scale: Int = 0): String? {
+    if (value == null || value.isZero()) return null
+    return if (value.greater(P0))
+        "+" + value.round(scale)
+    else
+        "" + value.round(scale)
+}
+
+@JvmOverloads
+fun percentFormat(value: BigDecimal?, scale: Int = 0): String? {
+    if (value == null || value.isZero()) return null
+    return if (value.greater(P0))
+        "+" + value.round(scale) + "%"
+    else
+        "" + value.round(scale) + "%"
 }

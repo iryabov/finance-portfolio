@@ -25,10 +25,10 @@
                     <set field-label-location="left" field-label-align="right">
                         <row>
                             <col>
-                                <output-text id="totalMarketValue"/>
+                                <output-text id="totalMarketValue" format="number 0.00"/>
                             </col>
                             <col>
-                                <output-text id="totalValueProfit" no-label="true" class="text-success"/>
+                                <output-text id="totalValueProfit" class="text-success"/>
                             </col>
                             <col>
                                 <output-text id="totalValueProfitPercent"/>
@@ -37,7 +37,7 @@
                                 <output-text id="totalMarketProfit"/>
                             </col>
                             <col>
-                                <output-text id="totalMarketProfitPercent" no-label="true"/>
+                                <output-text id="totalMarketProfitPercent"/>
                             </col>
                         </row>
                     </set>
