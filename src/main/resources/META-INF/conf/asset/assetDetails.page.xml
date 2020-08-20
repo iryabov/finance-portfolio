@@ -97,11 +97,11 @@
                             </switch>
                         </badge>
                     </column>
-                    <column text-field-id="currency" label="Currency"/>
+                    <column text-field-id="currency" label="Currency" tooltip-field-id="settlementTicker"/>
                     <column text-field-id="price" label="Price">
                         <text format="number 0.00"/>
                     </column>
-                    <column text-field-id="quantity" label="Quantity">
+                    <column text-field-id="quantity" label="Quantity" tooltip-field-id="settlementQuantity">
                     </column>
                     <column text-field-id="profit" label="Volume">
 <!--                        <text format="number 0.00"/>-->

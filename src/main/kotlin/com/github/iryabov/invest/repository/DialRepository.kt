@@ -167,6 +167,112 @@ select
     d.type as type,
     d.quantity as quantity,
     d.currency as currency,
+    d.settlement_quantity as settlement_quantity,
+    d.settlement_ticker as settlement_ticker,
+    (case when d.currency = :currency then abs(d.volume)
+     else abs(coalesce((select r.price * d.volume from rate r where  r.dt = d.dt and  r.currency_purchase = d.currency and  r.currency_sale = :currency), 0)) 
+     end 
+    ) as volume,
+    (select sum(case when df.currency = :currency then df.volume 
+                else coalesce((select r.price * df.volume from rate r where  r.dt = df.dt and  r.currency_purchase = df.currency and  r.currency_sale = :currency), 0)
+                end / df.quantity * w.quantity
+            ) 
+     from writeoff w
+     join dial df on df.id = w.dial_from and df.ticker = w.ticker
+     where w.dial_to = d.id and w.ticker = d.ticker
+    ) as sold_volume,
+    (case when d.quantity <> 0 then abs(d.volume / d.quantity)
+     else 0 
+     end
+    ) as price,
+    (
+        select sum(w.quantity) as sold_quantity
+        from writeoff w
+        where w.dial_from = d.id
+          and d.quantity > 0
+    ) as sold_quantity,
+    (case when d.type = 'DIVIDEND' then
+        (select sum(od.quantity)
+        from dial od
+        where od.account_id = :account_id
+          and od.ticker = d.ticker 
+          and od.active = true
+          and od.dt < d.dt)
+     else null end     
+    ) as dividend_quantity
+from (
+    select  
+        d.id,
+        d.active as active,
+        d.dt as dt,
+        d.ticker as ticker,
+        d.type as type,
+        d.quantity as quantity,
+        d.currency as currency,
+        d.currency as settlement_ticker,
+        d.volume as settlement_quantity,
+        d.volume as volume
+     from dial d
+     where d.account_id = :account_id
+       and (:ticker is null or d.ticker = :ticker)   
+     union   
+     select  
+        d.id,
+        d.active as active,
+        d.dt as dt,
+        d.currency as ticker,
+        (case 
+            when d.type = 'SALE' then 'PURCHASE'
+            when d.type = 'PURCHASE' then 'SALE'
+            else d.type
+         end) as type,
+        d.volume as quantity,
+        (case 
+         when d.ticker in ('RUB', 'USD', 'EUR') then d.ticker
+         else d.currency
+         end
+        ) as currency,
+        d.ticker as settlement_ticker,
+        d.quantity as settlement_quantity,
+        (case 
+         when d.ticker in ('RUB', 'USD', 'EUR') then d.quantity
+         else d.volume
+         end
+        ) as volume
+     from dial d 
+     where d.account_id = :account_id and d.currency = :ticker
+) d
+left join asset a on a.ticker = d.ticker
+order by d.dt desc, d.id desc    
+    """)
+    fun findAllByAsset(@Param("account_id") accountId: Int,
+                       @Param("currency") currency: Currency,
+                       @Param("ticker") ticker: String?): List<DialView>
+
+    @Query("""
+        select *
+        from dial d
+        where d.active = true
+          and d.account_id = :account_id
+          and (d.dt > :date_from or (d.dt = :date_from and d.id > :id))
+        order by d.dt, d.id
+    """)
+    fun findAllSaleAndPurchaseLaterThan(@Param("account_id") accountId: Int,
+                                        @Param("ticker") ticker: String,
+                                        @Param("date_from") dateFrom: LocalDate,
+                                        @Param("id") dialId: Long): List<Dial>
+
+
+    @Query("""
+select 
+    d.id,
+    d.active as active,
+    d.dt as dt,
+    d.ticker as asset_ticker,
+    a.name as asset_name,
+    d.type as type,
+    d.quantity as quantity,
+    d.currency as currency,
     (case when d.currency = :currency then abs(d.volume)
      else abs(coalesce((select r.price * d.volume from rate r where  r.dt = d.dt and  r.currency_purchase = d.currency and  r.currency_sale = :currency), 0)) 
      end 
@@ -204,20 +310,7 @@ where d.account_id = :account_id
   and (:ticker is null or d.ticker = :ticker)   
 order by d.dt desc, d.id desc   
     """)
-    fun findAllByAsset(@Param("account_id") accountId: Int,
-                       @Param("currency") currency: Currency,
-                       @Param("ticker") ticker: String?): List<DialView>
-
-    @Query("""
-        select *
-        from dial d
-        where d.active = true
-          and d.account_id = :account_id
-          and (d.dt > :date_from or (d.dt = :date_from and d.id > :id))
-        order by d.dt, d.id
-    """)
-    fun findAllSaleAndPurchaseLaterThan(@Param("account_id") accountId: Int,
-                                        @Param("ticker") ticker: String,
-                                        @Param("date_from") dateFrom: LocalDate,
-                                        @Param("id") dialId: Long): List<Dial>
+    fun findAllByCurrency(@Param("account_id") accountId: Int,
+                          @Param("currency") settlementCurrency: Currency,
+                          @Param("ticker") currency: Currency?): List<DialView>
 }

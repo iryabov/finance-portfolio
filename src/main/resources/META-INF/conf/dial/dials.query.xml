@@ -90,5 +90,11 @@
         <field id="soldOut" domain="boolean">
             <select mapping="soldQuantity" normalize="#this > 0 &amp;&amp; #this >= #data['quantity']"/>
         </field>
+        <field id="settlementTicker" domain="string">
+            <select mapping="settlementTicker"/>
+        </field>
+        <field id="settlementQuantity" domain="integer">
+            <select mapping="settlementQuantity"/>
+        </field>
     </fields>
 </query>

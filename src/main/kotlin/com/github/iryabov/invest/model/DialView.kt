@@ -20,7 +20,9 @@ data class DialView(
         var price: BigDecimal?,
         var soldQuantity: Int?,
         var soldVolume: BigDecimal?,
-        var dividendQuantity: Int?) {
+        var dividendQuantity: Int?,
+        var settlementTicker: String?,
+        var settlementQuantity: Int?) {
     var dividendProfit: BigDecimal = P0
     var profit: BigDecimal? = if (soldVolume.notZero()) (soldVolume ?: P0) + (volume ?: P0) else null
 }
