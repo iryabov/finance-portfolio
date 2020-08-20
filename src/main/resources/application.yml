@@ -30,6 +30,6 @@ n2o:
           has-label:
   config:
     monitoring:
-      enabled: false
+      enabled: true
 portfolio:
   currency: RUB

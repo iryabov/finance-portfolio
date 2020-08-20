@@ -29,7 +29,7 @@ class SecuritiesClientMoex: SecuritiesClient {
         val response = callCandlebordes(market, board, ticker, fromStr, tillStr)
         val rows = readRows(response, "history")
         if (rows == null || rows.length == 0)
-            throw IllegalStateException("Security $ticker not found")
+            return Collections.emptyList()
         val list =  ArrayList<Security>()
         for (i in 0 until rows.length) {
             val row = rows.item(i) as Element

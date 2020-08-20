@@ -34,6 +34,12 @@ class SecuritiesClientTest(
                 LocalDate.of(2020, 2, 1))
         Assertions.assertThat(ofz[0].ticker).isEqualTo("SU26220RMFS2")
         Assertions.assertThat(ofz[0].price).isGreaterThan(BigDecimal.ZERO)
+
+        val vtbb = securitiesClientMoex.findHistoryPrices("ВТБ Б-1-85",
+                LocalDate.of(2020, 1, 1),
+                LocalDate.of(2020, 2, 1))
+        Assertions.assertThat(vtbb[0].ticker).isEqualTo("RU000A101U46")
+        Assertions.assertThat(vtbb[0].price).isGreaterThan(BigDecimal.ZERO)
     }
 
     @Test
