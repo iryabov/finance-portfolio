@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository
 import org.springframework.web.reactive.function.client.WebClient
 import org.w3c.dom.Document
 import org.w3c.dom.Element
+import org.w3c.dom.NodeList
 import org.xml.sax.InputSource
 import java.io.StringReader
 import java.lang.IllegalStateException
@@ -21,21 +22,13 @@ import kotlin.collections.ArrayList
 class SecuritiesClientMoex: SecuritiesClient {
     private val client: WebClient = WebClient.create("https://iss.moex.com/iss")
 
-    override fun findHistoryPrices(ticker: String, from: LocalDate, till: LocalDate): List<Security> {
+    override fun findHistoryPrices(name: String, from: LocalDate, till: LocalDate): List<Security> {
+        val (market, board, ticker) = findMarketAndBoard(name)
         val fromStr = from.format(DateTimeFormatter.ISO_DATE)
         val tillStr = till.format(DateTimeFormatter.ISO_DATE)
-        val market = "shares"
-        val board = "tqbr"
-        val response = client.get().uri("/history/engines/stock/markets/$market/boards/$board/securities/$ticker/candlebordes.xml?from=$fromStr&till=$tillStr&iss.meta=off")
-                .accept(MediaType.APPLICATION_XML)
-                .acceptCharset(Charsets.UTF_8)
-                .retrieve().bodyToMono(String::class.java).block()
-        val xml = readXml(response!!)
-        val document = xml.getElementsByTagName("document").item(0) as Element
-        val history = findData(document, "history")
-        val rows = (history.getElementsByTagName("rows").item(0) as Element)
-                .getElementsByTagName("row")
-        if (rows.length == 0)
+        val response = callCandlebordes(market, board, ticker, fromStr, tillStr)
+        val rows = readRows(response, "history")
+        if (rows == null || rows.length == 0)
             throw IllegalStateException("Security $ticker not found")
         val list =  ArrayList<Security>()
         for (i in 0 until rows.length) {
@@ -50,20 +43,13 @@ class SecuritiesClientMoex: SecuritiesClient {
         return list
     }
 
-    override fun findLastPrice(ticker: String): Security {
-        val market = "shares"
-        val board = "tqbr"
-        val response = client.get().uri("/engines/stock/markets/$market/boards/$board/securities/$ticker.xml?iss.meta=off")
-                .accept(MediaType.APPLICATION_XML)
-                .acceptCharset(Charsets.UTF_8)
-                .retrieve().bodyToMono(String::class.java).block()
-        val xml = readXml(response!!)
-        val document = xml.getElementsByTagName("document").item(0) as Element
-        val securities = findData(document, "securities")
-        val rows = securities.getElementsByTagName("rows").item(0) as Element
-        if (rows.getElementsByTagName("row").length == 0)
+    override fun findLastPrice(name: String): Security {
+        val (market, board, ticker) = findMarketAndBoard(name)
+        val response = callTicker(market, board, ticker)
+        val rows = readRows(response)
+        if (rows == null || rows.length == 0)
             throw IllegalStateException("Security $ticker not found")
-        val row0 = rows.getElementsByTagName("row").item(0) as Element
+        val row0 = rows.item(0) as Element
         assert(row0.getAttribute("SECID") == ticker)
         return Security(
                 date = LocalDate.parse(row0.getAttribute("PREVDATE"), DateTimeFormatter.ISO_DATE),
@@ -73,16 +59,9 @@ class SecuritiesClientMoex: SecuritiesClient {
     }
 
     override fun findByName(name: String): List<Security> {
-        val response = client.get().uri("/securities.xml?q=$name&iss.meta=off")
-                .accept(MediaType.APPLICATION_XML)
-                .acceptCharset(Charsets.UTF_8)
-                .retrieve().bodyToMono(String::class.java).block()
-        val xml = readXml(response!!)
-        val document = xml.getElementsByTagName("document").item(0) as Element
-        val securities = findData(document, "securities")
-        val rows = (securities.getElementsByTagName("rows").item(0) as Element)
-                .getElementsByTagName("row")
-        if (rows.length == 0)
+        val response = callSecurities(name)
+        val rows = readRows(response)
+        if (rows == null || rows.length == 0)
             return Collections.emptyList()
         val list =  ArrayList<Security>()
         for (i in 0 until rows.length) {
@@ -94,6 +73,52 @@ class SecuritiesClientMoex: SecuritiesClient {
             )
         }
         return list
+    }
+
+    private fun callCandlebordes(market: String, board: String, ticker: String, fromStr: String?, tillStr: String?): String? {
+        val response = client.get().uri("/history/engines/stock/markets/$market/boards/$board/securities/$ticker/candlebordes.xml?from=$fromStr&till=$tillStr&iss.meta=off")
+                .accept(MediaType.APPLICATION_XML)
+                .acceptCharset(Charsets.UTF_8)
+                .retrieve().bodyToMono(String::class.java).block()
+        return response
+    }
+
+    private fun callTicker(market: String, board: String, ticker: String): String? {
+        val response = client.get().uri("/engines/stock/markets/$market/boards/$board/securities/$ticker.xml?iss.meta=off")
+                .accept(MediaType.APPLICATION_XML)
+                .acceptCharset(Charsets.UTF_8)
+                .retrieve().bodyToMono(String::class.java).block()
+        return response
+    }
+
+    private fun callSecurities(name: String): String? {
+        val response = client.get().uri("/securities.xml?q=$name&iss.meta=off")
+                .accept(MediaType.APPLICATION_XML)
+                .acceptCharset(Charsets.UTF_8)
+                .retrieve().bodyToMono(String::class.java).block()
+        return response
+    }
+
+    private fun readRows(response: String?, type: String = "securities"): NodeList? {
+        val xml = readXml(response!!)
+        val document = xml.getElementsByTagName("document").item(0) as Element
+        val securities = findData(document, type)
+        return (securities.getElementsByTagName("rows").item(0) as Element)
+                .getElementsByTagName("row")
+    }
+
+    private fun findMarketAndBoard(name: String): Triple<String, String, String> {
+        val tickerResponse = callSecurities(name)
+        val tickerRows = readRows(tickerResponse)
+        val tickerRow = tickerRows?.item(0) as Element
+        val market = when {
+            tickerRow.getAttribute("type").contains("share") -> "shares"
+            tickerRow.getAttribute("type").contains("bond") -> "bonds"
+            else -> "shares"
+        }
+        val board = tickerRow.getAttribute("marketprice_boardid")
+        val ticker = tickerRow.getAttribute("secid")
+        return Triple(market, board, ticker)
     }
 
     private fun findData(document: Element, id: String): Element {

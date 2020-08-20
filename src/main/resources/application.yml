@@ -28,5 +28,8 @@ n2o:
         has-label:
         axis:
           has-label:
+  config:
+    monitoring:
+      enabled: false
 portfolio:
   currency: RUB

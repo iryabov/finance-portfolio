@@ -4,9 +4,9 @@ import java.math.BigDecimal
 import java.time.LocalDate
 
 interface SecuritiesClient {
-    fun findHistoryPrices(ticker: String, from: LocalDate, till: LocalDate = LocalDate.now()): List<Security>
+    fun findHistoryPrices(name: String, from: LocalDate, till: LocalDate = LocalDate.now()): List<Security>
 
-    fun findLastPrice(ticker: String): Security
+    fun findLastPrice(name: String): Security
 
     fun findByName(name: String): List<Security>
 }

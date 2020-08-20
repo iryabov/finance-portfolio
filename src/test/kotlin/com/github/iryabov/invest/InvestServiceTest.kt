@@ -323,23 +323,6 @@ class InvestServiceTest(
     }
 
     @Test
-    @Disabled
-    fun securitiesClient() {
-        val price = securitiesClientMoex.findLastPrice("YNDX")
-        assertThat(price.ticker).isEqualTo("YNDX")
-        assertThat(price.price).isGreaterThan(BigDecimal.ZERO)
-
-        val history = securitiesClientMoex.findHistoryPrices("YNDX",
-                LocalDate.of(2020, 1, 1),
-                LocalDate.of(2020, 2, 1))
-        assertThat(history[0].ticker).isEqualTo("YNDX")
-        assertThat(history[0].price).isGreaterThan(BigDecimal.ZERO)
-
-        val securities = securitiesClientMoex.findByName("Яндекс")
-        assertThat(securities.size).isGreaterThan(0)
-    }
-
-    @Test
     @Transactional
     @Disabled
     fun csvLoad() {
