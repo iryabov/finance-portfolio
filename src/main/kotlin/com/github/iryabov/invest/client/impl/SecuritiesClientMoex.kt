@@ -2,6 +2,7 @@ package com.github.iryabov.invest.client.impl
 
 import com.github.iryabov.invest.client.Security
 import com.github.iryabov.invest.client.SecuritiesClient
+import com.github.iryabov.invest.relation.Currency
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Repository
 import org.springframework.web.reactive.function.client.WebClient
@@ -33,12 +34,15 @@ class SecuritiesClientMoex: SecuritiesClient {
         val list =  ArrayList<Security>()
         for (i in 0 until rows.length) {
             val row = rows.item(i) as Element
-            list.add(Security(
-                    date = LocalDate.parse(row.getAttribute("TRADEDATE"), DateTimeFormatter.ISO_DATE),
-                    ticker = row.getAttribute("SECID"),
-                    shortName = row.getAttribute("SHORTNAME"),
-                    price = BigDecimal(row.getAttribute("CLOSE"))
-            ))
+            if (!row.getAttribute("CLOSE").isNullOrEmpty())
+                list.add(Security(
+                        date = LocalDate.parse(row.getAttribute("TRADEDATE"), DateTimeFormatter.ISO_DATE),
+                        ticker = row.getAttribute("SECID"),
+                        shortName = row.getAttribute("SHORTNAME"),
+                        price = BigDecimal(row.getAttribute("CLOSE")),
+                        settlementCurrency = currencyOf(row.getAttribute("CURRENCYID")),
+                        faceCurrency = currencyOf(row.getAttribute("FACEUNIT"))
+                ))
         }
         return list
     }
@@ -55,7 +59,9 @@ class SecuritiesClientMoex: SecuritiesClient {
                 date = LocalDate.parse(row0.getAttribute("PREVDATE"), DateTimeFormatter.ISO_DATE),
                 ticker = row0.getAttribute("SECID"),
                 shortName = row0.getAttribute("SHORTNAME"),
-                price = BigDecimal(row0.getAttribute("PREVADMITTEDQUOTE")))
+                price = BigDecimal(row0.getAttribute("PREVADMITTEDQUOTE")),
+                settlementCurrency = currencyOf(row0.getAttribute("CURRENCYID")),
+                faceCurrency = currencyOf(row0.getAttribute("FACEUNIT")))
     }
 
     override fun findByName(name: String): List<Security> {
@@ -137,6 +143,11 @@ class SecuritiesClientMoex: SecuritiesClient {
         val xmlInput = InputSource(StringReader(content))
 
         return dBuilder.parse(xmlInput)
+    }
+
+    private fun currencyOf(name: String?): Currency {
+        var curName = if (name == "SUR") "RUB" else name
+        return Currency.values().find { c -> c.name == curName } ?: Currency.RUB
     }
 
 }

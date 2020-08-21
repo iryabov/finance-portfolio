@@ -3,6 +3,7 @@ package com.github.iryabov.invest.service.impl
 import com.github.iryabov.invest.client.CurrenciesClient
 import com.github.iryabov.invest.client.ExchangeRate
 import com.github.iryabov.invest.entity.*
+import com.github.iryabov.invest.etl.CurrencyRateLoader
 import com.github.iryabov.invest.model.*
 import com.github.iryabov.invest.relation.Currency
 import com.github.iryabov.invest.relation.DialType
@@ -27,10 +28,9 @@ class InvestServiceImpl(
         val dialRepo: DialRepository,
         val writeOffRepo: WriteOffRepository,
         val rateRepository: CurrencyRateRepository,
-        @Qualifier("currenciesClientCBRF")
-        val currenciesClient: CurrenciesClient,
         val assetRepo: AssetRepository,
-        val securityHistoryRepo: SecurityHistoryRepository
+        val securityHistoryRepo: SecurityHistoryRepository,
+        val currencyRateLoader: CurrencyRateLoader
 ) : InvestService {
     override fun createAccount(form: AccountForm): Int {
         val created = accountRepo.save(form.toEntity())
@@ -44,7 +44,7 @@ class InvestServiceImpl(
     override fun addDial(accountId: Int, form: DialForm): Long {
         val created = dialRepo.save(form.toEntityWith(accountId))
         if (created.volume != P0)
-            addExchangeRate(created.date)
+            currencyRateLoader.addExchangeRate(created.date)
         writeOffByFifoAndRecalculation(if (created.quantity < 0) created else created.invert(), needWriteOff(created))
         return created.id!!
     }
@@ -162,21 +162,7 @@ class InvestServiceImpl(
         )
     }
 
-    private fun addExchangeRate(date: LocalDate) {
-        val exchange: ExchangeRate by lazy { currenciesClient.findCurrencyByDate(date) }
-        for (currencyPurchased in Currency.values()) {
-            val rates = rateRepository.findByDateAndBase(date, currencyPurchased)
-            for (currencySale in Currency.values().filter { it != currencyPurchased }) {
-                if (rates.all { it.currencySale != currencySale }) {
-                    rateRepository.save(CurrencyPair(
-                            date = date,
-                            currencyPurchased = currencyPurchased,
-                            currencySale = currencySale,
-                            price = exchange.getPairExchangePrice(currencyPurchased, currencySale)))
-                }
-            }
-        }
-    }
+
 
     private fun writeOffByFifoAndRecalculation(dial: Dial, calc: Boolean = true) {
         if (dial.quantity >= 0) return
