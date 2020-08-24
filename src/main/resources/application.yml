@@ -33,3 +33,6 @@ n2o:
       enabled: true
 portfolio:
   currency: RUB
+  client:
+    unibit:
+      access_key: Demo

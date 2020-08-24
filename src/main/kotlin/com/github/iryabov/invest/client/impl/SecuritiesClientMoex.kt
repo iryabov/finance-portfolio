@@ -39,7 +39,7 @@ class SecuritiesClientMoex: SecuritiesClient {
                         date = LocalDate.parse(row.getAttribute("TRADEDATE"), DateTimeFormatter.ISO_DATE),
                         ticker = row.getAttribute("SECID"),
                         shortName = row.getAttribute("SHORTNAME"),
-                        price = BigDecimal(row.getAttribute("CLOSE")),
+                        settlementPrice = BigDecimal(row.getAttribute("CLOSE")),
                         settlementCurrency = currencyOf(row.getAttribute("CURRENCYID")),
                         faceCurrency = currencyOf(row.getAttribute("FACEUNIT"))
                 ))
@@ -59,7 +59,7 @@ class SecuritiesClientMoex: SecuritiesClient {
                 date = LocalDate.parse(row0.getAttribute("PREVDATE"), DateTimeFormatter.ISO_DATE),
                 ticker = row0.getAttribute("SECID"),
                 shortName = row0.getAttribute("SHORTNAME"),
-                price = BigDecimal(row0.getAttribute("PREVADMITTEDQUOTE")),
+                settlementPrice = BigDecimal(row0.getAttribute("PREVADMITTEDQUOTE")),
                 settlementCurrency = currencyOf(row0.getAttribute("CURRENCYID")),
                 faceCurrency = currencyOf(row0.getAttribute("FACEUNIT")))
     }
@@ -73,6 +73,7 @@ class SecuritiesClientMoex: SecuritiesClient {
         for (i in 0 until rows.length) {
             val row = rows.item(i) as Element
             list.add(Security(
+                    date = LocalDate.now(),
                     ticker = row.getAttribute("secid"),
                     shortName = row.getAttribute("shortname"),
                     fullName = row.getAttribute("name"))

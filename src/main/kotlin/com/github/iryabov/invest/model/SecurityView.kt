@@ -1,9 +1,7 @@
 package com.github.iryabov.invest.model
 
-import com.github.iryabov.invest.relation.AssetClass
-import com.github.iryabov.invest.relation.Country
+import com.github.iryabov.invest.relation.*
 import com.github.iryabov.invest.relation.Currency
-import com.github.iryabov.invest.relation.Sector
 import com.github.iryabov.invest.service.impl.P0
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -20,6 +18,7 @@ data class SecurityView(
         val assetClass: AssetClass?,
         val assetSector: Sector?,
         val assetCountry: Country?,
+        val api: FinanceApi,
         var currency: Currency = Currency.RUB,
         var history: List<SecurityHistoryView> = Collections.emptyList())
 

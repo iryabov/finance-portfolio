@@ -29,13 +29,14 @@
                 </java>
             </invocation>
             <in>
-                <field id="security.id" mapping="ticker"/>
+                <field id="ticker" mapping="ticker"/>
                 <field id="name" mapping="name"/>
                 <field id="price" mapping="priceNow"/>
                 <field id="assetClass.id" mapping="assetClass"/>
                 <field id="sector.id" mapping="sector"/>
                 <field id="country.id" mapping="country"/>
                 <field id="currency.id" mapping="currency"/>
+                <field id="api.id" mapping="api"/>
             </in>
         </operation>
         <operation id="editSecurity">
@@ -55,6 +56,20 @@
                 <field id="sector.id" mapping="sector"/>
                 <field id="country.id" mapping="country"/>
                 <field id="currency.id" mapping="currency"/>
+                <field id="api.id" mapping="api"/>
+            </in>
+        </operation>
+        <operation id="deleteSecurity">
+            <invocation>
+                <java method="editSecurity" class="com.github.iryabov.invest.service.InvestService">
+                    <spring/>
+                    <arguments>
+                        <argument type="primitive" name="ticker"/>
+                    </arguments>
+                </java>
+            </invocation>
+            <in>
+                <field id="ticker" mapping="[0]"/>
             </in>
         </operation>
     </operations>

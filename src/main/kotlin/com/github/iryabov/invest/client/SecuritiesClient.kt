@@ -13,11 +13,12 @@ interface SecuritiesClient {
 }
 
 data class Security(
-        val date: LocalDate = LocalDate.now(),
+        val date: LocalDate,
         val ticker: String,
         val shortName: String = "",
         val fullName: String = "",
-        var price: BigDecimal = BigDecimal.ZERO,
+        val settlementPrice: BigDecimal = BigDecimal.ZERO,
+        var facePrice: BigDecimal = BigDecimal.ZERO,
         val settlementCurrency: Currency = Currency.RUB,
         val faceCurrency: Currency = Currency.RUB
 )

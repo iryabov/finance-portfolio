@@ -7,7 +7,7 @@
                 <pre-filters>
                     <eq field-id="id" param="ticker"/>
                 </pre-filters>
-                <toolbar place="topRight">
+                <toolbar place="topLeft">
                     <button id="edit" label="Edit" icon="fa fa-pencil" type="icon" color="primary">
                         <open-page page-id="securityForm"
                                    page-name="Edit"
@@ -16,6 +16,11 @@
                     <button label="Load">
                         <invoke operation-id="load" route="/load">
                         </invoke>
+                    </button>
+                </toolbar>
+                <toolbar place="topRight">
+                    <button label="Delete" color="danger" icon="fa fa-trash" type="icon">
+                        <invoke operation-id="deleteSecurity" route="/delete"/>
                     </button>
                 </toolbar>
                 <fields>

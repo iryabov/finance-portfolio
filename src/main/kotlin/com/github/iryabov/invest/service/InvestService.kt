@@ -32,6 +32,8 @@ interface InvestService {
 
     fun editSecurity(form: Asset)
 
+    fun deleteSecurity(ticker: String)
+
     fun getSecurity(ticker: String): SecurityView
 
     fun getSecurity(ticker: String,

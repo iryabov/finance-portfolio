@@ -43,5 +43,8 @@
         <field id="price">
             <select mapping="priceNow"/>
         </field>
+        <field id="api.id">
+            <select mapping="api"/>
+        </field>
     </fields>
 </query>

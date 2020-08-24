@@ -10,5 +10,7 @@ enum class Sector {
     ENERGY,
     RETAIL,
     GOLD,
-    REALTY
+    REALTY,
+    TRANSPORT,
+    TOURISM
 }

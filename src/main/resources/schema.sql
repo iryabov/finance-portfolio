@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS public.asset
     sector character varying,
     country character varying,
     currency character varying,
+    api character varying,
     price_now double precision,
     price_week double precision,
     price_month double precision,

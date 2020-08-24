@@ -23,6 +23,8 @@ data class Asset (
         var country: Country? = null,
         @Column
         var currency: Currency? = null,
+        @Column
+        var api: FinanceApi = FinanceApi.MOEX,
         @Column("price_now")
         var priceNow: BigDecimal? = null,
         @Column("price_week")

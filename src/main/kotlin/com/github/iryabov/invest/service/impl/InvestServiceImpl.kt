@@ -128,6 +128,10 @@ class InvestServiceImpl(
         assetRepo.save(form)
     }
 
+    override fun deleteSecurity(ticker: String) {
+        assetRepo.deleteById(ticker)
+    }
+
     override fun getSecurity(ticker: String): SecurityView {
         val securityEntity = assetRepo.findById(ticker).orElseThrow()
         return securityEntity.toView()
@@ -309,6 +313,7 @@ private fun Asset.toView(securityHistory: List<SecurityHistoryView> = Collection
             assetSector = this.sector,
             assetCountry = this.country,
             currency = this.currency ?: currency,
+            api = this.api,
             priceNow = this.priceNow ?: P0,
             priceWeek = this.priceWeek ?: P0,
             priceMonth = this.priceMonth ?: P0,

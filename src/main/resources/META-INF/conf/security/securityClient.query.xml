@@ -3,7 +3,7 @@
        name="Securities">
     <list result-mapping="#this" count-mapping="size()" filters="name">
         <java method="findByName" class="com.github.iryabov.invest.client.SecuritiesClient">
-            <spring/>
+            <spring bean="securitiesClientMoex"/>
             <arguments>
                 <argument type="primitive" name="name"/>
             </arguments>
@@ -30,7 +30,7 @@
             <select mapping="date"/>
         </field>
         <field id="price">
-            <select mapping="price"/>
+            <select mapping="facePrice"/>
         </field>
         <field id="shortName">
             <select mapping="shortName"/>
