@@ -71,6 +71,7 @@ class InvestServiceImpl(
         val account = AccountView(accountId, accountEntity.name, assets)
         account.calc()
         account.calcProportion()
+        account.calcCurrencies()
         return account
     }
 
@@ -221,6 +222,11 @@ private fun AccountView.calcProportion() {
     assert(assets.sumByBigDecimal { a -> a.netInterest }.eq(P100))
     assert(assets.sumByBigDecimal { a -> a.marketInterest }.eq(P100))
     assert(assets.sumByBigDecimal { a -> a.profitInterest }.eq(P0))
+}
+
+private fun AccountView.calcCurrencies() {
+    currencies = assets.filter { it.assetTicker.isCurrency() }
+    securities = assets.filter { !it.assetTicker.isCurrency() }
 }
 
 private fun AssetView.calc() {

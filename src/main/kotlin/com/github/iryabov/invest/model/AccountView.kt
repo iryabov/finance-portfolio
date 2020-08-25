@@ -15,6 +15,14 @@ data class AccountView(
         var assets: List<AssetView>
 ) {
     /**
+     * Активы в виде валюты
+     */
+    lateinit var currencies: List<AssetView>
+    /**
+     * Активы в виде ценных бумаг
+     */
+    lateinit var securities: List<AssetView>
+    /**
      * Суммарная себестоимость активов
      */
     lateinit var totalNetValue: BigDecimal
