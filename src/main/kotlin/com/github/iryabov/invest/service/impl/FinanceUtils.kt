@@ -1,5 +1,6 @@
 package com.github.iryabov.invest.service.impl
 
+import com.github.iryabov.invest.relation.Currency
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.LocalDate
@@ -89,4 +90,12 @@ fun Int.negate(): Int {
 
 fun Int.invert(): Int {
     return 1 / this
+}
+
+fun String.isCurrency(): Boolean {
+    return Currency.values().any { c -> c.name == this }
+}
+
+fun currencyOf(ticker: String): Currency? {
+    return Currency.values().find { c -> c.name == ticker }
 }

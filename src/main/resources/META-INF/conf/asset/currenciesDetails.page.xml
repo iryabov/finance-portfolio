@@ -1,0 +1,130 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<page xmlns="http://n2oapp.net/framework/config/schema/page-2.0"
+      name="{id}">
+    <toolbar place="topLeft">
+        <group>
+            <button id="purchase" label="Buy" widget-id="asset"
+                    color="success">
+                <open-page page-id="dialNew" submit-operation-id="addDial" route="/purchase">
+                    <query-param name="type" value="PURCHASE"/>
+                </open-page>
+            </button>
+            <button id="sell" label="Sell" widget-id="asset"
+                    color="danger">
+                <open-page page-id="dialNew" submit-operation-id="addDial" route="/sale">
+                    <query-param name="type" value="SALE"/>
+                </open-page>
+                <dependencies>
+                    <enabling message="You do not have this asset now">quantity > 0</enabling>
+                </dependencies>
+            </button>
+        </group>
+    </toolbar>
+    <regions>
+        <region>
+            <form id="asset" query-id="accountAsset" route="/">
+                <fields>
+                    <set field-label-location="left">
+                        <row>
+                            <output-text id="quantity"/>
+                            <output-text id="marketValue" format="number 0.00"/>
+                            <output-text id="marketProfit" format="number 0.00"/>
+                            <output-text id="valueProfit" format="number 0.00"/>
+                        </row>
+                    </set>
+                </fields>
+                <pre-filters>
+                    <eq field-id="accountId" param="account_id"/>
+                    <eq field-id="id" param="asset_id"/>
+                </pre-filters>
+            </form>
+            <chart id="history" route="/history"
+                   query-id="assetHistory"
+                   name="History" depends-on="period"
+                   width="1000" height="200">
+                <lines x-field-id="date" grid-horizontal="true" grid-vertical="false"
+                       tooltip-separator=" ">
+                    <line field-id="securityPrice" color="#8884d8" type="linear"/>
+                    <line field-id="purchasePrice" color="#00FF00" type="linear"/>
+                    <line field-id="salePrice" color="#FF0000" type="linear"/>
+                </lines>l
+                <!--                <bars x-field-id="date" y-field-id="quantity" grid-horizontal="false" grid-vertical="false"-->
+                <!--                       tooltip-separator=" ">-->
+                <!--                    <bar field-id="purchase" color="#8884d8" />-->
+                <!--                    <bar field-id="sale" color="#FF0000"/>-->
+                <!--                </bars>-->
+                <pre-filters>
+                    <eq field-id="accountId" param="account_id"/>
+                    <eq field-id="ticker" param="asset_id"/>
+                    <eq field-id="period" value="{period.id}" ref-widget-id="period" ref-model="resolve"/>
+                </pre-filters>
+            </chart>
+            <form id="period">
+                <fields>
+                    <set>
+                        <radio-group id="period" label="Period" param="period" inline="true">
+                            <default-value id="FIVE_YEARS" name="5 years"/>
+                            <options>
+                                <option id="WEEK" name="Week"/>
+                                <option id="MONTH" name="Month"/>
+                                <option id="HALF_YEAR" name="Half year"/>
+                                <option id="YEAR" name="Year"/>
+                                <option id="FIVE_YEARS" name="5 years"/>
+                            </options>
+                        </radio-group>
+                    </set>
+                </fields>
+            </form>
+            <table id="dials" query-id="dials" route="/dials" selection="none">
+                <columns>
+                    <column text-field-id="active" label="A">
+                        <checkbox>
+                            <invoke operation-id="deactivateDial" message-on-success="false"/>
+                        </checkbox>
+                    </column>
+                    <!--            <column text-field-id="asset.ticker"/>-->
+                    <!--            <column text-field-id="asset.name"/>-->
+                    <column text-field-id="dt" label="Date"/>
+                    <column text-field-id="type" label="Type">
+                        <badge>
+                            <switch value-field-id="type">
+                                <case value="PURCHASE">success</case>
+                                <case value="DEPOSIT">success</case>
+                                <case value="SALE">danger</case>
+                                <case value="WITHDRAWALS">danger</case>
+                                <case value="DIVIDEND">info</case>
+                                <case value="TAX">warning</case>
+                            </switch>
+                        </badge>
+                    </column>
+                    <column text-field-id="settlementTicker" label="Settlement ticker" tooltip-field-id="currency"/>
+                    <column text-field-id="price" label="Price">
+                        <text format="number 0.00"/>
+                    </column>
+                    <column text-field-id="quantity" label="Quantity" tooltip-field-id="quantity">
+                    </column>
+                    <column text-field-id="profit" label="Volume">
+                        <!--                        <text format="number 0.00"/>-->
+                        <badge text="{volume}" text-format="number 0.00" color="{profitColor}"/>
+                    </column>
+                    <column text-field-id="" width="20px">
+                        <toolbar>
+                            <button id="delete" icon="fa fa-trash" confirm="true">
+                                <invoke operation-id="deleteDial" route="/delete"/>
+                            </button>
+                        </toolbar>
+                    </column>
+                </columns>
+                <rows>
+                    <switch value-field-id="soldOut">
+                        <case value="true">text-secondary</case>
+                    </switch>
+                </rows>
+                <pre-filters>
+                    <eq field-id="account.id" param="account_id"/>
+                    <eq field-id="asset.ticker" param="asset_id"/>
+                </pre-filters>
+            </table>
+        </region>
+    </regions>
+</page>

@@ -302,14 +302,6 @@ private fun DialView.calcDividend(old : MutableList<DialView>) {
         old.add(0, this)
 }
 
-private fun String.isCurrency(): Boolean {
-    return Currency.values().any { c -> c.name == this }
-}
-
-private fun currencyOf(ticker: String): Currency? {
-    return Currency.values().find { c -> c.name == ticker }
-}
-
 private fun Asset.toView(securityHistory: List<SecurityHistoryView> = Collections.emptyList(),
                          currency: Currency = Currency.RUB): SecurityView {
     return SecurityView(

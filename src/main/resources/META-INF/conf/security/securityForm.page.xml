@@ -69,6 +69,7 @@
                 <options>
                     <option id="MOEX" name="Moex Api"/>
                     <option id="UNIBIT" name="UniBit Api"/>
+                    <option id="CACHE" name="Cache Api"/>
                 </options>
             </select>
         </fields>

@@ -61,7 +61,7 @@
         </operation>
         <operation id="deleteSecurity">
             <invocation>
-                <java method="editSecurity" class="com.github.iryabov.invest.service.InvestService">
+                <java method="deleteSecurity" class="com.github.iryabov.invest.service.InvestService">
                     <spring/>
                     <arguments>
                         <argument type="primitive" name="ticker"/>
@@ -69,7 +69,7 @@
                 </java>
             </invocation>
             <in>
-                <field id="ticker" mapping="[0]"/>
+                <field id="id" mapping="[0]"/>
             </in>
         </operation>
     </operations>

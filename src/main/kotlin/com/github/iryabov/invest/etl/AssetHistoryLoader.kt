@@ -7,36 +7,40 @@ import com.github.iryabov.invest.repository.SecurityHistoryRepository
 import com.github.iryabov.invest.repository.AssetRepository
 import com.github.iryabov.invest.client.SecuritiesClient
 import com.github.iryabov.invest.client.Security
+import com.github.iryabov.invest.client.impl.SecuritiesClientCache
 import com.github.iryabov.invest.client.impl.SecuritiesClientMoex
 import com.github.iryabov.invest.client.impl.SecuritiesClientUnibit
 import com.github.iryabov.invest.relation.AssetClass
 import com.github.iryabov.invest.relation.FinanceApi
+import com.github.iryabov.invest.service.impl.P1
+import com.github.iryabov.invest.service.impl.isCurrency
 import org.springframework.stereotype.Component
-import java.lang.UnsupportedOperationException
 import java.math.RoundingMode
 import java.time.LocalDate
+import java.time.Period
 import java.util.*
+import java.util.stream.Collectors
 
 @Component
 class AssetHistoryLoader(
         val securitiesClientMoex: SecuritiesClientMoex,
         val securitiesClientUnibit: SecuritiesClientUnibit,
+        val securitiesClientCache: SecuritiesClientCache,
         val assetRepo: AssetRepository,
         val securityHistoryRepo: SecurityHistoryRepository,
         val currencyRateLoader: CurrencyRateLoader
 ) {
     fun load(ticker: String, from: LocalDate, till: LocalDate) {
         var client: SecuritiesClient = securitiesClientMoex
-        val assetOptional = assetRepo.findById(ticker)
-        if (assetOptional.isPresent)
-            client = when (assetOptional.get().api) {
-                FinanceApi.MOEX -> securitiesClientMoex
-                FinanceApi.UNIBIT -> securitiesClientUnibit
-            }
+        val assetFound = assetRepo.findById(ticker).orElseThrow()
+        client = when (assetFound.api) {
+            FinanceApi.MOEX -> securitiesClientMoex
+            FinanceApi.UNIBIT -> securitiesClientUnibit
+            FinanceApi.CACHE -> securitiesClientCache
+        }
         val security = client.findLastPrice(ticker)
-        if (assetOptional.isPresent)
-            exchange(security, assetOptional.orElse(null)?.currency ?: Currency.RUB)
-        val asset = assetRepo.save(security.toEntity(assetOptional))
+        exchange(security, assetFound.currency ?: Currency.RUB)
+        val asset = assetRepo.save(security.toEntity(assetFound))
         var begin = from
         var end = from
         do {
@@ -69,20 +73,9 @@ private fun Security.toHistoryEntity(dest: SecurityHistory? = null): SecurityHis
             .copy(id = dest?.id)
 }
 
-private fun Security.toEntity(exists: Optional<Asset>): Asset {
-    return if (exists.isPresent) {
-        exists.get().copy(
+private fun Security.toEntity(exists: Asset): Asset {
+    return exists.copy(
                 ticker = this.ticker,
                 name = this.shortName,
                 priceNow = this.facePrice)
-    } else {
-        val asset = Asset(
-                ticker = this.ticker,
-                name = this.shortName,
-                priceNow = this.facePrice,
-                assetClass = AssetClass.SHARE,
-                currency = this.settlementCurrency)
-        asset.newEntity = true
-        asset
-    }
 }

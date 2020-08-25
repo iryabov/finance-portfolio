@@ -63,7 +63,7 @@
                         <case value="false">text-secondary</case>
                     </switch>
                     <click>
-                        <open-page page-id="assetDetails" route="/:asset_id/details">
+                        <open-page page-id="currenciesDetails" route="/:asset_id/details">
                             <path-param name="asset_id" value="{id}"/>
                         </open-page>
                     </click>

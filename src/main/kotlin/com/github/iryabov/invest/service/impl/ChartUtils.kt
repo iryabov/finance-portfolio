@@ -25,11 +25,6 @@ fun <T> fillChart(history: List<T>, fromDate: LocalDate, tillDate: LocalDate,
             result.add(constructor(pair.first, if (result.isNotEmpty()) result.last() else null))
         }
     }
-//    if (history.isEmpty() || extractor(history[0]) > fromDate)
-//        result.add(constructor(fromDate))
-//    result.addAll(history)
-//    if (history.isEmpty() || extractor(history[history.lastIndex]) < tillDate)
-//        result.add(constructor(tillDate))
     return result
 }
 
