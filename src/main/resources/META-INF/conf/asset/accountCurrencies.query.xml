@@ -46,6 +46,9 @@
         <field id="asset.name">
             <select mapping="assetName"/>
         </field>
+        <field id="name">
+            <select mapping="assetName" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).fullName(#this, #data['asset.ticker'])"/>
+        </field>
         <field id="asset.class">
             <select mapping="assetClass"/>
         </field>

@@ -5,7 +5,7 @@
         <region>
             <table query-id="security" route="/">
                 <toolbar place="topLeft">
-                    <button id="add" color="primary" label="Add">
+                    <button id="add" color="primary" label="Add" model="filter">
                         <open-page page-id="securityForm" page-name="Add security"
                                    submit-operation-id="addSecurity" upload="defaults">
 

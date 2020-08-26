@@ -76,6 +76,6 @@ private fun Security.toHistoryEntity(dest: SecurityHistory? = null): SecurityHis
 private fun Security.toEntity(exists: Asset): Asset {
     return exists.copy(
                 ticker = this.ticker,
-                name = this.shortName,
+                name = if (this.shortName.isNotBlank()) this.shortName else exists.name,
                 priceNow = this.facePrice)
 }

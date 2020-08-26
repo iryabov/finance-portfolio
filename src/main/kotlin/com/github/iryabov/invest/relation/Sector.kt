@@ -12,5 +12,6 @@ enum class Sector {
     GOLD,
     REALTY,
     TRANSPORT,
-    TOURISM
+    TOURISM,
+    HEALTH
 }

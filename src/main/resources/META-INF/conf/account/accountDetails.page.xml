@@ -51,10 +51,12 @@
             <table id="currencies" name="Currencies" query-id="accountCurrencies" route="/currencies" selection="none" size="100">
                 <pagination hide-single-page="true"/>
                 <columns>
-                    <column text-field-id="asset.ticker" label="Currency"/>
-                    <column text-field-id="quantity"/>
-                    <column text-field-id="marketValue"/>
-                    <column text-field-id="marketProfitPercent">
+                    <column text-field-id="name" label="Name"/>
+                    <column text-field-id="quantity" label="Quantity"/>
+                    <column text-field-id="netValue" label="Value">
+                        <text format="number 0,0.00"/>
+                    </column>
+                    <column text-field-id="marketProfitPercent" label="Profit">
                         <badge text="{marketProfit}" text-format="number 0,0.00" color="{marketProfitColor}"/>
                     </column>
                 </columns>
@@ -74,10 +76,12 @@
             </table>
             <table id="securities" name="Securities" query-id="accountAsset" route="/securities" selection="none" size="100">
                 <columns>
-                    <column text-field-id="asset.ticker" label="Ticker"/>
-                    <column text-field-id="quantity"/>
-                    <column text-field-id="marketValue"/>
-                    <column text-field-id="marketProfitPercent">
+                    <column text-field-id="name" label="Name"/>
+                    <column text-field-id="quantity" label="Quantity"/>
+                    <column text-field-id="netValue" label="Value">
+                        <text format="number 0,0.00"/>
+                    </column>
+                    <column text-field-id="marketProfitPercent" label="Profit">
                         <badge text="{marketProfit}" text-format="number 0,0.00" color="{marketProfitColor}"/>
                     </column>
                 </columns>
