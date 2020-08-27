@@ -12,6 +12,8 @@ interface InvestService {
 
     fun addDial(accountId: Int, form: DialForm): Long
 
+    fun remittanceDeal(accountFrom: Int, accountTo: Int, form: RemittanceForm): Long
+
     fun deleteDial(accountId: Int, id: Long)
 
     fun deactivateDial(accountId: Int, id: Long)

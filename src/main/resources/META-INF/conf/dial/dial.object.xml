@@ -66,5 +66,27 @@
                 <field id="id" mapping="[1]" domain="long"/>
             </in>
         </operation>
+        <operation id="remittanceDeal">
+            <invocation>
+                <java method="remittanceDeal" class="com.github.iryabov.invest.service.InvestService">
+                    <spring/>
+                    <arguments>
+                        <argument type="primitive" name="accountFrom"/>
+                        <argument type="primitive" name="accountTo"/>
+                        <argument type="entity" name="form" class="com.github.iryabov.invest.model.RemittanceForm"/>
+                    </arguments>
+                </java>
+            </invocation>
+            <in>
+                <field id="accountFrom.id" param="account_from" mapping="[0]"/>
+                <field id="accountTo.id" param="account_to" mapping="[1]"/>
+                <field id="opened" mapping="[2].opened"/>
+                <field id="currency.id" mapping="[2].currency"/>
+                <field id="quantity" mapping="[2].quantity"/>
+            </in>
+            <out>
+                <field id="id" domain="long" mapping="#this"/>
+            </out>
+        </operation>
     </operations>
 </object>

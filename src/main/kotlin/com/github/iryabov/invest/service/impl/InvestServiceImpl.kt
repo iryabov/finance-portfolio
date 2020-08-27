@@ -1,7 +1,5 @@
 package com.github.iryabov.invest.service.impl
 
-import com.github.iryabov.invest.client.CurrenciesClient
-import com.github.iryabov.invest.client.ExchangeRate
 import com.github.iryabov.invest.entity.*
 import com.github.iryabov.invest.etl.CurrencyRateLoader
 import com.github.iryabov.invest.model.*
@@ -10,7 +8,6 @@ import com.github.iryabov.invest.relation.DialType
 import com.github.iryabov.invest.relation.Period
 import com.github.iryabov.invest.repository.*
 import com.github.iryabov.invest.service.InvestService
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -30,6 +27,7 @@ class InvestServiceImpl(
         val rateRepository: CurrencyRateRepository,
         val assetRepo: AssetRepository,
         val securityHistoryRepo: SecurityHistoryRepository,
+        val remittanceRepository: RemittanceRepository,
         val currencyRateLoader: CurrencyRateLoader
 ) : InvestService {
     override fun createAccount(form: AccountForm): Int {
@@ -47,6 +45,17 @@ class InvestServiceImpl(
             currencyRateLoader.addExchangeRate(created.date)
         writeOffByFifoAndRecalculation(if (created.quantity < 0) created else created.invert(), needWriteOff(created))
         return created.id!!
+    }
+
+    override fun remittanceDeal(accountFrom: Int, accountTo: Int, form: RemittanceForm): Long {
+        val from = dialRepo.save(form.toDealFormWith(DialType.WITHDRAWALS).toEntityWith(accountFrom))
+        if (from.volume != P0)
+            currencyRateLoader.addExchangeRate(from.date)
+        writeOffByFifoAndRecalculation(from, needWriteOff(from))
+        val to = dialRepo.save(form.toDealFormWith(DialType.DEPOSIT).toEntityWith(accountTo))
+        writeOffByFifoAndRecalculation(to.invert(), needWriteOff(to))
+        remittanceRepository.save(Remittance(dialFrom = from.id!!, dialTo = to.id!!))
+        return from.id!!
     }
 
     override fun deleteDial(accountId: Int, id: Long) {
@@ -258,6 +267,16 @@ private fun DialForm.toEntityWith(accountId: Int): Dial {
             currency = currency,
             volume = if (type.income) volume else volume.negate(),
             quantity = quantity)
+}
+
+private fun RemittanceForm.toDealFormWith(type: DialType): DialForm {
+    return DialForm(
+            opened = this.opened,
+            type = type,
+            ticker = this.currency.name,
+            currency = this.currency,
+            volume = BigDecimal(this.quantity)
+    )
 }
 
 private fun AccountForm.toEntity() = Account(
