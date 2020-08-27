@@ -240,7 +240,7 @@ from (
          end
         ) as volume
      from dial d 
-     where d.account_id = :account_id and d.currency = :ticker
+     where d.account_id = :account_id and d.currency = :ticker and d.ticker <> :ticker
 ) d
 left join asset a on a.ticker = d.ticker
 order by d.dt desc, d.id desc    

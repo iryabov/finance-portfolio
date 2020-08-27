@@ -20,16 +20,17 @@
 <!--            <input-select id="asset" label="Asset" query-id="assets" label-field-id="fullName">-->
 <!--                -->
 <!--            </input-select> -->
-<!--            <auto-complete id="asset.id" label="Ticker" param="asset_id"-->
-<!--                           query-id="accountAsset" value-field-id="ticker"-->
-<!--                           required="true">-->
-<!--            </auto-complete>-->
-            <input-text id="asset.id" label="Ticker" param="asset_id"
-                        required="true">
-                <dependencies>
-                    <visibility on="type">type.id != 'DEPOSIT' &amp;&amp; type.id != 'WITHDRAWALS'</visibility>
-                </dependencies>
-            </input-text>
+            <auto-complete id="asset.id" label="Ticker" param="asset_id"
+                           query-id="security" value-field-id="id"
+                           search-filter-id="ticker"
+                           required="true">
+            </auto-complete>
+<!--            <input-text id="asset.id" label="Ticker" param="asset_id"-->
+<!--                        required="true">-->
+<!--                <dependencies>-->
+<!--                    <visibility on="type">type.id != 'DEPOSIT' &amp;&amp; type.id != 'WITHDRAWALS'</visibility>-->
+<!--                </dependencies>-->
+<!--            </input-text>-->
 <!--            <output-text id="asset.name" label="Name">-->
 <!--                <dependencies>-->
 <!--                    <reset on="asset.id"/>-->

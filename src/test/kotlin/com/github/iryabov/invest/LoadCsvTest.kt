@@ -40,15 +40,15 @@ class LoadCsvTest(
         val tinkoff = accountRepo.findByName("Тинькофф")
         if (tinkoff != null)
             accountRepo.delete(tinkoff)
-        val vtbiis = accountRepo.findByName("ВТБ ИИС")
-        if (vtbiis != null)
-            accountRepo.delete(vtbiis!!)
-        val vtbbroker = accountRepo.findByName("ВТБ Брокер")
-        if (vtbbroker != null)
-            accountRepo.delete(vtbbroker!!)
+//        val vtbiis = accountRepo.findByName("ВТБ ИИС")
+//        if (vtbiis != null)
+//            accountRepo.delete(vtbiis!!)
+//        val vtbbroker = accountRepo.findByName("ВТБ Брокер")
+//        if (vtbbroker != null)
+//            accountRepo.delete(vtbbroker!!)
         val vtb = accountRepo.findByName("ВТБ")
         if (vtb != null)
-            accountRepo.delete(vtb!!)
+            accountRepo.delete(vtb)
     }
 
     @Test
@@ -56,7 +56,7 @@ class LoadCsvTest(
     //@Disabled
     @Rollback(false)
     fun csvLoad() {
-        csvLoader.load(FileSystemResource("excel/test4.csv"))
+        csvLoader.load(FileSystemResource("excel/test5.csv"))
     }
 
 }

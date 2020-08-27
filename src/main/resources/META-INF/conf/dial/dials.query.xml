@@ -17,7 +17,7 @@
             <arguments>
                 <argument type="primitive" name="accountId"/>
                 <argument type="primitive" name="currency"/>
-                <argument type="primitive" name="ticker" default-value="null"/>
+                <argument type="primitive" name="ticker"/>
             </arguments>
         </java>
     </list>

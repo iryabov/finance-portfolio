@@ -93,15 +93,17 @@
                                 <case value="SALE">danger</case>
                                 <case value="WITHDRAWALS">danger</case>
                                 <case value="DIVIDEND">info</case>
+                                <case value="COUPON">info</case>
+                                <case value="PERCENT">info</case>
                                 <case value="TAX">warning</case>
                             </switch>
                         </badge>
                     </column>
-                    <column text-field-id="settlementTicker" label="Settlement ticker" tooltip-field-id="currency"/>
+                    <column text-field-id="settlementTicker" label="Settlement ticker"/>
                     <column text-field-id="price" label="Price">
                         <text format="number 0.00"/>
                     </column>
-                    <column text-field-id="quantity" label="Quantity" tooltip-field-id="quantity">
+                    <column text-field-id="quantity" label="Quantity">
                     </column>
                     <column text-field-id="profit" label="Volume">
                         <!--                        <text format="number 0.00"/>-->
