@@ -60,17 +60,34 @@ class InvestServiceImpl(
 
     override fun deleteDial(accountId: Int, id: Long) {
         val deleted = dialRepo.findById(id).orElseThrow()
+        val remittance = remittanceRepository.findOneByDialFromOrTo(deleted.id!!)
         dialRepo.deleteById(id)
         writeOffByFifoAndRecalculation(if (deleted.quantity < 0) deleted else deleted.invert(), false)
+        if (remittance != null) {
+            val remittanceId = if (remittance.dialFrom == id) remittance.dialTo else remittance.dialFrom
+            val remittanceDeal = dialRepo.findById(remittanceId).orElseThrow()
+            dialRepo.deleteById(remittanceDeal.id!!)
+            writeOffByFifoAndRecalculation(if (remittanceDeal.quantity < 0) remittanceDeal else remittanceDeal.invert(), false)
+        }
     }
 
     override fun deactivateDial(accountId: Int, id: Long) {
         val deactivated = dialRepo.findById(id).orElseThrow()
+        val remittance = remittanceRepository.findOneByDialFromOrTo(deactivated.id!!)
         dialRepo.deactivate(id)
         if (deactivated.active)
             writeOffRepo.deleteAllByDialId(deactivated.id!!)
         writeOffByFifoAndRecalculation(if (deactivated.quantity < 0) deactivated else deactivated.invert(),
                 needWriteOff(deactivated) && !deactivated.active)
+        if (remittance != null) {
+            val remittanceId = if (remittance.dialFrom == id) remittance.dialTo else remittance.dialFrom
+            val remittanceDeal = dialRepo.findById(remittanceId).orElseThrow()
+            dialRepo.deactivate(remittanceDeal.id!!)
+            if (remittanceDeal.active)
+                writeOffRepo.deleteAllByDialId(remittanceDeal.id!!)
+            writeOffByFifoAndRecalculation(if (remittanceDeal.quantity < 0) remittanceDeal else remittanceDeal.invert(),
+                    needWriteOff(remittanceDeal) && !remittanceDeal.active)
+        }
     }
 
     override fun getAccount(accountId: Int, currency: Currency): AccountView {
