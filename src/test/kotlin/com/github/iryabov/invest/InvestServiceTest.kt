@@ -303,6 +303,17 @@ class InvestServiceTest(
         assertThatAsset(account1, "RUB") { it.quantity == 1000 && it.netValue.eq(money(1000)) }
         assertThatAsset(account2, "RUB") { it.quantity == 0 && it.netValue.eq(money(0)) }
 
+        //withdrawals with remittance
+        val withdrawals = investService.addDial(account1, DialForm(ticker = "RUB",
+                quantity = 1000,
+                currency = RUB,
+                type = WITHDRAWALS,
+                opened = date("2020-08-03"),
+                volume = money(1000),
+                remittanceAccountId = account2))
+        assertThatAsset(account1, "RUB") { it.quantity == 0 && it.netValue.eq(money(0)) }
+        assertThatAsset(account2, "RUB") { it.quantity == 1000 && it.netValue.eq(money(1000)) }
+
         //account deleting
         investService.deleteAccount(account1)
         investService.deleteAccount(account2)

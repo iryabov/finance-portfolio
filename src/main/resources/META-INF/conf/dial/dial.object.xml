@@ -31,6 +31,7 @@
                 <field id="currency.id" mapping="[1].currency"/>
                 <field id="volume" mapping="[1].volume"/>
                 <field id="quantity" mapping="[1].quantity"/>
+                <field id="accountTo.id" mapping="[1].remittanceAccountId"/>
             </in>
             <out>
                 <field id="id" domain="long" mapping="#this"/>

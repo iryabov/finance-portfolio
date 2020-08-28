@@ -44,6 +44,11 @@ class InvestServiceImpl(
         if (created.volume != P0)
             currencyRateLoader.addExchangeRate(created.date)
         writeOffByFifoAndRecalculation(if (created.quantity < 0) created else created.invert(), needWriteOff(created))
+        if ((form.type == DialType.WITHDRAWALS || form.type == DialType.DEPOSIT) && form.remittanceAccountId != null) {
+            val remittanceDial = dialRepo.save(form.toEntityWith(form.remittanceAccountId!!).invert())
+            writeOffByFifoAndRecalculation(if (remittanceDial.quantity < 0) remittanceDial else remittanceDial.invert(), needWriteOff(remittanceDial))
+            remittanceRepository.save(Remittance(dialFrom = created.id!!, dialTo = remittanceDial.id!!))
+        }
         return created.id!!
     }
 
