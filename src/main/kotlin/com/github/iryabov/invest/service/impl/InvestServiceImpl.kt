@@ -47,15 +47,15 @@ class InvestServiceImpl(
         return created.id!!
     }
 
-    override fun remittanceDeal(accountFrom: Int, accountTo: Int, form: RemittanceForm): Long {
+    override fun remittanceDeal(accountFrom: Int, accountTo: Int, form: RemittanceForm): Pair<Long, Long> {
         val from = dialRepo.save(form.toDealFormWith(DialType.WITHDRAWALS).toEntityWith(accountFrom))
         if (from.volume != P0)
             currencyRateLoader.addExchangeRate(from.date)
         writeOffByFifoAndRecalculation(from, needWriteOff(from))
         val to = dialRepo.save(form.toDealFormWith(DialType.DEPOSIT).toEntityWith(accountTo))
         writeOffByFifoAndRecalculation(to.invert(), needWriteOff(to))
-        remittanceRepository.save(Remittance(dialFrom = from.id!!, dialTo = to.id!!))
-        return from.id!!
+        val remittance = remittanceRepository.save(Remittance(dialFrom = from.id!!, dialTo = to.id!!))
+        return remittance.dialFrom to remittance.dialTo
     }
 
     override fun deleteDial(accountId: Int, id: Long) {
@@ -244,6 +244,7 @@ private fun AccountView.calc() {
 }
 
 private fun AccountView.calcProportion() {
+    if (assets.isEmpty()) return
     assets.forEach { a -> a.calcProportion(totalNetValue, totalMarketValue) }
     assert(assets.sumByBigDecimal { a -> a.netInterest }.eq(P100))
     assert(assets.sumByBigDecimal { a -> a.marketInterest }.eq(P100))

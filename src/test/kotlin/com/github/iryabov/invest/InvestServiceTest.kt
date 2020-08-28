@@ -2,8 +2,6 @@ package com.github.iryabov.invest
 
 import com.github.iryabov.invest.etl.AssetHistoryLoader
 import com.github.iryabov.invest.relation.Currency
-import com.github.iryabov.invest.model.AccountForm
-import com.github.iryabov.invest.model.DialForm
 import com.github.iryabov.invest.relation.DialType
 import com.github.iryabov.invest.repository.AccountRepository
 import com.github.iryabov.invest.repository.DialRepository
@@ -14,15 +12,11 @@ import com.github.iryabov.invest.client.impl.SecuritiesClientMoex
 import com.github.iryabov.invest.etl.CurrencyRateLoader
 import com.github.iryabov.invest.service.InvestService
 import com.github.iryabov.invest.etl.DialsCsvLoader
-import com.github.iryabov.invest.model.AssetView
-import com.github.iryabov.invest.model.DialView
+import com.github.iryabov.invest.model.*
 import com.github.iryabov.invest.relation.Currency.RUB
 import com.github.iryabov.invest.relation.DialType.*
 import com.github.iryabov.invest.relation.Period
-import com.github.iryabov.invest.service.impl.NotEnoughFundsException
-import com.github.iryabov.invest.service.impl.date
-import com.github.iryabov.invest.service.impl.eq
-import com.github.iryabov.invest.service.impl.money
+import com.github.iryabov.invest.service.impl.*
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
@@ -278,6 +272,44 @@ class InvestServiceTest(
         assertThat(accountRepo.findById(accountId).isEmpty).isTrue()
     }
 
+    @Test
+    internal fun remittance() {
+        val account1 = investService.createAccount(AccountForm("RemittanceAccount1", "1"))
+        val account2 = investService.createAccount(AccountForm("RemittanceAccount2", "2"))
+
+        val deposit = investService.addDial(account1, DialForm("RUB", date("2020-08-01"), DEPOSIT, RUB, money(1000)))
+        val remittance = investService.remittanceDeal(account1, account2, RemittanceForm(date("2020-08-02"), RUB, 1000))
+        assertThatAsset(account1, "RUB") { it.quantity == 0 && it.netValue.eq(money(0)) }
+        assertThatAsset(account2, "RUB") { it.quantity == 1000 && it.netValue.eq(money(1000)) }
+
+        //deactivate from
+        investService.deactivateDial(account1, remittance.first)
+        assertThat(dialRepo.findById(remittance.first).orElseThrow().active).isFalse()
+        assertThat(dialRepo.findById(remittance.second).orElseThrow().active).isFalse()
+        assertThatAsset(account1, "RUB") { it.quantity == 1000 && it.netValue.eq(money(1000)) }
+        assertThatAsset(account2, "RUB") { it.quantity == 0 && it.netValue.eq(money(0)) }
+
+        //activate to
+        investService.deactivateDial(account2, remittance.second)
+        assertThat(dialRepo.findById(remittance.second).orElseThrow().active).isTrue()
+        assertThat(dialRepo.findById(remittance.first).orElseThrow().active).isTrue()
+        assertThatAsset(account1, "RUB") { it.quantity == 0 && it.netValue.eq(money(0)) }
+        assertThatAsset(account2, "RUB") { it.quantity == 1000 && it.netValue.eq(money(1000)) }
+
+        //delete to
+        investService.deleteDial(account2, remittance.second)
+        assertThat(dialRepo.findById(remittance.second).isEmpty).isTrue()
+        assertThat(dialRepo.findById(remittance.first).isEmpty).isTrue()
+        assertThatAsset(account1, "RUB") { it.quantity == 1000 && it.netValue.eq(money(1000)) }
+        assertThatAsset(account2, "RUB") { it.quantity == 0 && it.netValue.eq(money(0)) }
+
+        //account deleting
+        investService.deleteAccount(account1)
+        investService.deleteAccount(account2)
+        assertThat(accountRepo.findById(account1).isEmpty).isTrue()
+        assertThat(accountRepo.findById(account2).isEmpty).isTrue()
+    }
+
     @Test()
     @Disabled
     fun getAccountView() {
@@ -362,7 +394,7 @@ class InvestServiceTest(
     }
 
     private fun assertThatAsset(accountId: Int, ticker: String, predicate: (AssetView) -> Boolean): AssertContinue<AssetView> {
-        val found = investService.getAccount(accountId).assets.find { it.assetTicker == ticker }!!
+        val found = investService.getAccount(accountId).assets.find { it.assetTicker == ticker } ?: AssetView(assetTicker = ticker, quantity = 0, netValue = P0)
         assertThat(found).matches(predicate)
         return AssertContinue(found)
     }

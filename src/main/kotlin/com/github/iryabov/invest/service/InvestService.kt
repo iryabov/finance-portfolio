@@ -12,7 +12,7 @@ interface InvestService {
 
     fun addDial(accountId: Int, form: DialForm): Long
 
-    fun remittanceDeal(accountFrom: Int, accountTo: Int, form: RemittanceForm): Long
+    fun remittanceDeal(accountFrom: Int, accountTo: Int, form: RemittanceForm): Pair<Long, Long>
 
     fun deleteDial(accountId: Int, id: Long)
 

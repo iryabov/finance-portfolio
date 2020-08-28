@@ -21,7 +21,7 @@ fun calcProfitPercent(a: BigDecimal, b: BigDecimal): BigDecimal {
 }
 
 fun calcPercent(a: BigDecimal, b: BigDecimal): BigDecimal {
-    return if (b.compareTo(P0) != 0) a.divide(b, 2, RoundingMode.HALF_UP) * P100 else P0
+    return if (b.compareTo(P0) != 0) a.divide(b, 2, RoundingMode.HALF_UP) * P100 else P100
 }
 
 inline fun <T> Iterable<T>.sumByBigDecimal(selector: (T) -> BigDecimal): BigDecimal {
