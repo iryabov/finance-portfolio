@@ -2,19 +2,18 @@ package com.github.iryabov.invest
 
 import com.github.iryabov.invest.etl.AssetHistoryLoader
 import com.github.iryabov.invest.relation.Currency
-import com.github.iryabov.invest.relation.DialType
 import com.github.iryabov.invest.repository.AccountRepository
-import com.github.iryabov.invest.repository.DialRepository
+import com.github.iryabov.invest.repository.DealRepository
 import com.github.iryabov.invest.repository.CurrencyRateRepository
 import com.github.iryabov.invest.client.impl.CurrenciesClientCBRF
 import com.github.iryabov.invest.client.impl.CurrenciesClientECB
 import com.github.iryabov.invest.client.impl.SecuritiesClientMoex
 import com.github.iryabov.invest.etl.CurrencyRateLoader
 import com.github.iryabov.invest.service.InvestService
-import com.github.iryabov.invest.etl.DialsCsvLoader
+import com.github.iryabov.invest.etl.DealsCsvLoader
 import com.github.iryabov.invest.model.*
 import com.github.iryabov.invest.relation.Currency.RUB
-import com.github.iryabov.invest.relation.DialType.*
+import com.github.iryabov.invest.relation.DealType.*
 import com.github.iryabov.invest.relation.Period
 import com.github.iryabov.invest.service.impl.*
 import org.assertj.core.api.Assertions.assertThat
@@ -33,20 +32,19 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.LocalDate
 import java.time.Month
-import java.util.function.Predicate
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE,
         properties = ["spring.datasource.url=jdbc:postgresql://localhost:5432/invest_test"])
 @Sql("/schema.sql")
 class InvestServiceTest(
         @Autowired
-        val dialRepo: DialRepository,
+        val dealRepo: DealRepository,
         @Autowired
         val accountRepo: AccountRepository,
         @Autowired
         val investService: InvestService,
         @Autowired
-        val csvLoader: DialsCsvLoader,
+        val csvLoader: DealsCsvLoader,
         @Autowired
         val currenciesClientECB: CurrenciesClientECB,
         @Autowired
@@ -75,22 +73,22 @@ class InvestServiceTest(
         assertThat(accountRepo.findById(accountId)).isPresent
 
         //dial deposit
-        val deposit = investService.addDial(accountId, DialForm(type = DEPOSIT,
+        val deposit = investService.addDeal(accountId, DealForm(type = DEPOSIT,
                 ticker = "RUB",
                 volume = BigDecimal(100),
                 currency = RUB))
-        assertThat(dialRepo.findById(deposit).get()).matches { d ->
+        assertThat(dealRepo.findById(deposit).get()).matches { d ->
             d.ticker == "RUB" && d.accountId == accountId && d.active
                     && d.quantity == 100 && d.volume == BigDecimal(-100)
         }
 
         //dial purchase
-        val purchase = investService.addDial(accountId, DialForm(type = PURCHASE,
+        val purchase = investService.addDeal(accountId, DealForm(type = PURCHASE,
                 ticker = "TEST",
                 volume = BigDecimal(100),
                 currency = RUB,
                 quantity = 10))
-        assertThat(dialRepo.findById(purchase).get()).matches { d ->
+        assertThat(dealRepo.findById(purchase).get()).matches { d ->
             d.ticker == "TEST" && d.accountId == accountId && d.active
                     && d.quantity == 10 && d.volume == BigDecimal(-100)
         }
@@ -101,12 +99,12 @@ class InvestServiceTest(
             it.assets.find { a -> a.assetTicker == "TEST" }!!.netValue.eq(BigDecimal(100))
         }
 
-        val sale = investService.addDial(accountId, DialForm(type = SALE,
+        val sale = investService.addDeal(accountId, DealForm(type = SALE,
                 ticker = "TEST",
                 volume = BigDecimal(25),
                 currency = RUB,
                 quantity = 2))
-        assertThat(dialRepo.findById(sale).get()).matches { d ->
+        assertThat(dealRepo.findById(sale).get()).matches { d ->
             d.ticker == "TEST" && d.accountId == accountId && d.active
                     && d.quantity == -2 && d.volume == BigDecimal(25)
         }
@@ -118,8 +116,8 @@ class InvestServiceTest(
         }
 
         //dial deactivating
-        investService.deactivateDial(accountId, sale)
-        assertThat(dialRepo.findById(sale).get()).matches { d -> !d.active }
+        investService.deactivateDeal(accountId, sale)
+        assertThat(dealRepo.findById(sale).get()).matches { d -> !d.active }
 
         account = investService.getAccount(accountId)
         assertThat(account).matches {
@@ -128,8 +126,8 @@ class InvestServiceTest(
         }
 
         //dial activating
-        investService.deactivateDial(accountId, sale)
-        assertThat(dialRepo.findById(sale).get()).matches { d -> d.active }
+        investService.deactivateDeal(accountId, sale)
+        assertThat(dealRepo.findById(sale).get()).matches { d -> d.active }
 
         account = investService.getAccount(accountId)
         assertThat(account).matches {
@@ -138,8 +136,8 @@ class InvestServiceTest(
         }
 
         //dial deleting
-        investService.deleteDial(accountId, sale)
-        assertThat(dialRepo.findById(sale).isEmpty).isTrue()
+        investService.deleteDeal(accountId, sale)
+        assertThat(dealRepo.findById(sale).isEmpty).isTrue()
 
         //account deleting
         investService.deleteAccount(accountId)
@@ -154,25 +152,25 @@ class InvestServiceTest(
         assertThat(accountRepo.findById(accountId)).isPresent
 
         assertThatThrownBy {
-            investService.addDial(accountId, DialForm("AAA", date("2020-04-07"), PURCHASE, RUB, money(500), 5))
+            investService.addDeal(accountId, DealForm("AAA", date("2020-04-07"), PURCHASE, RUB, money(500), 5))
         }.isInstanceOf(NotEnoughFundsException::class.java)
 
-        val deposit2000 = investService.addDial(accountId, DialForm("RUB", date("2020-02-09"),
+        val deposit2000 = investService.addDeal(accountId, DealForm("RUB", date("2020-02-09"),
                 DEPOSIT, RUB, money(2000)))
 
-        val purchase5For500 = investService.addDial(accountId, DialForm("AAA", date("2020-04-07"),
+        val purchase5For500 = investService.addDeal(accountId, DealForm("AAA", date("2020-04-07"),
                 PURCHASE, RUB, money(500), 5))
 
-        val purchase10For1000 = investService.addDial(accountId, DialForm("AAA", date("2020-05-01"),
+        val purchase10For1000 = investService.addDeal(accountId, DealForm("AAA", date("2020-05-01"),
                 PURCHASE, RUB, money(1000), 10))
 
-        val sale5For500 = investService.addDial(accountId, DialForm("AAA", date("2020-06-01"),
+        val sale5For500 = investService.addDeal(accountId, DealForm("AAA", date("2020-06-01"),
                 SALE, RUB, money(500), 5))
 
-        val purchase10For950 = investService.addDial(accountId, DialForm("AAA", date("2020-06-22"),
+        val purchase10For950 = investService.addDeal(accountId, DealForm("AAA", date("2020-06-22"),
                 PURCHASE, RUB, money(950), 10))
 
-        val sale5For450 = investService.addDial(accountId, DialForm("AAA", date("2020-07-07"),
+        val sale5For450 = investService.addDeal(accountId, DealForm("AAA", date("2020-07-07"),
                 SALE, RUB, money(450), 5))
 
         assertThatAsset(accountId, "AAA") { it.quantity == 15 && it.netValue.eq(money(1450)) }
@@ -181,18 +179,18 @@ class InvestServiceTest(
         assertThatDial(purchase10For950) { it.soldQuantity == null }
         assertThatDial(sale5For450) { it.profit!!.eq(money(-50)) }
 
-        investService.deactivateDial(accountId, purchase10For1000)
+        investService.deactivateDeal(accountId, purchase10For1000)
         assertThatAsset(accountId, "AAA") { it.quantity == 5 && it.netValue.eq(money(475)) }
         assertThatDial(purchase5For500) { it.soldQuantity == 5 }
         assertThatDial(purchase10For1000) { it.soldQuantity == null }
         assertThatDial(purchase10For950) { it.soldQuantity == 5 }
         assertThatDial(sale5For450) { it.profit!!.eq(money(-25)) }
 
-        val dividend25 = investService.addDial(accountId, DialForm("AAA", date("2020-07-30"),
+        val dividend25 = investService.addDeal(accountId, DealForm("AAA", date("2020-07-30"),
                 DIVIDEND, RUB, money(25)))
         assertThatDial(purchase10For950) { it.dividendProfit.eq(money(25)) }
 
-        investService.deactivateDial(accountId, purchase10For1000)
+        investService.deactivateDeal(accountId, purchase10For1000)
         assertThatAsset(accountId, "AAA") { it.quantity == 15 && it.netValue.eq(money(1450)) }
         assertThatDial(purchase5For500) { it.soldQuantity == 5 }
         assertThatDial(purchase10For1000) { it.soldQuantity == 5 }
@@ -201,12 +199,12 @@ class InvestServiceTest(
         assertThatDial(purchase10For950) { it.dividendProfit.eq(money(17)) }
         assertThatDial(sale5For450) { it.profit!!.eq(money(-50)) }
 
-        val dividend20 = investService.addDial(accountId, DialForm("AAA", date("2020-08-20"),
+        val dividend20 = investService.addDeal(accountId, DealForm("AAA", date("2020-08-20"),
                 DIVIDEND, RUB, money(20)))
         assertThatDial(purchase10For1000) { it.dividendProfit.eq(money(15)) }
         assertThatDial(purchase10For950) { it.dividendProfit.eq(money(30)) }
 
-        val sale5For600 = investService.addDial(accountId, DialForm("AAA", date("2020-08-08"),
+        val sale5For600 = investService.addDeal(accountId, DealForm("AAA", date("2020-08-08"),
                 SALE, RUB, money(600), 5))
         assertThatAsset(accountId, "AAA") { it.quantity == 10 && it.netValue.eq(money(950)) }
         assertThatDial(purchase10For1000) { it.dividendProfit.eq(money(8)) }
@@ -214,16 +212,16 @@ class InvestServiceTest(
         assertThatDial(sale5For600) { it.profit!!.eq(money(100)) }
         assertThatDial(purchase10For1000) { it.soldQuantity == 10 }
 
-        val sale10For1000 = investService.addDial(accountId, DialForm("AAA", date("2020-09-10"),
+        val sale10For1000 = investService.addDeal(accountId, DealForm("AAA", date("2020-09-10"),
                 SALE, RUB, money(1000), 10))
         assertThatAsset(accountId, "AAA") { it.quantity == 0 && it.netValue.eq(money(0)) }
         assertThatDial(sale10For1000) { it.profit!!.eq(money(50)) }
 
-        val withdrawals = investService.addDial(accountId, DialForm("RUB", date("2020-10-01"),
+        val withdrawals = investService.addDeal(accountId, DealForm("RUB", date("2020-10-01"),
                 WITHDRAWALS, RUB, money(2050)))
         assertThatAsset(accountId, "RUB") { it.quantity == 95 && it.netValue.eq(money(95)) }
 
-        val tax10 = investService.addDial(accountId, DialForm("AAA", date("2021-01-10"),
+        val tax10 = investService.addDeal(accountId, DealForm("AAA", date("2021-01-10"),
                 TAX, RUB, money(10)))
         assertThatAsset(accountId, "RUB") { it.quantity == 85 && it.netValue.eq(money(85)) }
 
@@ -238,31 +236,31 @@ class InvestServiceTest(
         assertThat(accountRepo.findById(accountId)).isPresent
 
         //RUB=1500
-        val dial1 = investService.addDial(accountId, DialForm("RUB", date("2020-08-01"), DEPOSIT, RUB, money(1500)))
+        val dial1 = investService.addDeal(accountId, DealForm("RUB", date("2020-08-01"), DEPOSIT, RUB, money(1500)))
         //RUB=500, AAA=1000
-        val dial2 = investService.addDial(accountId, DialForm("AAA", date("2020-08-01"), PURCHASE, RUB, money(1000), 10))
+        val dial2 = investService.addDeal(accountId, DealForm("AAA", date("2020-08-01"), PURCHASE, RUB, money(1000), 10))
         //RUB=0, AAA=1500
-        val dial3 = investService.addDial(accountId, DialForm("AAA", date("2020-08-01"), PURCHASE, RUB, money(500), 5))
+        val dial3 = investService.addDeal(accountId, DealForm("AAA", date("2020-08-01"), PURCHASE, RUB, money(500), 5))
         //RUB=1000, AAA=500
-        val dial4 = investService.addDial(accountId, DialForm("AAA", date("2020-08-01"), SALE, RUB, money(1000), 10))
+        val dial4 = investService.addDeal(accountId, DealForm("AAA", date("2020-08-01"), SALE, RUB, money(1000), 10))
         //RUB=0, AAA=500, BBB=1000
-        val dial5 = investService.addDial(accountId, DialForm("BBB", date("2020-08-01"), PURCHASE, RUB, money(1000), 1))
+        val dial5 = investService.addDeal(accountId, DealForm("BBB", date("2020-08-01"), PURCHASE, RUB, money(1000), 1))
         assertThatAsset(accountId, "RUB") { it.quantity == 0 && it.netValue.eq(money(0)) }
         assertThatAsset(accountId, "AAA") { it.quantity == 5 && it.netValue.eq(money(500)) }
         assertThatAsset(accountId, "BBB") { it.quantity == 1 && it.netValue.eq(money(1000)) }
 
         assertThatThrownBy {
             //RUB=-1000, AAA=1500, BBB=1000
-            investService.deactivateDial(accountId, dial4)
+            investService.deactivateDeal(accountId, dial4)
         }.isInstanceOf(NotEnoughFundsException::class.java)
         //RUB=1000, AAA=500, BBB=0
-        investService.deactivateDial(accountId, dial5)
+        investService.deactivateDeal(accountId, dial5)
         //RUB=0, AAA=1500, BBB=0
-        investService.deactivateDial(accountId, dial4)
+        investService.deactivateDeal(accountId, dial4)
         //RUB=1000, AAA=500, BBB=0
-        investService.deactivateDial(accountId, dial2)
+        investService.deactivateDeal(accountId, dial2)
         //RUB=0, AAA=500, BBB=1000
-        investService.deactivateDial(accountId, dial5)
+        investService.deactivateDeal(accountId, dial5)
         assertThatAsset(accountId, "RUB") { it.quantity == 0 && it.netValue.eq(money(0)) }
         assertThatAsset(accountId, "AAA") { it.quantity == 5 && it.netValue.eq(money(500)) }
         assertThatAsset(accountId, "BBB") { it.quantity == 1 && it.netValue.eq(money(1000)) }
@@ -277,34 +275,34 @@ class InvestServiceTest(
         val account1 = investService.createAccount(AccountForm("RemittanceAccount1", "1"))
         val account2 = investService.createAccount(AccountForm("RemittanceAccount2", "2"))
 
-        val deposit = investService.addDial(account1, DialForm("RUB", date("2020-08-01"), DEPOSIT, RUB, money(1000)))
+        val deposit = investService.addDeal(account1, DealForm("RUB", date("2020-08-01"), DEPOSIT, RUB, money(1000)))
         val remittance = investService.remittanceDeal(account1, account2, RemittanceForm(date("2020-08-02"), RUB, 1000))
         assertThatAsset(account1, "RUB") { it.quantity == 0 && it.netValue.eq(money(0)) }
         assertThatAsset(account2, "RUB") { it.quantity == 1000 && it.netValue.eq(money(1000)) }
 
         //deactivate from
-        investService.deactivateDial(account1, remittance.first)
-        assertThat(dialRepo.findById(remittance.first).orElseThrow().active).isFalse()
-        assertThat(dialRepo.findById(remittance.second).orElseThrow().active).isFalse()
+        investService.deactivateDeal(account1, remittance.first)
+        assertThat(dealRepo.findById(remittance.first).orElseThrow().active).isFalse()
+        assertThat(dealRepo.findById(remittance.second).orElseThrow().active).isFalse()
         assertThatAsset(account1, "RUB") { it.quantity == 1000 && it.netValue.eq(money(1000)) }
         assertThatAsset(account2, "RUB") { it.quantity == 0 && it.netValue.eq(money(0)) }
 
         //activate to
-        investService.deactivateDial(account2, remittance.second)
-        assertThat(dialRepo.findById(remittance.second).orElseThrow().active).isTrue()
-        assertThat(dialRepo.findById(remittance.first).orElseThrow().active).isTrue()
+        investService.deactivateDeal(account2, remittance.second)
+        assertThat(dealRepo.findById(remittance.second).orElseThrow().active).isTrue()
+        assertThat(dealRepo.findById(remittance.first).orElseThrow().active).isTrue()
         assertThatAsset(account1, "RUB") { it.quantity == 0 && it.netValue.eq(money(0)) }
         assertThatAsset(account2, "RUB") { it.quantity == 1000 && it.netValue.eq(money(1000)) }
 
         //delete to
-        investService.deleteDial(account2, remittance.second)
-        assertThat(dialRepo.findById(remittance.second).isEmpty).isTrue()
-        assertThat(dialRepo.findById(remittance.first).isEmpty).isTrue()
+        investService.deleteDeal(account2, remittance.second)
+        assertThat(dealRepo.findById(remittance.second).isEmpty).isTrue()
+        assertThat(dealRepo.findById(remittance.first).isEmpty).isTrue()
         assertThatAsset(account1, "RUB") { it.quantity == 1000 && it.netValue.eq(money(1000)) }
         assertThatAsset(account2, "RUB") { it.quantity == 0 && it.netValue.eq(money(0)) }
 
         //withdrawals with remittance
-        val withdrawals = investService.addDial(account1, DialForm(ticker = "RUB",
+        val withdrawals = investService.addDeal(account1, DealForm(ticker = "RUB",
                 quantity = 1000,
                 currency = RUB,
                 type = WITHDRAWALS,
@@ -314,12 +312,12 @@ class InvestServiceTest(
         assertThatAsset(account1, "RUB") { it.quantity == 0 && it.netValue.eq(money(0)) }
         assertThatAsset(account2, "RUB") { it.quantity == 1000 && it.netValue.eq(money(1000)) }
         //delete from
-        investService.deleteDial(account1, withdrawals)
+        investService.deleteDeal(account1, withdrawals)
         assertThatAsset(account1, "RUB") { it.quantity == 1000 && it.netValue.eq(money(1000)) }
         assertThatAsset(account2, "RUB") { it.quantity == 0 && it.netValue.eq(money(0)) }
 
         //percent with remittance
-        val percent = investService.addDial(account1, DialForm(ticker = "RUB",
+        val percent = investService.addDeal(account1, DealForm(ticker = "RUB",
                 quantity = 500,
                 currency = RUB,
                 type = PERCENT,
@@ -425,15 +423,15 @@ class InvestServiceTest(
         return AssertContinue(found)
     }
 
-    private fun assertThatDial(accountId: Int, ticker: String, date: LocalDate, predicate: (DialView) -> Boolean): AssertContinue<DialView> {
-        val found = investService.getDials(accountId, RUB, ticker).find { it.dt == date }!!
+    private fun assertThatDial(accountId: Int, ticker: String, date: LocalDate, predicate: (DealView) -> Boolean): AssertContinue<DealView> {
+        val found = investService.getDeals(accountId, RUB, ticker).find { it.dt == date }!!
         assertThat(found).matches(predicate)
         return AssertContinue(found)
     }
 
-    private fun assertThatDial(dialId: Long, predicate: (DialView) -> Boolean): AssertContinue<DialView> {
-        val dial = dialRepo.findByIdOrNull(dialId)!!
-        val found = investService.getDials(dial.accountId, RUB, dial.ticker).find {
+    private fun assertThatDial(dialId: Long, predicate: (DealView) -> Boolean): AssertContinue<DealView> {
+        val dial = dealRepo.findByIdOrNull(dialId)!!
+        val found = investService.getDeals(dial.accountId, RUB, dial.ticker).find {
             it.dt == dial.date && it.type == dial.type && it.active == dial.active
         }!!
         assertThat(found).matches(predicate)

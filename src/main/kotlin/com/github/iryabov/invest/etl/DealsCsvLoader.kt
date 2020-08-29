@@ -1,11 +1,11 @@
 package com.github.iryabov.invest.etl
 
 import com.github.iryabov.invest.model.AccountForm
-import com.github.iryabov.invest.model.DialForm
+import com.github.iryabov.invest.model.DealForm
 import com.github.iryabov.invest.relation.Currency
-import com.github.iryabov.invest.relation.DialType
+import com.github.iryabov.invest.relation.DealType
 import com.github.iryabov.invest.repository.AccountRepository
-import com.github.iryabov.invest.repository.DialRepository
+import com.github.iryabov.invest.repository.DealRepository
 import com.github.iryabov.invest.service.InvestService
 import org.springframework.core.io.Resource
 import org.springframework.stereotype.Component
@@ -18,8 +18,8 @@ import java.time.format.DateTimeFormatter
 import kotlin.math.abs
 
 @Component
-class DialsCsvLoader(
-        val dialRepo: DialRepository,
+class DealsCsvLoader(
+        val dealRepo: DealRepository,
         val accountRepo: AccountRepository,
         val service: InvestService
 ) {
@@ -30,14 +30,14 @@ class DialsCsvLoader(
         val records = readRecords(csv)
         for (record in records) {
             try {
-                val dial = DialForm(
+                val dial = DealForm(
                         ticker = record[TICKER.idx].toTicker(),
                         opened = record[OPENED.idx].toDate(),
                         currency = record[CURRENCY.idx].toCurrency(),
                         volume = record[AMOUNT.idx].toAmount(),
                         quantity = if (record.size > QUANTITY.idx) record[QUANTITY.idx].toQuantity() else null,
                         type = record[TYPE.idx].toType())
-                service.addDial(record[ACCOUNT.idx].toAccountId(), dial)
+                service.addDeal(record[ACCOUNT.idx].toAccountId(), dial)
             } catch (e: Exception) {
                 print(record)
                 throw e
@@ -95,15 +95,15 @@ class DialsCsvLoader(
         return LocalDate.parse(this, formatter)
     }
 
-    private fun String.toType(): DialType {
+    private fun String.toType(): DealType {
         return when (this) {
-            "b", "PURCHASE" -> DialType.PURCHASE
-            "s", "SALE" -> DialType.SALE
-            "d", "DIVIDEND" -> DialType.DIVIDEND
-            "p", "PERCENT" -> DialType.PERCENT
-            "t", "TAX" -> DialType.TAX
-            "i", "DEPOSIT" -> DialType.DEPOSIT
-            "o", "WITHDRAWALS" -> DialType.WITHDRAWALS
+            "b", "PURCHASE" -> DealType.PURCHASE
+            "s", "SALE" -> DealType.SALE
+            "d", "DIVIDEND" -> DealType.DIVIDEND
+            "p", "PERCENT" -> DealType.PERCENT
+            "t", "TAX" -> DealType.TAX
+            "i", "DEPOSIT" -> DealType.DEPOSIT
+            "o", "WITHDRAWALS" -> DealType.WITHDRAWALS
             else -> throw java.lang.IllegalArgumentException(this)
         }
     }

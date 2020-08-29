@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <object xmlns="http://n2oapp.net/framework/config/schema/object-4.0"
-        name="Dial"
+        name="deal"
         service-class="com.github.iryabov.invest.service.InvestService">
     <fields>
         <field id="ticker.id" domain="string"/>
@@ -13,13 +13,13 @@
     </fields>
 
     <operations>
-        <operation id="addDial">
+        <operation id="addDeal">
             <invocation>
-                <java method="addDial" class="com.github.iryabov.invest.service.InvestService">
+                <java method="addDeal" class="com.github.iryabov.invest.service.InvestService">
                     <spring/>
                     <arguments>
                         <argument type="primitive" name="accountId"/>
-                        <argument type="entity" name="form" class="com.github.iryabov.invest.model.DialForm"/>
+                        <argument type="entity" name="form" class="com.github.iryabov.invest.model.DealForm"/>
                     </arguments>
                 </java>
             </invocation>
@@ -37,9 +37,9 @@
                 <field id="id" domain="long" mapping="#this"/>
             </out>
         </operation>
-        <operation id="deleteDial">
+        <operation id="deleteDeal">
             <invocation>
-                <java method="deleteDial" class="com.github.iryabov.invest.service.InvestService">
+                <java method="deleteDeal" class="com.github.iryabov.invest.service.InvestService">
                     <spring/>
                     <arguments>
                         <argument type="primitive" name="accountId"/>
@@ -52,9 +52,9 @@
                 <field id="id" mapping="[1]" domain="long"/>
             </in>
         </operation>
-        <operation id="deactivateDial">
+        <operation id="deactivateDeal">
             <invocation>
-                <java method="deactivateDial" class="com.github.iryabov.invest.service.InvestService">
+                <java method="deactivateDeal" class="com.github.iryabov.invest.service.InvestService">
                     <spring/>
                     <arguments>
                         <argument type="primitive" name="accountId"/>

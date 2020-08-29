@@ -3,14 +3,14 @@
       name="{name}">
     <toolbar place="topLeft">
         <group>
-            <button id="addDial" label="Add dial" widget-id="securities" model="filter"
+            <button id="addDeal" label="Add deal" widget-id="securities" model="filter"
                     icon="fa fa-plus" color="primary">
-                <open-page page-id="dialNew" submit-operation-id="addDial" route="/newdial"/>
+                <open-page page-id="dealNew" submit-operation-id="addDeal" route="/newdeal"/>
             </button>
         </group>
-        <button id="viewDials" label="Dials history" widget-id="securities" model="filter"
+        <button id="viewDeals" label="Deals history" widget-id="securities" model="filter"
                 icon="fa fa-history" type="icon">
-            <open-page page-id="accountDials" route="/dials"/>
+            <open-page page-id="accountDeals" route="/deals"/>
         </button>
     </toolbar>
     <toolbar place="topRight">

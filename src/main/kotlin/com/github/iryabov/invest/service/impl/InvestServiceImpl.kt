@@ -4,7 +4,7 @@ import com.github.iryabov.invest.entity.*
 import com.github.iryabov.invest.etl.CurrencyRateLoader
 import com.github.iryabov.invest.model.*
 import com.github.iryabov.invest.relation.Currency
-import com.github.iryabov.invest.relation.DialType
+import com.github.iryabov.invest.relation.DealType
 import com.github.iryabov.invest.relation.Period
 import com.github.iryabov.invest.repository.*
 import com.github.iryabov.invest.service.InvestService
@@ -22,7 +22,7 @@ import kotlin.collections.ArrayList
 @Transactional
 class InvestServiceImpl(
         val accountRepo: AccountRepository,
-        val dialRepo: DialRepository,
+        val dealRepo: DealRepository,
         val writeOffRepo: WriteOffRepository,
         val rateRepository: CurrencyRateRepository,
         val assetRepo: AssetRepository,
@@ -39,57 +39,57 @@ class InvestServiceImpl(
         accountRepo.deleteById(id)
     }
 
-    override fun addDial(accountId: Int, form: DialForm): Long {
-        val created = dialRepo.save(form.toEntityWith(accountId))
+    override fun addDeal(accountId: Int, form: DealForm): Long {
+        val created = dealRepo.save(form.toEntityWith(accountId))
         if (created.volume != P0)
             currencyRateLoader.addExchangeRate(created.date)
         writeOffByFifoAndRecalculation(if (created.quantity < 0) created else created.invert(), needWriteOff(created))
-        if ((form.type == DialType.WITHDRAWALS || form.type == DialType.DEPOSIT) && form.remittanceAccountId != null) {
-            val remittanceDial = dialRepo.save(form.toEntityWith(form.remittanceAccountId!!).invert())
+        if ((form.type == DealType.WITHDRAWALS || form.type == DealType.DEPOSIT) && form.remittanceAccountId != null) {
+            val remittanceDial = dealRepo.save(form.toEntityWith(form.remittanceAccountId!!).invert())
             writeOffByFifoAndRecalculation(if (remittanceDial.quantity < 0) remittanceDial else remittanceDial.invert(), needWriteOff(remittanceDial))
             remittanceRepository.save(Remittance(dialFrom = created.id!!, dialTo = remittanceDial.id!!))
-        } else if (setOf(DialType.DIVIDEND, DialType.COUPON, DialType.PERCENT).contains(form.type) && form.remittanceAccountId != null) {
+        } else if (setOf(DealType.DIVIDEND, DealType.COUPON, DealType.PERCENT).contains(form.type) && form.remittanceAccountId != null) {
             remittanceDeal(accountId, form.remittanceAccountId!!, form.toRemittanceForm())
         }
         return created.id!!
     }
 
     override fun remittanceDeal(accountFrom: Int, accountTo: Int, form: RemittanceForm): Pair<Long, Long> {
-        val from = dialRepo.save(form.toDealFormWith(DialType.WITHDRAWALS).toEntityWith(accountFrom))
+        val from = dealRepo.save(form.toDealFormWith(DealType.WITHDRAWALS).toEntityWith(accountFrom))
         if (from.volume != P0)
             currencyRateLoader.addExchangeRate(from.date)
         writeOffByFifoAndRecalculation(from, needWriteOff(from))
-        val to = dialRepo.save(form.toDealFormWith(DialType.DEPOSIT).toEntityWith(accountTo))
+        val to = dealRepo.save(form.toDealFormWith(DealType.DEPOSIT).toEntityWith(accountTo))
         writeOffByFifoAndRecalculation(to.invert(), needWriteOff(to))
         val remittance = remittanceRepository.save(Remittance(dialFrom = from.id!!, dialTo = to.id!!))
         return remittance.dialFrom to remittance.dialTo
     }
 
-    override fun deleteDial(accountId: Int, id: Long) {
-        val deleted = dialRepo.findById(id).orElseThrow()
+    override fun deleteDeal(accountId: Int, id: Long) {
+        val deleted = dealRepo.findById(id).orElseThrow()
         val remittance = remittanceRepository.findOneByDialFromOrTo(deleted.id!!)
-        dialRepo.deleteById(id)
+        dealRepo.deleteById(id)
         writeOffByFifoAndRecalculation(if (deleted.quantity < 0) deleted else deleted.invert(), false)
         if (remittance != null) {
             val remittanceId = if (remittance.dialFrom == id) remittance.dialTo else remittance.dialFrom
-            val remittanceDeal = dialRepo.findById(remittanceId).orElseThrow()
-            dialRepo.deleteById(remittanceDeal.id!!)
+            val remittanceDeal = dealRepo.findById(remittanceId).orElseThrow()
+            dealRepo.deleteById(remittanceDeal.id!!)
             writeOffByFifoAndRecalculation(if (remittanceDeal.quantity < 0) remittanceDeal else remittanceDeal.invert(), false)
         }
     }
 
-    override fun deactivateDial(accountId: Int, id: Long) {
-        val deactivated = dialRepo.findById(id).orElseThrow()
+    override fun deactivateDeal(accountId: Int, id: Long) {
+        val deactivated = dealRepo.findById(id).orElseThrow()
         val remittance = remittanceRepository.findOneByDialFromOrTo(deactivated.id!!)
-        dialRepo.deactivate(id)
+        dealRepo.deactivate(id)
         if (deactivated.active)
             writeOffRepo.deleteAllByDialId(deactivated.id!!)
         writeOffByFifoAndRecalculation(if (deactivated.quantity < 0) deactivated else deactivated.invert(),
                 needWriteOff(deactivated) && !deactivated.active)
         if (remittance != null) {
             val remittanceId = if (remittance.dialFrom == id) remittance.dialTo else remittance.dialFrom
-            val remittanceDeal = dialRepo.findById(remittanceId).orElseThrow()
-            dialRepo.deactivate(remittanceDeal.id!!)
+            val remittanceDeal = dealRepo.findById(remittanceId).orElseThrow()
+            dealRepo.deactivate(remittanceDeal.id!!)
             if (remittanceDeal.active)
                 writeOffRepo.deleteAllByDialId(remittanceDeal.id!!)
             writeOffByFifoAndRecalculation(if (remittanceDeal.quantity < 0) remittanceDeal else remittanceDeal.invert(),
@@ -100,7 +100,7 @@ class InvestServiceImpl(
     override fun getAccount(accountId: Int, currency: Currency): AccountView {
         val assets = ArrayList<AssetView>()
         val accountEntity = accountRepo.findById(accountId).orElseThrow()
-        assets.addAll(dialRepo.findAssets(accountId, currency))
+        assets.addAll(dealRepo.findAssets(accountId, currency))
         val account = AccountView(accountId, accountEntity.name, assets)
         account.calc()
         account.calcProportion()
@@ -113,7 +113,7 @@ class InvestServiceImpl(
     }
 
     override fun getAsset(accountId: Int, currency: Currency, ticker: String): AssetView {
-        val assets = dialRepo.findAssets(accountId, currency, ticker)
+        val assets = dealRepo.findAssets(accountId, currency, ticker)
         if (assets.isEmpty())
             return AssetView(assetTicker = ticker, quantity = 0, netValue = P0)
         val asset = assets.first()
@@ -125,7 +125,7 @@ class InvestServiceImpl(
     override fun getAssetHistory(accountId: Int, ticker: String, period: Period, currency: Currency): List<AssetHistoryView> {
         val from = period.from.invoke()
         val till = LocalDate.now()
-        val assetHistory = dialRepo.findAllByPeriod(accountId, ticker, currency, from, till)
+        val assetHistory = dealRepo.findAllByPeriod(accountId, ticker, currency, from, till)
         assetHistory.forEach {
             it.purchase = if (it.quantity > 0) it.quantity else 0
             it.purchasePrice = if (it.quantity > 0) it.price else null
@@ -141,9 +141,9 @@ class InvestServiceImpl(
                 ::reduce)
     }
 
-    override fun getDials(accountId: Int, currency: Currency, ticker: String?): List<DialView> {
-        val dials = dialRepo.findAllByAsset(accountId, currency, ticker)
-        val old: MutableList<DialView> = ArrayList()
+    override fun getDeals(accountId: Int, currency: Currency, ticker: String?): List<DealView> {
+        val dials = dealRepo.findAllByAsset(accountId, currency, ticker)
+        val old: MutableList<DealView> = ArrayList()
         dials.asReversed().forEach { it.calcDividend(old) }
         return dials
     }
@@ -202,31 +202,31 @@ class InvestServiceImpl(
 
 
 
-    private fun writeOffByFifoAndRecalculation(dial: Dial, calc: Boolean = true) {
-        if (dial.quantity >= 0) return
-        writeOffRepo.deleteAllLaterThan(dial.accountId, dial.ticker, dial.date, dial.id!!)
+    private fun writeOffByFifoAndRecalculation(deal: Deal, calc: Boolean = true) {
+        if (deal.quantity >= 0) return
+        writeOffRepo.deleteAllLaterThan(deal.accountId, deal.ticker, deal.date, deal.id!!)
         if (calc)
-            writeOffByFifo(dial)
-        val lateDials = dialRepo.findAllSaleAndPurchaseLaterThan(dial.accountId, dial.ticker, dial.date, dial.id!!)
+            writeOffByFifo(deal)
+        val lateDials = dealRepo.findAllSaleAndPurchaseLaterThan(deal.accountId, deal.ticker, deal.date, deal.id!!)
         for (lateDial in lateDials) {
             writeOffByFifo(if (lateDial.quantity < 0) lateDial else lateDial.invert())
         }
     }
 
-    private fun writeOffByFifo(dial: Dial) {
-        val fifo = writeOffRepo.findBalance(dial.accountId, dial.ticker, dial.date, dial.id!!).listIterator()
-        var needToSell = -1 * dial.quantity
+    private fun writeOffByFifo(deal: Deal) {
+        val fifo = writeOffRepo.findBalance(deal.accountId, deal.ticker, deal.date, deal.id!!).listIterator()
+        var needToSell = -1 * deal.quantity
         while (needToSell > 0 && fifo.hasNext()) {
             val balance = fifo.next()
             if (balance.balancedQuantity > 0) {
-                val writeOff = WriteOff(dialFrom = balance.dialFrom, dialTo = dial.id!!,
-                        quantity = min(needToSell, balance.balancedQuantity), ticker = dial.ticker)
+                val writeOff = WriteOff(dialFrom = balance.dialFrom, dialTo = deal.id!!,
+                        quantity = min(needToSell, balance.balancedQuantity), ticker = deal.ticker)
                 writeOffRepo.save(writeOff)
                 needToSell -= writeOff.quantity
             }
         }
         if (needToSell > 0)
-            throw NotEnoughFundsException("Need to sell $needToSell ${dial.ticker}, but they haven't on ${dial.date}")
+            throw NotEnoughFundsException("Need to sell $needToSell ${deal.ticker}, but they haven't on ${deal.date}")
     }
 
 }
@@ -277,14 +277,14 @@ private fun AssetView.calcProportion(totalNetValue: BigDecimal, totalMarketValue
     profitInterest = marketInterest - netInterest
 }
 
-private fun DialForm.toEntityWith(accountId: Int): Dial {
+private fun DealForm.toEntityWith(accountId: Int): Deal {
     val quantity: Int = when {
         this.type.quantity -> if (!this.type.income) this.quantity!! else this.quantity!!.negate()
         this.type.currency -> if (!this.type.income) this.volume.toInt() else this.volume.toInt().negate()
         else -> 0
     }
     val ticker: String = if (!this.type.currency) this.ticker else this.currency.name
-    return Dial(
+    return Deal(
             accountId = accountId,
             type = type,
             ticker = ticker,
@@ -294,8 +294,8 @@ private fun DialForm.toEntityWith(accountId: Int): Dial {
             quantity = quantity)
 }
 
-private fun RemittanceForm.toDealFormWith(type: DialType): DialForm {
-    return DialForm(
+private fun RemittanceForm.toDealFormWith(type: DealType): DealForm {
+    return DealForm(
             opened = this.opened,
             type = type,
             ticker = this.currency.name,
@@ -304,7 +304,7 @@ private fun RemittanceForm.toDealFormWith(type: DialType): DialForm {
     )
 }
 
-private fun DialForm.toRemittanceForm(): RemittanceForm {
+private fun DealForm.toRemittanceForm(): RemittanceForm {
     return RemittanceForm(
             opened = this.opened!!,
             currency = this.currency,
@@ -317,8 +317,8 @@ private fun AccountForm.toEntity() = Account(
         num = num
 )
 
-private fun Dial.invert(): Dial {
-    return Dial(
+private fun Deal.invert(): Deal {
+    return Deal(
             id = id,
             active = active,
             date = date,
@@ -333,10 +333,10 @@ private fun Dial.invert(): Dial {
             tax = tax)
 }
 
-private fun DialView.calcDividend(old : MutableList<DialView>) {
+private fun DealView.calcDividend(old : MutableList<DealView>) {
     if (!this.active)
         return
-    if (type == DialType.DIVIDEND && (dividendQuantity ?: 0) > 0) {
+    if (type == DealType.DIVIDEND && (dividendQuantity ?: 0) > 0) {
         val dividendPerAsset = (volume ?: P0).divide((dividendQuantity ?: 0).toBigDecimal(), 2, RoundingMode.HALF_UP)
         var remainQuantity = dividendQuantity!!
         old.filter { it.assetTicker == this.assetTicker }.forEach {
@@ -382,6 +382,6 @@ private fun reduce(a: AssetHistoryView, b: AssetHistoryView): AssetHistoryView {
     return result
 }
 
-private fun needWriteOff(created: Dial) =
+private fun needWriteOff(created: Deal) =
         (created.quantity != 0 || created.volume.notZero())
-                && setOf(DialType.PURCHASE, DialType.SALE, DialType.WITHDRAWALS, DialType.TAX).contains(created.type)
+                && setOf(DealType.PURCHASE, DealType.SALE, DealType.WITHDRAWALS, DealType.TAX).contains(created.type)

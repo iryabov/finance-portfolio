@@ -5,13 +5,13 @@
         <group>
             <button id="purchase" label="Buy" widget-id="asset"
                     color="success">
-                <open-page page-id="dialNew" submit-operation-id="addDial" route="/purchase">
+                <open-page page-id="dealNew" submit-operation-id="addDeal" route="/purchase">
                     <query-param name="type" value="PURCHASE"/>
                 </open-page>
             </button>
             <button id="sell" label="Sell" widget-id="asset"
                     color="danger">
-                <open-page page-id="dialNew" submit-operation-id="addDial" route="/sale">
+                <open-page page-id="dealNew" submit-operation-id="addDeal" route="/sale">
                     <query-param name="type" value="SALE"/>
                 </open-page>
                 <dependencies>
@@ -75,11 +75,11 @@
                     </set>
                 </fields>
             </form>
-            <table id="dials" query-id="dials" route="/dials" selection="none">
+            <table id="deals" query-id="deals" route="/deals" selection="none">
                 <columns>
                     <column text-field-id="active" label="A">
                         <checkbox>
-                            <invoke operation-id="deactivateDial" message-on-success="false"/>
+                            <invoke operation-id="deactivateDeal" message-on-success="false"/>
                         </checkbox>
                     </column>
                     <!--            <column text-field-id="asset.ticker"/>-->
@@ -112,7 +112,7 @@
                     <column text-field-id="" width="20px">
                         <toolbar>
                             <button id="delete" icon="fa fa-trash" confirm="true">
-                                <invoke operation-id="deleteDial" route="/delete"/>
+                                <invoke operation-id="deleteDeal" route="/delete"/>
                             </button>
                         </toolbar>
                     </column>

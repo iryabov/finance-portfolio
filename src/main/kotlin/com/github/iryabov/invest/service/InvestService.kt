@@ -10,13 +10,13 @@ interface InvestService {
 
     fun deleteAccount(id: Int)
 
-    fun addDial(accountId: Int, form: DialForm): Long
+    fun addDeal(accountId: Int, form: DealForm): Long
 
     fun remittanceDeal(accountFrom: Int, accountTo: Int, form: RemittanceForm): Pair<Long, Long>
 
-    fun deleteDial(accountId: Int, id: Long)
+    fun deleteDeal(accountId: Int, id: Long)
 
-    fun deactivateDial(accountId: Int, id: Long)
+    fun deactivateDeal(accountId: Int, id: Long)
 
     fun getAccount(accountId: Int, currency: Currency = Currency.RUB): AccountView
 
@@ -26,7 +26,7 @@ interface InvestService {
 
     fun getAssetHistory(accountId: Int, ticker: String, period: Period, currency: Currency = Currency.RUB): List<AssetHistoryView>
 
-    fun getDials(accountId: Int, currency: Currency = Currency.RUB, ticker: String? = null): List<DialView>
+    fun getDeals(accountId: Int, currency: Currency = Currency.RUB, ticker: String? = null): List<DealView>
 
     fun getSecurities(): List<SecurityView>
 

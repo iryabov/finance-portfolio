@@ -1,8 +1,6 @@
 package com.github.iryabov.invest.relation
 
-import java.lang.IllegalArgumentException
-
-enum class DialType(val income: Boolean = true, val quantity: Boolean = false, val currency: Boolean = false) {
+enum class DealType(val income: Boolean = true, val quantity: Boolean = false, val currency: Boolean = false) {
     SALE(income = true, quantity = true, currency = false),
     PURCHASE(income = false, quantity = true, currency = false),
     DIVIDEND(income = true, quantity = false, currency = false),
@@ -14,7 +12,7 @@ enum class DialType(val income: Boolean = true, val quantity: Boolean = false, v
 
 
 
-    fun invert(): DialType {
+    fun invert(): DealType {
         return when {
             this == SALE -> PURCHASE
             this == PURCHASE -> SALE

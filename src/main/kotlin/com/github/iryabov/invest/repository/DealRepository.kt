@@ -1,22 +1,20 @@
 package com.github.iryabov.invest.repository
 
-import com.github.iryabov.invest.entity.Dial
+import com.github.iryabov.invest.entity.Deal
 import com.github.iryabov.invest.model.AssetHistoryView
 import com.github.iryabov.invest.model.AssetView
-import com.github.iryabov.invest.model.Balance
-import com.github.iryabov.invest.model.DialView
+import com.github.iryabov.invest.model.DealView
 import com.github.iryabov.invest.relation.Currency
 import org.springframework.data.jdbc.repository.query.Modifying
 import org.springframework.data.jdbc.repository.query.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
-import java.math.BigDecimal
 import java.time.LocalDate
 
 
 @Repository
-interface DialRepository : CrudRepository<Dial, Long> {
+interface DealRepository : CrudRepository<Deal, Long> {
     @Modifying
     @Query("UPDATE dial SET active = NOT active WHERE id = :id")
     fun deactivate(@Param("id") id: Long): Boolean
@@ -247,7 +245,7 @@ order by d.dt desc, d.id desc
     """)
     fun findAllByAsset(@Param("account_id") accountId: Int,
                        @Param("currency") currency: Currency,
-                       @Param("ticker") ticker: String?): List<DialView>
+                       @Param("ticker") ticker: String?): List<DealView>
 
     @Query("""
         select *
@@ -260,7 +258,7 @@ order by d.dt desc, d.id desc
     fun findAllSaleAndPurchaseLaterThan(@Param("account_id") accountId: Int,
                                         @Param("ticker") ticker: String,
                                         @Param("date_from") dateFrom: LocalDate,
-                                        @Param("id") dialId: Long): List<Dial>
+                                        @Param("id") dialId: Long): List<Deal>
 
 
     @Query("""
@@ -312,5 +310,5 @@ order by d.dt desc, d.id desc
     """)
     fun findAllByCurrency(@Param("account_id") accountId: Int,
                           @Param("currency") settlementCurrency: Currency,
-                          @Param("ticker") currency: Currency?): List<DialView>
+                          @Param("ticker") currency: Currency?): List<DealView>
 }
