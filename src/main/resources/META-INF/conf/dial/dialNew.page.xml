@@ -25,23 +25,6 @@
                            search-filter-id="ticker"
                            required="true">
             </auto-complete>
-<!--            <input-text id="asset.id" label="Ticker" param="asset_id"-->
-<!--                        required="true">-->
-<!--                <dependencies>-->
-<!--                    <visibility on="type">type.id != 'DEPOSIT' &amp;&amp; type.id != 'WITHDRAWALS'</visibility>-->
-<!--                </dependencies>-->
-<!--            </input-text>-->
-<!--            <output-text id="asset.name" label="Name">-->
-<!--                <dependencies>-->
-<!--                    <reset on="asset.id"/>-->
-<!--                    <fetch-value query-id="security" on="asset.id" value-field-id="name" apply-on-init="false">-->
-<!--                        <pre-filters>-->
-<!--                            <eq field-id="id" value="{asset.id}"/>-->
-<!--                        </pre-filters>-->
-<!--                    </fetch-value>-->
-<!--                    <visibility on="asset.name">asset.name != null</visibility>-->
-<!--                </dependencies>-->
-<!--            </output-text>-->
             
             <radio-group id="currency" label="Currency" required="true" inline="true">
                 <default-value id="RUB"/>
@@ -73,7 +56,11 @@
                 </output-text>
                 <select id="accountTo" param="account_to" label="Remittance to account" query-id="account" label-field-id="name">
                     <dependencies>
-                        <visibility on="type">type.id == 'DEPOSIT' || type.id == 'WITHDRAWALS'</visibility>
+                        <visibility on="type">type.id == 'DEPOSIT' ||
+                            type.id == 'WITHDRAWALS' ||
+                            type.id == 'DIVIDEND' ||
+                            type.id == 'COUPON' ||
+                            type.id == 'PERCENT'</visibility>
                     </dependencies>
                 </select>
             </set>

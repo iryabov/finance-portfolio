@@ -313,6 +313,21 @@ class InvestServiceTest(
                 remittanceAccountId = account2))
         assertThatAsset(account1, "RUB") { it.quantity == 0 && it.netValue.eq(money(0)) }
         assertThatAsset(account2, "RUB") { it.quantity == 1000 && it.netValue.eq(money(1000)) }
+        //delete from
+        investService.deleteDial(account1, withdrawals)
+        assertThatAsset(account1, "RUB") { it.quantity == 1000 && it.netValue.eq(money(1000)) }
+        assertThatAsset(account2, "RUB") { it.quantity == 0 && it.netValue.eq(money(0)) }
+
+        //percent with remittance
+        val percent = investService.addDial(account1, DialForm(ticker = "RUB",
+                quantity = 500,
+                currency = RUB,
+                type = PERCENT,
+                opened = date("2020-08-04"),
+                volume = money(500),
+                remittanceAccountId = account2))
+        assertThatAsset(account1, "RUB") { it.quantity == 1000 && it.netValue.eq(money(1000)) }
+        assertThatAsset(account2, "RUB") { it.quantity == 500 && it.netValue.eq(money(500)) }
 
         //account deleting
         investService.deleteAccount(account1)

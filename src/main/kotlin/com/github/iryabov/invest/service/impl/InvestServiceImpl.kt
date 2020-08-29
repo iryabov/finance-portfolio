@@ -48,6 +48,8 @@ class InvestServiceImpl(
             val remittanceDial = dialRepo.save(form.toEntityWith(form.remittanceAccountId!!).invert())
             writeOffByFifoAndRecalculation(if (remittanceDial.quantity < 0) remittanceDial else remittanceDial.invert(), needWriteOff(remittanceDial))
             remittanceRepository.save(Remittance(dialFrom = created.id!!, dialTo = remittanceDial.id!!))
+        } else if (setOf(DialType.DIVIDEND, DialType.COUPON, DialType.PERCENT).contains(form.type) && form.remittanceAccountId != null) {
+            remittanceDeal(accountId, form.remittanceAccountId!!, form.toRemittanceForm())
         }
         return created.id!!
     }
@@ -299,6 +301,14 @@ private fun RemittanceForm.toDealFormWith(type: DialType): DialForm {
             ticker = this.currency.name,
             currency = this.currency,
             volume = BigDecimal(this.quantity)
+    )
+}
+
+private fun DialForm.toRemittanceForm(): RemittanceForm {
+    return RemittanceForm(
+            opened = this.opened!!,
+            currency = this.currency,
+            quantity = this.volume.toInt()
     )
 }
 

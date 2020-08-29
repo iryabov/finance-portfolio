@@ -3,12 +3,12 @@
              name="Money remittance">
     <form object-id="dial">
         <fields>
-            <date-time id="opened" label="Opened" required="true" default-value="{moment().format('YYYY-MM-DD')}"/>
-           <select id="accountFrom" param="account_from" label="From" query-id="account" label-field-id="name">
+            <date-time id="opened" label="Opened" param="opened" required="true" default-value="{moment().format('YYYY-MM-DD')}"/>
+           <select id="accountFrom" param="account_id" label="From" query-id="account" label-field-id="name">
            </select>
-            <select id="accountTo" param="account_to" label="To" query-id="account" label-field-id="name">
+            <select id="accountTo" label="To" query-id="account" label-field-id="name">
             </select>
-            <radio-group id="currency" label="Currency" required="true" inline="true">
+            <radio-group id="currency" param="currency" label="Currency" required="true" inline="true">
                 <default-value id="RUB"/>
                 <options>
                     <option id="RUB" name="RUB"/>
@@ -16,7 +16,7 @@
                     <option id="EUR" name="EUR"/>
                 </options>
             </radio-group>
-            <input-money id="quantity" label="Quantity" required="true">
+            <input-money id="quantity" param="quality" label="Quantity" required="true">
             </input-money>
         </fields>
     </form>
