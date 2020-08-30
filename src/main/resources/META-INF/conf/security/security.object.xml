@@ -19,6 +19,13 @@
                 <field id="till" default-value="0" normalize="T(java.time.LocalDate).now()" mapping="[2]"/>
             </in>
         </operation>
+        <operation id="loadAll">
+            <invocation>
+                <java method="loadAll" class="com.github.iryabov.invest.etl.AssetHistoryLoader">
+                    <spring/>
+                </java>
+            </invocation>
+        </operation>
         <operation id="addSecurity">
             <invocation>
                 <java method="addSecurity" class="com.github.iryabov.invest.service.InvestService">

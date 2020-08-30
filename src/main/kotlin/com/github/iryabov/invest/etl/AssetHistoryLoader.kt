@@ -27,6 +27,7 @@ class AssetHistoryLoader(
         val securitiesClientUnibit: SecuritiesClientUnibit,
         val securitiesClientCache: SecuritiesClientCache,
         val assetRepo: AssetRepository,
+        val assetHistoryRepo: SecurityHistoryRepository,
         val securityHistoryRepo: SecurityHistoryRepository,
         val currencyRateLoader: CurrencyRateLoader
 ) {
@@ -55,6 +56,19 @@ class AssetHistoryLoader(
         } while (end < till)
     }
 
+    fun loadAll() {
+        assetRepo.findAll().forEach {
+            val lastDate = assetHistoryRepo.findLastDateByTicker(it.ticker)
+            val actualDate = LocalDate.now().minusDays(1)
+            if (lastDate != null && lastDate < actualDate)
+                load(it.ticker, lastDate, actualDate)
+            else
+                load(it.ticker, it.lastUpdate ?: LocalDate.now().minusYears(1),
+                        actualDate)
+        }
+    }
+
+
     private fun exchange(historyPrice: Security, faceCurrency: Currency) {
         if (historyPrice.settlementCurrency != faceCurrency) {
             val rate = currencyRateLoader.getRate(historyPrice.date, faceCurrency, historyPrice.settlementCurrency)
@@ -77,5 +91,6 @@ private fun Security.toEntity(exists: Asset): Asset {
     return exists.copy(
                 ticker = this.ticker,
                 name = if (this.shortName.isNotBlank()) this.shortName else exists.name,
-                priceNow = this.facePrice)
+                priceNow = this.facePrice,
+                lastUpdate = this.date)
 }

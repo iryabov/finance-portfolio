@@ -8,6 +8,7 @@ import org.springframework.data.domain.Persistable
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
 import java.math.BigDecimal
+import java.time.LocalDate
 
 @Table
 data class Asset (
@@ -30,7 +31,9 @@ data class Asset (
         @Column("price_week")
         var priceWeek: BigDecimal? = null,
         @Column("price_month")
-        var priceMonth: BigDecimal? = null
+        var priceMonth: BigDecimal? = null,
+        @Column("last_update")
+        var lastUpdate: LocalDate? = null
 ): Persistable<String> {
 
         constructor(): this("", "")

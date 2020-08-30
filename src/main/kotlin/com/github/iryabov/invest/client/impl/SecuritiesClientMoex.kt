@@ -3,6 +3,7 @@ package com.github.iryabov.invest.client.impl
 import com.github.iryabov.invest.client.Security
 import com.github.iryabov.invest.client.SecuritiesClient
 import com.github.iryabov.invest.relation.Currency
+import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Repository
 import org.springframework.web.reactive.function.client.WebClient
@@ -21,6 +22,7 @@ import kotlin.collections.ArrayList
 
 @Repository
 class SecuritiesClientMoex: SecuritiesClient {
+    private val logger = LoggerFactory.getLogger(javaClass)
     private val client: WebClient = WebClient.create("https://iss.moex.com/iss")
 
     override fun findHistoryPrices(name: String, from: LocalDate, till: LocalDate): List<Security> {
@@ -83,7 +85,9 @@ class SecuritiesClientMoex: SecuritiesClient {
     }
 
     private fun callCandlebordes(market: String, board: String, ticker: String, fromStr: String?, tillStr: String?): String? {
-        val response = client.get().uri("/history/engines/stock/markets/$market/boards/$board/securities/$ticker/candlebordes.xml?from=$fromStr&till=$tillStr&iss.meta=off")
+        val url = "/history/engines/stock/markets/$market/boards/$board/securities/$ticker/candlebordes.xml?from=$fromStr&till=$tillStr&iss.meta=off"
+        logger.info("moex $url")
+        val response = client.get().uri(url)
                 .accept(MediaType.APPLICATION_XML)
                 .acceptCharset(Charsets.UTF_8)
                 .retrieve().bodyToMono(String::class.java).block()
@@ -91,7 +95,9 @@ class SecuritiesClientMoex: SecuritiesClient {
     }
 
     private fun callTicker(market: String, board: String, ticker: String): String? {
-        val response = client.get().uri("/engines/stock/markets/$market/boards/$board/securities/$ticker.xml?iss.meta=off")
+        val url = "/engines/stock/markets/$market/boards/$board/securities/$ticker.xml?iss.meta=off"
+        logger.info("moex $url")
+        val response = client.get().uri(url)
                 .accept(MediaType.APPLICATION_XML)
                 .acceptCharset(Charsets.UTF_8)
                 .retrieve().bodyToMono(String::class.java).block()
@@ -99,7 +105,9 @@ class SecuritiesClientMoex: SecuritiesClient {
     }
 
     private fun callSecurities(name: String): String? {
-        val response = client.get().uri("/securities.xml?q=$name&iss.meta=off")
+        val url = "/securities.xml?q=$name&iss.meta=off"
+        logger.info("moex $url")
+        val response = client.get().uri(url)
                 .accept(MediaType.APPLICATION_XML)
                 .acceptCharset(Charsets.UTF_8)
                 .retrieve().bodyToMono(String::class.java).block()
@@ -117,7 +125,16 @@ class SecuritiesClientMoex: SecuritiesClient {
     private fun findMarketAndBoard(name: String): Triple<String, String, String> {
         val tickerResponse = callSecurities(name)
         val tickerRows = readRows(tickerResponse)
-        val tickerRow = tickerRows?.item(0) as Element
+        var tickerRow: Element? = null
+        for (i in 0 until tickerRows!!.length) {
+            val row = tickerRows.item(i) as Element
+            if (row.getAttribute("secid") == name) {
+                tickerRow = row
+                break
+            }
+        }
+        if (tickerRow == null)
+            throw IllegalStateException("Ticker $name not found")
         val market = when {
             tickerRow.getAttribute("type").contains("share") -> "shares"
             tickerRow.getAttribute("type").contains("bond") -> "bonds"

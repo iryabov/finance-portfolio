@@ -40,4 +40,12 @@ interface SecurityHistoryRepository : CrudRepository<SecurityHistory, Long> {
     fun deleteByTicker(@Param("ticker") ticker: String,
                        @Param("from") from: LocalDate,
                        @Param("till") till: LocalDate)
+
+    @Query("""
+        select h.dt as date
+        from asset_history h
+        order by h.dt desc
+        limit 1
+    """)
+    fun findLastDateByTicker(@Param("ticker") ticker: String): LocalDate?
 }

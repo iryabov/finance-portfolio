@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS public.asset
     price_now double precision,
     price_week double precision,
     price_month double precision,
+    last_update date,
     CONSTRAINT asset_pkey PRIMARY KEY (ticker)
 );
 

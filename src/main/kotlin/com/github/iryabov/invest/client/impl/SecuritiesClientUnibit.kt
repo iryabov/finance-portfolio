@@ -3,6 +3,7 @@ package com.github.iryabov.invest.client.impl
 import com.github.iryabov.invest.client.SecuritiesClient
 import com.github.iryabov.invest.client.Security
 import com.github.iryabov.invest.relation.Currency
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Repository
@@ -43,6 +44,7 @@ import java.util.*
  */
 @Repository
 class SecuritiesClientUnibit: SecuritiesClient {
+    private val logger = LoggerFactory.getLogger(javaClass)
     private val client: WebClient = WebClient.create("https://api.unibit.ai/v2")
     @Value("\${portfolio.client.unibit.access_key}")
     private lateinit var accessKey: String
@@ -65,6 +67,7 @@ class SecuritiesClientUnibit: SecuritiesClient {
     }
 
     private fun retrieve(name: String, url: String): List<Security> {
+        logger.info("unibit $url")
         val response = client.get().uri(url)
                 .accept(MediaType.APPLICATION_JSON)
                 .acceptCharset(Charsets.UTF_8)
