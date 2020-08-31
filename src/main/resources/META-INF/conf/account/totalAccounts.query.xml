@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<query xmlns="http://n2oapp.net/framework/config/schema/query-4.0"
+       name="Total accounts" object-id="account">
+    <unique result-mapping="#this" filters="currency">
+        <java method="getAccounts" class="com.github.iryabov.invest.service.InvestService">
+            <spring/>
+            <arguments>
+                <argument type="primitive" name="currency"/>
+            </arguments>
+        </java>
+    </unique>
+
+    <fields>
+        <field id="currency">
+            <filters>
+                <eq filter-id="currency" default-value="${portfolio.currency}"
+                    normalize="T(com.github.iryabov.invest.relation.Currency).valueOf(#this)"
+                    mapping="[0]"/>
+            </filters>
+        </field>
+        <field id="totalDeposit">
+            <select mapping="totalDeposit"/>
+        </field>
+        <field id="totalWithdrawals">
+            <select mapping="totalWithdrawals"/>
+        </field>
+        <field id="totalNetValue">
+            <select mapping="totalNetValue"/>
+        </field>
+        <field id="totalMarketValue">
+            <select mapping="totalMarketValue"/>
+        </field>
+        <field id="totalFixedProfit">
+            <select mapping="totalFixedProfit" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitFormat(#this)"/>
+        </field>
+        <field id="totalMarketProfit">
+            <select mapping="totalMarketProfit" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitFormat(#this)"/>
+        </field>
+        <field id="totalDepositFixedProfitPercent">
+            <select mapping="totalDepositFixedProfitPercent" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).percentFormat(#this)"/>
+        </field>
+        <field id="totalDepositMarketProfitPercent">
+            <select mapping="totalDepositMarketProfitPercent" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).percentFormat(#this)"/>
+        </field>
+        <field id="totalMarketProfitColor">
+            <select mapping="totalMarketProfit > 0 ? 'success' : 'danger'"/>
+        </field>
+
+    </fields>
+
+</query>

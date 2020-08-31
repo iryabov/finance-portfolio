@@ -108,8 +108,10 @@ class InvestServiceImpl(
         return account
     }
 
-    override fun getAccounts(): List<AccountView> {
-        return accountRepo.findAllByActive().map { getAccount(it.id!!) }
+    override fun getAccounts(currency: Currency): TotalView {
+        val result = TotalView(accountRepo.findAllByActive().map { getAccount(it.id!!, currency) })
+        result.calc()
+        return result
     }
 
     override fun getAsset(accountId: Int, currency: Currency, ticker: String): AssetView {
@@ -231,6 +233,17 @@ class InvestServiceImpl(
 
 }
 
+private fun TotalView.calc() {
+    totalDeposit = accounts.sumByBigDecimal { a -> a.totalDeposit }
+    totalWithdrawals = accounts.sumByBigDecimal { a -> a.totalWithdrawals }
+    totalNetValue = accounts.sumByBigDecimal { a -> a.totalNetValue }
+    totalMarketValue = accounts.sumByBigDecimal { a -> a.totalMarketValue }
+    totalFixedProfit = accounts.sumByBigDecimal { a -> a.totalFixedProfit }
+    totalMarketProfit = accounts.sumByBigDecimal { a -> a.totalMarketProfit }
+    totalDepositFixedProfitPercent = calcProfitPercent(totalDeposit + totalFixedProfit, totalDeposit)
+    totalDepositMarketProfitPercent = calcProfitPercent(totalDeposit + totalMarketProfit, totalDeposit)
+}
+
 private fun AccountView.calc() {
     assets.forEach { a -> a.calc() }
     totalNetValue = assets.sumByBigDecimal { a -> a.netValue }
@@ -244,9 +257,11 @@ private fun AccountView.calc() {
     totalValueProfitPercent = calcProfitPercent(totalMarketValue, totalNetValue)
     totalFixedProfit = (totalNetValue + totalProceeds) - totalExpenses
     totalFixedTurnoverProfitPercent = calcProfitPercent(totalNetValue + totalProceeds, totalExpenses)
+    totalFixedDepositProfitPercent = calcProfitPercent(totalDeposit + totalFixedProfit, totalDeposit)
     totalFixedProfitPercent = calcPercent(totalNetValue + (totalProceeds - totalExpenses), totalNetValue)
     totalMarketProfit = (totalMarketValue + totalProceeds) - totalExpenses
     totalMarketTurnoverProfitPercent = calcProfitPercent(totalMarketValue + totalProceeds, totalExpenses)
+    totalMarketDepositProfitPercent = calcProfitPercent(totalDeposit + totalMarketProfit, totalDeposit)
     totalMarketProfitPercent = calcPercent(totalMarketValue + (totalProceeds - totalExpenses), totalNetValue)
 }
 

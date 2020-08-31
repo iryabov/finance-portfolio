@@ -20,7 +20,7 @@ interface InvestService {
 
     fun getAccount(accountId: Int, currency: Currency = Currency.RUB): AccountView
 
-    fun getAccounts(): List<AccountView>
+    fun getAccounts(currency: Currency = Currency.RUB): TotalView
 
     fun getAsset(accountId: Int, currency: Currency = Currency.RUB, ticker: String): AssetView
 

@@ -13,9 +13,32 @@
     </toolbar>
     <regions>
         <region>
-            <table id="accounts" query-id="account" route="/">
+            <form id="total" query-id="totalAccounts" route="/">
+                <fields>
+                    <set field-label-location="left" field-label-align="right">
+                        <row>
+                            <col>
+                                <output-text id="totalMarketValue" format="number 0,0.00"/>
+                            </col>
+                            <col>
+                                <output-text id="totalMarketProfit" format="number 0,0.00"/>
+                            </col>
+                            <col>
+                                <output-text id="totalDepositMarketProfitPercent"/>
+                            </col>
+                        </row>
+                    </set>
+                </fields>
+            </form>
+            <table id="accounts" query-id="accounts" route="/accounts" selection="none">
                 <columns>
-                    <column text-field-id="name"/>
+                    <column text-field-id="name" label="Name"/>
+                    <column text-field-id="totalNetValue" label="Value">
+                        <text format="number 0,0.00"/>
+                    </column>
+                    <column text-field-id="totalMarketDepositProfitPercent" label="Profit">
+                        <badge text="{totalMarketProfit}" text-format="number 0,0.00" color="{totalMarketProfitColor}"/>
+                    </column>
                 </columns>
                 <rows>
                     <click>
