@@ -274,8 +274,8 @@ private fun AccountView.calcProportion() {
 }
 
 private fun AccountView.calcCurrencies() {
-    currencies = assets.filter { it.assetTicker.isCurrency() }
-    securities = assets.filter { !it.assetTicker.isCurrency() }
+    currencies = assets.filter { it.assetTicker.isCurrency() }.sortedByDescending { it.marketInterest }
+    securities = assets.filter { !it.assetTicker.isCurrency() }.sortedByDescending { it.marketInterest }
 }
 
 private fun AssetView.calc() {

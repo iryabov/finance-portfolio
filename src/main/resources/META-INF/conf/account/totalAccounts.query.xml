@@ -37,7 +37,7 @@
             <select mapping="totalMarketProfit" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitFormat(#this)"/>
         </field>
         <field id="totalDepositFixedProfitPercent">
-            <select mapping="totalDepositFixedProfitPercent" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitPrcentFormat(#this)"/>
+            <select mapping="totalDepositFixedProfitPercent" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitPercentFormat(#this)"/>
         </field>
         <field id="totalDepositMarketProfitPercent">
             <select mapping="totalDepositMarketProfitPercent" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitPercentFormat(#this)"/>
