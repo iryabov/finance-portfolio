@@ -4,9 +4,9 @@
     <form object-id="deal">
         <fields>
             <date-time id="opened" label="Opened" param="opened" required="true" default-value="{moment().format('YYYY-MM-DD')}"/>
-           <select id="accountFrom" param="account_id" label="From" query-id="account" label-field-id="name">
+           <select id="accountFrom" param="account_id" label="From" query-id="accounts" label-field-id="name">
            </select>
-            <select id="accountTo" label="To" query-id="account" label-field-id="name">
+            <select id="accountTo" label="To" query-id="accounts" label-field-id="name">
             </select>
             <radio-group id="currency" param="currency" label="Currency" required="true" inline="true">
                 <default-value id="RUB"/>

@@ -54,12 +54,17 @@
                 <pagination hide-single-page="true"/>
                 <columns>
                     <column text-field-id="name" label="Name"/>
-                    <column text-field-id="quantity" label="Quantity"/>
+                    <column text-field-id="quantity" label="Quantity">
+                        <text format="number 0,0"/>
+                    </column>
                     <column text-field-id="netValue" label="Value">
                         <text format="number 0,0.00"/>
                     </column>
                     <column text-field-id="marketProfitPercent" label="Profit">
                         <badge text="{marketProfit}" text-format="number 0,0.00" color="{marketProfitColor}"/>
+                    </column>
+                    <column text-field-id="profitInterest" label="Proportion">
+                        <badge text="{marketInterest}"/>
                     </column>
                 </columns>
                 <rows>
@@ -79,12 +84,17 @@
             <table id="securities" name="Securities" query-id="accountAsset" route="/securities" selection="none" size="100">
                 <columns>
                     <column text-field-id="name" label="Name"/>
-                    <column text-field-id="quantity" label="Quantity"/>
+                    <column text-field-id="quantity" label="Quantity">
+                        <text format="number 0,0"/>
+                    </column>
                     <column text-field-id="netValue" label="Value">
                         <text format="number 0,0.00"/>
                     </column>
                     <column text-field-id="marketProfitPercent" label="Profit">
                         <badge text="{marketProfit}" text-format="number 0,0.00" color="{marketProfitColor}"/>
+                    </column>
+                    <column text-field-id="profitInterest" label="Proportion">
+                        <badge text="{marketInterest}"/>
                     </column>
                 </columns>
                 <rows>

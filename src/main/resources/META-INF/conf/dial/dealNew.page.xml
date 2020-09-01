@@ -54,7 +54,7 @@
                             &amp;&amp; type.id != 'DIVIDEND'</visibility>
                     </dependencies>
                 </output-text>
-                <select id="accountTo" param="account_to" label="Remittance to account" query-id="account" label-field-id="name">
+                <select id="accountTo" param="account_to" label="Remittance to account" query-id="accounts" label-field-id="name">
                     <dependencies>
                         <visibility on="type">type.id == 'DEPOSIT' ||
                             type.id == 'WITHDRAWALS' ||

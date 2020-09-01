@@ -3,7 +3,7 @@ package com.github.iryabov.invest.service.impl
 import java.math.BigDecimal
 
 fun fullName(name: String?, code: String?): String {
-    return if (name != null && name.isNotEmpty() && code != null && code.isNotEmpty())
+    return if (name != null && name.isNotEmpty() && code != null && code.isNotEmpty() && code != name)
         "$name ($code)"
     else if (name != null && name.isNotEmpty())
         "$name"
@@ -45,10 +45,13 @@ fun profitFormat(value: BigDecimal?, scale: Int = 0): String? {
 }
 
 @JvmOverloads
+fun profitPercentFormat(value: BigDecimal?, scale: Int = 0): String? {
+    if (value == null || value.isZero()) return null
+    return "${profitFormat(value, scale)}%"
+}
+
+@JvmOverloads
 fun percentFormat(value: BigDecimal?, scale: Int = 0): String? {
     if (value == null || value.isZero()) return null
-    return if (value.greater(P0))
-        "+" + value.round(scale) + "%"
-    else
-        "" + value.round(scale) + "%"
+    return "${value.round(scale)}%"
 }

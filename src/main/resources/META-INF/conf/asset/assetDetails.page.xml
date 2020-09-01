@@ -101,13 +101,13 @@
                     </column>
                     <column text-field-id="currency" label="Currency"/>
                     <column text-field-id="price" label="Price">
-                        <text format="number 0.00"/>
+                        <text format="number 0,0.00"/>
                     </column>
                     <column text-field-id="quantity" label="Quantity">
                     </column>
                     <column text-field-id="profit" label="Volume">
 <!--                        <text format="number 0.00"/>-->
-                        <badge text="{volume}" text-format="number 0.00" color="{profitColor}"/>
+                        <badge text="{volume}" text-format="number 0,0.00" color="{profitColor}"/>
                     </column>
                     <column text-field-id="" width="20px">
                         <toolbar>
