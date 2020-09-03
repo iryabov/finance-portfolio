@@ -36,17 +36,23 @@ class SecuritiesClientTest(
         Assertions.assertThat(fxus[0].ticker).isEqualTo("FXUS")
         Assertions.assertThat(fxus[0].settlementPrice).isEqualTo(money(3575))
 
-        val ofz = securitiesClientMoex.findHistoryPrices("ОФЗ 26220",
+        val ofz = securitiesClientMoex.findHistoryPrices("SU26220RMFS2",
                 LocalDate.of(2020, 1, 1),
                 LocalDate.of(2020, 2, 1))
         Assertions.assertThat(ofz[0].ticker).isEqualTo("SU26220RMFS2")
         Assertions.assertThat(ofz[0].settlementPrice).isGreaterThan(money(100))
 
-        val vtbb = securitiesClientMoex.findHistoryPrices("ВТБ Б-1-85",
+        val vtbb = securitiesClientMoex.findHistoryPrices("RU000A101U46",
                 LocalDate.of(2020, 7, 1),
                 LocalDate.of(2020, 8, 1))
         Assertions.assertThat(vtbb[0].ticker).isEqualTo("RU000A101U46")
         Assertions.assertThat(vtbb[0].settlementPrice).isGreaterThan(money(100))
+
+        val imoex = securitiesClientMoex.findHistoryPrices("IMOEX",
+                LocalDate.of(2020, 7, 1),
+                LocalDate.of(2020, 8, 1))
+        Assertions.assertThat(imoex[0].ticker).isEqualTo("IMOEX")
+        Assertions.assertThat(imoex[0].settlementPrice).isGreaterThan(money(2700))
 
         val apple = securitiesClientUnibit.findHistoryPrices("AAPL",
                 LocalDate.of(2020, 1, 1),
@@ -65,13 +71,13 @@ class SecuritiesClientTest(
         Assertions.assertThat(fxus.ticker).isEqualTo("FXUS")
         Assertions.assertThat(fxus.settlementPrice).isGreaterThan(BigDecimal.ZERO)
 
-        val ofz = securitiesClientMoex.findLastPrice("ОФЗ 26220")
+        val ofz = securitiesClientMoex.findLastPrice("SU26220RMFS2")
         Assertions.assertThat(ofz.ticker).isEqualTo("SU26220RMFS2")
         Assertions.assertThat(ofz.settlementPrice).isGreaterThan(BigDecimal.ZERO)
 
         val apple = securitiesClientUnibit.findLastPrice("AAPL")
         Assertions.assertThat(apple.ticker).isEqualTo("AAPL")
-        Assertions.assertThat(apple.settlementPrice).isEqualTo(money(497.48))
+        Assertions.assertThat(apple.settlementPrice).isEqualTo(money(131.40))
     }
 
     @Test

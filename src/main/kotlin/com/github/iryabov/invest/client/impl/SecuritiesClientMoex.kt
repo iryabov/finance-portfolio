@@ -52,18 +52,33 @@ class SecuritiesClientMoex: SecuritiesClient {
     override fun findLastPrice(name: String): Security {
         val (market, board, ticker) = findMarketAndBoard(name)
         val response = callTicker(market, board, ticker)
-        val rows = readRows(response)
-        if (rows == null || rows.length == 0)
+        val securities = readRows(response)
+        if (securities == null || securities.length == 0)
             throw IllegalStateException("Security $ticker not found")
-        val row0 = rows.item(0) as Element
-        assert(row0.getAttribute("SECID") == ticker)
-        return Security(
-                date = LocalDate.parse(row0.getAttribute("PREVDATE"), DateTimeFormatter.ISO_DATE),
-                ticker = row0.getAttribute("SECID"),
-                shortName = row0.getAttribute("SHORTNAME"),
-                settlementPrice = BigDecimal(row0.getAttribute("PREVADMITTEDQUOTE")),
-                settlementCurrency = currencyOf(row0.getAttribute("CURRENCYID")),
-                faceCurrency = currencyOf(row0.getAttribute("FACEUNIT")))
+        val sec0 = securities.item(0) as Element
+        assert(sec0.getAttribute("SECID") == ticker)
+        if (board == "SNDX") {
+            val marketdata = readRows(response, "marketdata")
+            if (marketdata == null || marketdata.length == 0)
+                throw IllegalStateException("Marketdata $ticker not found")
+            val data0 = marketdata.item(0) as Element
+            assert(data0.getAttribute("SECID") == ticker)
+            return Security(
+                    date = LocalDate.parse(data0.getAttribute("TRADEDATE"), DateTimeFormatter.ISO_DATE),
+                    ticker = data0.getAttribute("SECID"),
+                    shortName = sec0.getAttribute("SHORTNAME"),
+                    settlementPrice = BigDecimal(data0.getAttribute("CURRENTVALUE")),
+                    settlementCurrency = currencyOf(sec0.getAttribute("CURRENCYID")),
+                    faceCurrency = currencyOf(sec0.getAttribute("FACEUNIT")))
+        } else {
+            return Security(
+                    date = LocalDate.parse(sec0.getAttribute("PREVDATE"), DateTimeFormatter.ISO_DATE),
+                    ticker = sec0.getAttribute("SECID"),
+                    shortName = sec0.getAttribute("SHORTNAME"),
+                    settlementPrice = BigDecimal(sec0.getAttribute("PREVADMITTEDQUOTE")),
+                    settlementCurrency = currencyOf(sec0.getAttribute("CURRENCYID")),
+                    faceCurrency = currencyOf(sec0.getAttribute("FACEUNIT")))
+        }
     }
 
     override fun findByName(name: String): List<Security> {
@@ -137,10 +152,14 @@ class SecuritiesClientMoex: SecuritiesClient {
             throw IllegalStateException("Ticker $name not found")
         val market = when {
             tickerRow.getAttribute("type").contains("share") -> "shares"
+            tickerRow.getAttribute("type").contains("etf") -> "shares"
             tickerRow.getAttribute("type").contains("bond") -> "bonds"
-            else -> "shares"
+            tickerRow.getAttribute("type").contains("index") -> "index"
+            else -> tickerRow.getAttribute("type")
         }
-        val board = tickerRow.getAttribute("marketprice_boardid")
+        var board = tickerRow.getAttribute("marketprice_boardid")
+        if (board.isEmpty())
+            board = tickerRow.getAttribute("primary_boardid")
         val ticker = tickerRow.getAttribute("secid")
         return Triple(market, board, ticker)
     }

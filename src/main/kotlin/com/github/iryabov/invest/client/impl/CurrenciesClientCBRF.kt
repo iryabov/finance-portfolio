@@ -54,6 +54,6 @@ class CurrenciesClientCBRF : CurrenciesClient {
                 return BigDecimal(value.replace(",", "."))
             }
         }
-        return BigDecimal.ONE
+        return BigDecimal.ZERO
     }
 }

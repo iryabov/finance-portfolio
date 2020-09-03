@@ -183,7 +183,8 @@ class InvestServiceImpl(
         val history = securityHistoryRepo.findAllHistoryByTicker(ticker, from, till, currency)
         val chart = fillChart(history, from, till, period.step,
                 { s -> s.date },
-                { date, prev -> SecurityHistoryView(date = date, price = prev?.price ?: P0) })
+                { date, prev -> SecurityHistoryView(date = date, price = prev?.price ?: P0) },
+                { a, b -> if (b.price.isZero()) SecurityHistoryView(date = b.date, price = a.price) else b })
         return securityEntity.toView(chart, currency)
     }
 
