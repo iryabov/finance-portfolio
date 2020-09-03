@@ -28,7 +28,9 @@ class InvestServiceImpl(
         val assetRepo: AssetRepository,
         val securityHistoryRepo: SecurityHistoryRepository,
         val remittanceRepository: RemittanceRepository,
-        val currencyRateLoader: CurrencyRateLoader
+        val currencyRateLoader: CurrencyRateLoader,
+        val portfolioRepo: PortfolioRepository,
+        val targetRepo: TargetRepository
 ) : InvestService {
     override fun createAccount(form: AccountForm): Int {
         val created = accountRepo.save(form.toEntity())
@@ -203,7 +205,18 @@ class InvestServiceImpl(
         )
     }
 
+    override fun getPortfolios(currency: Currency): List<PortfolioView> {
+        return portfolioRepo.findAllView(currency)
+    }
 
+    override fun createPortfolio(form: PortfolioForm): Int {
+        val portfolio = portfolioRepo.save(form.toEntity())
+        return portfolio.id!!
+    }
+
+    override fun deletePortfolio(id: Int) {
+        portfolioRepo.deleteById(id)
+    }
 
     private fun writeOffByFifoAndRecalculation(deal: Deal, calc: Boolean = true) {
         if (deal.quantity >= 0) return
@@ -401,3 +414,8 @@ private fun reduce(a: AssetHistoryView, b: AssetHistoryView): AssetHistoryView {
 private fun needWriteOff(created: Deal) =
         (created.quantity != 0 || created.volume.notZero())
                 && setOf(DealType.PURCHASE, DealType.SALE, DealType.WITHDRAWALS, DealType.TAX).contains(created.type)
+
+private fun PortfolioForm.toEntity() = Portfolio(
+        name = name,
+        note = note
+)

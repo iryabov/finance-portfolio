@@ -353,6 +353,15 @@ class InvestServiceTest(
         assertThat(broker.totalFixedProfitPercent.eq(BigDecimal("4.8"), 1)).isTrue()
     }
 
+    @Test
+    fun portfolio() {
+        val test = investService.createPortfolio(PortfolioForm(name = "test"))
+        val portfolios = investService.getPortfolios()
+        assertThat(portfolios.find { it.id == test }).isNotNull
+        investService.deletePortfolio(test)
+        assertThat(investService.getPortfolios().size).isEqualTo(0)
+    }
+
 
     @Test
     @Disabled

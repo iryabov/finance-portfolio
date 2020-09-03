@@ -44,4 +44,10 @@ interface InvestService {
 
     fun getCurrency(pair1: Currency, pair2: Currency,
                     period: Period): CurrencyView
+
+    fun getPortfolios(currency: Currency = Currency.RUB): List<PortfolioView>
+
+    fun createPortfolio(form: PortfolioForm): Int
+
+    fun deletePortfolio(id: Int)
 }
