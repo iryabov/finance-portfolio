@@ -15,6 +15,7 @@ import com.github.iryabov.invest.model.*
 import com.github.iryabov.invest.relation.Currency.RUB
 import com.github.iryabov.invest.relation.DealType.*
 import com.github.iryabov.invest.relation.Period
+import com.github.iryabov.invest.repository.PortfolioRepository
 import com.github.iryabov.invest.service.impl.*
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -52,25 +53,28 @@ class InvestServiceTest(
         @Autowired
         val rateRepo: CurrencyRateRepository,
         @Autowired
-        val securitiesClientMoex: SecuritiesClientMoex,
-        @Autowired
         val assetHistoryLoader: AssetHistoryLoader,
         @Autowired
-        val currencyRateLoader: CurrencyRateLoader
+        val currencyRateLoader: CurrencyRateLoader,
+        @Autowired
+        val portfolioRepo: PortfolioRepository
 ) {
 
     @BeforeEach
     internal fun setUp() {
         accountRepo.deleteAll()
+        portfolioRepo.deleteAll()
 //        rateRepo.deleteAll()
     }
 
     @Test
     //@Disabled
-    fun test() {
+    fun account() {
         //account creating
         val accountId = investService.createAccount(AccountForm("MyBrocker", "12345"))
         assertThat(accountRepo.findById(accountId)).isPresent
+
+        assertThat(investService.getAccounts(RUB).accounts.size).isEqualTo(1)
 
         //dial deposit
         val deposit = investService.addDeal(accountId, DealForm(type = DEPOSIT,
@@ -343,14 +347,14 @@ class InvestServiceTest(
         assertThat(bank.totalDeposit.eq(BigDecimal("101000"))).isTrue()
         assertThat(bank.totalWithdrawals.eq(BigDecimal("82132"))).isTrue()
         assertThat(bank.totalNetValue.eq(BigDecimal("29777"))).isTrue()
-        assertThat(bank.totalFixedProfitPercent.eq(BigDecimal("3.2"), 1)).isTrue()
+        assertThat(bank.totalDepositFixedProfitPercent.eq(BigDecimal("3.2"), 1)).isTrue()
 
         val broker = investService.getAccount(accountRepo.findByName("Broker")!!.id!!)
         assertThat(broker.assets.size).isEqualTo(5)
         assertThat(broker.totalDeposit.eq(BigDecimal("82132"))).isTrue()
         assertThat(broker.totalWithdrawals.eq(BigDecimal("1000"))).isTrue()
         assertThat(broker.totalNetValue.eq(BigDecimal("89009"))).isTrue()
-        assertThat(broker.totalFixedProfitPercent.eq(BigDecimal("4.8"), 1)).isTrue()
+        assertThat(broker.totalDepositFixedProfitPercent.eq(BigDecimal("4.8"), 1)).isTrue()
     }
 
     @Test

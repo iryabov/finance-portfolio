@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<object xmlns="http://n2oapp.net/framework/config/schema/object-4.0"
+        name="Portfolio"
+        service-class="com.github.iryabov.invest.service.InvestService">
+    <fields>
+        <field id="id" domain="integer"/>
+        <field id="name" domain="string"/>
+        <field id="note" domain="string"/>
+    </fields>
+
+    <operations>
+        <operation id="addPortfolio"
+                   submit-label="Save">
+            <invocation>
+                <java method="createPortfolio" class="com.github.iryabov.invest.service.InvestService">
+                    <spring/>
+                    <arguments>
+                        <argument type="entity" name="form" class="com.github.iryabov.invest.model.PortfolioForm"/>
+                    </arguments>
+                </java>
+            </invocation>
+            <in>
+                <field id="name" mapping="name"/>
+                <field id="note" mapping="note"/>
+            </in>
+            <out>
+                <field id="id" domain="integer" mapping="#this"/>
+            </out>
+        </operation>
+        <operation id="deletePortfolio">
+            <invocation>
+                <java method="deletePortfolio" class="com.github.iryabov.invest.service.InvestService">
+                    <spring/>
+                    <arguments>
+                        <argument type="primitive" name="id"/>
+                    </arguments>
+                </java>
+            </invocation>
+            <in>
+                <field id="id" mapping="[0]"/>
+            </in>
+        </operation>
+    </operations>
+</object>

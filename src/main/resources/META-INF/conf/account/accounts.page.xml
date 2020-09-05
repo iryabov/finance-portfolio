@@ -4,11 +4,11 @@
     <toolbar place="topLeft">
         <group>
             <button icon="fa fa-plus" label="Add account" color="primary" widget-id="accounts" model="filter">
-                <open-page page-id="accountNew" submit-operation-id="addAccount"/>
+                <open-page page-id="accountNew" submit-operation-id="addAccount" route="/add"/>
             </button>
         </group>
         <button icon="fa fa-exchange" label="Remittance" widget-id="accounts" model="filter" type="icon">
-            <open-page page-id="remittanceForm" submit-operation-id="remittanceDeal"/>
+            <open-page page-id="remittanceForm" submit-operation-id="remittanceDeal" route="/remittance"/>
         </button>
     </toolbar>
     <regions>
@@ -36,7 +36,7 @@
                     <column text-field-id="totalNetValue" label="Value">
                         <text format="number 0,0.00"/>
                     </column>
-                    <column text-field-id="totalMarketDepositProfitPercent" label="Profit">
+                    <column text-field-id="totalDepositMarketProfitPercent" label="Profit">
                         <badge text="{totalMarketProfit}" text-format="number 0,0.00" color="{totalMarketProfitColor}"/>
                     </column>
                 </columns>

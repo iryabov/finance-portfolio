@@ -1,0 +1,93 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<query xmlns="http://n2oapp.net/framework/config/schema/query-4.0"
+       name="Portfolio asset">
+    <list result-mapping="#this.assets" filters="portfolioId,currency" count-mapping="#this.assets.size()">
+        <java method="getPortfolio" class="com.github.iryabov.invest.service.InvestService">
+            <spring/>
+            <arguments>
+                <argument type="primitive" name="currency"/>
+                <argument type="primitive" name="portfolioId"/>
+            </arguments>
+        </java>
+    </list>
+<!--    <unique result-mapping="#this" filters="portfolioId,ticker,currency">-->
+<!--        <java method="getAsset" class="com.github.iryabov.invest.service.InvestService">-->
+<!--            <spring/>-->
+<!--            <arguments>-->
+<!--                <argument type="primitive" name="accountId"/>-->
+<!--                <argument type="primitive" name="currency"/>-->
+<!--                <argument type="primitive" name="ticker"/>-->
+<!--            </arguments>-->
+<!--        </java>-->
+<!--    </unique>-->
+
+    <fields>
+        <field id="portfolioId">
+            <filters>
+                <eq filter-id="portfolioId" mapping="[1]" required="true"/>
+            </filters>
+        </field>
+        <field id="currency">
+            <filters>
+                <eq filter-id="currency" default-value="${portfolio.currency}"
+                    normalize="T(com.github.iryabov.invest.relation.Currency).valueOf(#this)"
+                    mapping="[0]"/>
+            </filters>
+        </field>
+        <field id="id">
+            <select mapping="assetTicker"/>
+            <filters>
+                <eq filter-id="ticker" mapping="[2]"/>
+            </filters>
+        </field>
+        <field id="asset.ticker">
+            <select mapping="assetTicker"/>
+        </field>
+        <field id="asset.name">
+            <select mapping="assetName"/>
+        </field>
+        <field id="name">
+            <select mapping="assetName" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).fullName(#this, #data['asset.ticker'])"/>
+        </field>
+        <field id="asset.class">
+            <select mapping="assetClass"/>
+        </field>
+        <field id="quantity">
+            <select mapping="quantity"/>
+        </field>
+        <field id="netValue">
+            <select mapping="netValue"/>
+        </field>
+        <field id="marketValue">
+            <select mapping="marketValue"/>
+        </field>
+        <field id="valueProfit">
+            <select mapping="valueProfit" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitFormat(#this)"/>
+        </field>
+        <field id="fixedProfit">
+            <select mapping="fixedProfit" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitFormat(#this)"/>
+        </field>
+        <field id="marketProfitPercent">
+            <select mapping="marketProfit" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitPercentFormat(#this)"/>
+        </field>
+        <field id="marketProfit">
+            <select mapping="marketValue + proceeds - expenses"/>
+        </field>
+        <field id="marketProfitColor">
+            <select mapping="marketProfit > 0 ? 'success' : 'danger'"/>
+        </field>
+        <field id="netInterest">
+            <select mapping="netInterest" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).percentFormat(#this)"/>
+        </field>
+        <field id="marketInterest">
+            <select mapping="marketInterest" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).percentFormat(#this)"/>
+        </field>
+        <field id="profitInterest">
+            <select mapping="profitInterest" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitPercentFormat(#this)"/>
+        </field>
+        <field id="assetActive" domain="boolean">
+            <select mapping="quantity > 0"/>
+        </field>
+    </fields>
+
+</query>

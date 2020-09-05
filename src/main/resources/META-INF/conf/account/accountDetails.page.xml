@@ -17,7 +17,8 @@
         <button id="deleteAccount" label="Delete account" widget-id="account"
                 icon="fa fa-trash" type="icon" color="danger"
                 confirm="true" confirm-text="Are you sure to delete account {name}?">
-            <invoke operation-id="deleteAccount" close-on-success="true"/>
+            <invoke operation-id="deleteAccount" close-on-success="true"
+                    redirect-url="../../" redirect-target="application"/>
         </button>
     </toolbar>
     <regions>
@@ -33,13 +34,13 @@
                                 <output-text id="totalValueProfit" format="number 0,0.00" class="text-success"/>
                             </col>
                             <col>
-                                <output-text id="totalValueProfitPercent"/>
+                                <output-text id="totalDepositValueProfitPercent"/>
                             </col>
                             <col>
                                 <output-text id="totalMarketProfit" format="number 0,0.00"/>
                             </col>
                             <col>
-                                <output-text id="totalMarketProfitPercent"/>
+                                <output-text id="totalDepositMarketProfitPercent"/>
                             </col>
                         </row>
                     </set>

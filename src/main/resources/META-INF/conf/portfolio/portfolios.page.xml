@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<page xmlns="http://n2oapp.net/framework/config/schema/page-2.0"
+      name="My portfolios">
+    <toolbar place="topLeft">
+        <group>
+            <button icon="fa fa-plus" label="Add portfolio" color="primary" widget-id="portfolios" model="filter">
+                <open-page page-id="portfolioForm" submit-operation-id="addPortfolio" route="/add"/>
+            </button>
+        </group>
+    </toolbar>
+    <regions>
+        <region>
+            <table id="portfolios" query-id="portfolios" route="/portfolios" selection="none">
+                <columns>
+                    <column text-field-id="name" label="Name"/>
+                    <column text-field-id="totalNetValue" label="Value">
+                        <text format="number 0,0.00"/>
+                    </column>
+                    <column text-field-id="totalDepositMarketProfitPercent" label="Profit">
+                        <badge text="{totalMarketProfit}" text-format="number 0,0.00" color="{totalMarketProfitColor}"/>
+                    </column>
+                </columns>
+                <rows>
+                    <click>
+                        <open-page page-id="portfolioDetails" route="/:portfolio_id/details">
+                            <path-param name="portfolio_id" value="{id}"/>
+                        </open-page>
+                    </click>
+                </rows>
+                <pagination/>
+            </table>
+        </region>
+    </regions>
+
+</page>

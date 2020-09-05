@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<query xmlns="http://n2oapp.net/framework/config/schema/query-4.0"
+       name="Portfolio" object-id="portfolio" route="/portfolio_list">
+    <list count-mapping="size()" filters="currency">
+        <java method="getPortfolios" class="com.github.iryabov.invest.service.InvestService">
+            <spring/>
+            <arguments>
+                <argument type="primitive" name="currency"/>
+            </arguments>
+        </java>
+    </list>
+    <unique result-mapping="#this" filters="currency, id">
+        <java method="getPortfolio" class="com.github.iryabov.invest.service.InvestService">
+            <spring/>
+            <arguments>
+                <argument type="primitive" name="currency"/>
+                <argument type="primitive" name="id"/>
+            </arguments>
+        </java>
+    </unique>
+
+    <fields>
+        <field id="id">
+            <select mapping="id"/>
+            <filters>
+                <eq filter-id="id" mapping="[1]"/>
+            </filters>
+        </field>
+        <field id="currency">
+            <filters>
+                <eq filter-id="currency" default-value="${portfolio.currency}"
+                    normalize="T(com.github.iryabov.invest.relation.Currency).valueOf(#this)"
+                    mapping="[0]"/>
+            </filters>
+        </field>
+        <field id="name">
+            <select mapping="name"/>
+        </field>
+<!--        <field id="totalDeposit">-->
+<!--            <select mapping="totalDeposit"/>-->
+<!--        </field>-->
+<!--        <field id="totalWithdrawals">-->
+<!--            <select mapping="totalWithdrawals"/>-->
+<!--        </field>-->
+<!--        <field id="totalNetValue">-->
+<!--            <select mapping="totalNetValue"/>-->
+<!--        </field>-->
+<!--        <field id="totalMarketValue">-->
+<!--            <select mapping="totalMarketValue"/>-->
+<!--        </field>-->
+<!--        <field id="totalValueProfit">-->
+<!--            <select mapping="totalValueProfit" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitFormat(#this)"/>-->
+<!--        </field>-->
+<!--        <field id="totalDepositValueProfitPercent">-->
+<!--            <select mapping="totalDepositValueProfitPercent" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitPercentFormat(#this)"/>-->
+<!--        </field>-->
+<!--        <field id="totalFixedProfit">-->
+<!--            <select mapping="totalFixedProfit" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitFormat(#this)"/>-->
+<!--        </field>-->
+<!--        <field id="totalDepositFixedProfitPercent">-->
+<!--            <select mapping="totalDepositFixedProfitPercent" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitPercentFormat(#this)"/>-->
+<!--        </field>-->
+<!--        <field id="totalMarketProfit">-->
+<!--            <select mapping="totalMarketProfit" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitFormat(#this)"/>-->
+<!--        </field>-->
+<!--        <field id="totalDepositMarketProfitPercent">-->
+<!--            <select mapping="totalDepositMarketProfitPercent" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitPercentFormat(#this)"/>-->
+<!--        </field>-->
+<!--        <field id="totalDepositFixedProfitPercent">-->
+<!--            <select mapping="totalDepositFixedProfitPercent" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitPercentFormat(#this)"/>-->
+<!--        </field>-->
+<!--        <field id="totalDepositMarketProfitPercent">-->
+<!--            <select mapping="totalDepositMarketProfitPercent" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitPercentFormat(#this)"/>-->
+<!--        </field>-->
+<!--        <field id="totalMarketProfitColor">-->
+<!--            <select mapping="totalMarketProfit > 0 ? 'success' : 'danger'"/>-->
+<!--        </field>-->
+
+    </fields>
+
+</query>

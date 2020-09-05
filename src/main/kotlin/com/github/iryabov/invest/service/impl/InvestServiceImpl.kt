@@ -100,19 +100,13 @@ class InvestServiceImpl(
     }
 
     override fun getAccount(accountId: Int, currency: Currency): AccountView {
-        val assets = ArrayList<AssetView>()
         val accountEntity = accountRepo.findById(accountId).orElseThrow()
-        assets.addAll(dealRepo.findAssets(accountId, currency))
-        val account = AccountView(accountId, accountEntity.name, assets)
-        account.calc()
-        account.calcProportion()
-        account.calcCurrencies()
-        return account
+        return accountEntity.toView(dealRepo.findAssets(accountId, currency))
     }
 
     override fun getAccounts(currency: Currency): TotalView {
-        val result = TotalView(accountRepo.findAllByActive().map { getAccount(it.id!!, currency) })
-        result.calc()
+        val result = TotalView(accountRepo.findAllByActive().map { it.toView(dealRepo.findAssets(it.id!!, currency)) })
+        result.calcTotal(result.accounts)
         return result
     }
 
@@ -206,7 +200,12 @@ class InvestServiceImpl(
     }
 
     override fun getPortfolios(currency: Currency): List<PortfolioView> {
-        return portfolioRepo.findAllView(currency)
+        return portfolioRepo.findAll().map { it.toView(targetRepo.findAllViews(it.id!!, currency)) }
+    }
+
+    override fun getPortfolio(currency: Currency, portfolioId: Int): PortfolioView {
+        val portfolioEntity = portfolioRepo.findById(portfolioId).orElseThrow()
+        return portfolioEntity.toView(targetRepo.findAllViews(portfolioId, currency))
     }
 
     override fun createPortfolio(form: PortfolioForm): Int {
@@ -247,18 +246,18 @@ class InvestServiceImpl(
 
 }
 
-private fun TotalView.calc() {
-    totalDeposit = accounts.sumByBigDecimal { a -> a.totalDeposit }
-    totalWithdrawals = accounts.sumByBigDecimal { a -> a.totalWithdrawals }
-    totalNetValue = accounts.sumByBigDecimal { a -> a.totalNetValue }
-    totalMarketValue = accounts.sumByBigDecimal { a -> a.totalMarketValue }
-    totalFixedProfit = accounts.sumByBigDecimal { a -> a.totalFixedProfit }
-    totalMarketProfit = accounts.sumByBigDecimal { a -> a.totalMarketProfit }
+private fun <T: ValueView> ValueView.calcTotal(items: List<T>) {
+    totalDeposit = items.sumByBigDecimal { a -> a.totalDeposit }
+    totalWithdrawals = items.sumByBigDecimal { a -> a.totalWithdrawals }
+    totalNetValue = items.sumByBigDecimal { a -> a.totalNetValue }
+    totalMarketValue = items.sumByBigDecimal { a -> a.totalMarketValue }
+    totalFixedProfit = items.sumByBigDecimal { a -> a.totalFixedProfit }
+    totalMarketProfit = items.sumByBigDecimal { a -> a.totalMarketProfit }
     totalDepositFixedProfitPercent = calcProfitPercent(totalDeposit + totalFixedProfit, totalDeposit)
     totalDepositMarketProfitPercent = calcProfitPercent(totalDeposit + totalMarketProfit, totalDeposit)
 }
 
-private fun AccountView.calc() {
+private fun ValueView.calcAssets(assets: List<AssetView>) {
     assets.forEach { a -> a.calc() }
     totalNetValue = assets.sumByBigDecimal { a -> a.netValue }
     totalDeposit = assets.sumByBigDecimal { a -> a.deposit }
@@ -268,18 +267,16 @@ private fun AccountView.calc() {
     totalMarketValue = assets.sumByBigDecimal { a -> a.marketValue }
 
     totalValueProfit = totalMarketValue - totalNetValue
-    totalValueProfitPercent = calcProfitPercent(totalMarketValue, totalNetValue)
+    totalDepositValueProfitPercent = calcProfitPercent(totalMarketValue, totalNetValue)
     totalFixedProfit = (totalNetValue + totalProceeds) - totalExpenses
-    totalFixedTurnoverProfitPercent = calcProfitPercent(totalNetValue + totalProceeds, totalExpenses)
-    totalFixedDepositProfitPercent = calcProfitPercent(totalDeposit + totalFixedProfit, totalDeposit)
-    totalFixedProfitPercent = calcPercent(totalNetValue + (totalProceeds - totalExpenses), totalNetValue)
+    totalDepositFixedProfitPercent = calcProfitPercent(totalDeposit + totalFixedProfit, totalDeposit)
+    totalDepositFixedProfitPercent = calcPercent(totalNetValue + (totalProceeds - totalExpenses), totalNetValue)
     totalMarketProfit = (totalMarketValue + totalProceeds) - totalExpenses
-    totalMarketTurnoverProfitPercent = calcProfitPercent(totalMarketValue + totalProceeds, totalExpenses)
-    totalMarketDepositProfitPercent = calcProfitPercent(totalDeposit + totalMarketProfit, totalDeposit)
-    totalMarketProfitPercent = calcPercent(totalMarketValue + (totalProceeds - totalExpenses), totalNetValue)
+    totalDepositMarketProfitPercent = calcProfitPercent(totalDeposit + totalMarketProfit, totalDeposit)
+    totalDepositMarketProfitPercent = calcPercent(totalMarketValue + (totalProceeds - totalExpenses), totalNetValue)
 }
 
-private fun AccountView.calcProportion() {
+private fun ValueView.calcProportion(assets: List<AssetView>) {
     if (assets.isEmpty()) return
     assets.forEach { a -> a.calcProportion(totalNetValue, totalMarketValue) }
     assert(assets.sumByBigDecimal { a -> a.netInterest }.eq(P100))
@@ -419,3 +416,19 @@ private fun PortfolioForm.toEntity() = Portfolio(
         name = name,
         note = note
 )
+
+private fun Account.toView(assets: List<AssetView>): AccountView {
+    val view = AccountView(id!!, name, assets)
+    view.calcAssets(view.assets)
+    view.calcProportion(view.assets)
+    view.calcCurrencies()
+    return view
+}
+
+private fun Portfolio.toView(assets: List<AssetView>): PortfolioView {
+    val view = PortfolioView(id!!, name)
+    view.assets = assets
+    view.calcAssets(view.assets)
+    view.calcProportion(view.assets)
+    return view
+}

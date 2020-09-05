@@ -11,6 +11,10 @@ import java.util.*
  */
 data class AssetView(
         /**
+         * Учитывать ли актив в расчетах
+         */
+        var active: Boolean = true,
+        /**
          * Тикер актива
          */
         var assetTicker: String,
@@ -77,4 +81,21 @@ data class AssetView(
         /**
          * Процент изменения доли по рыночной стоимости относительно других активов
          */
-        var profitInterest: BigDecimal = P0)
+        var profitInterest: BigDecimal = P0,
+        /**
+         * Процент целевой доли по рыночной стоимости относительно других активов
+         */
+        var targetInterest: BigDecimal? = null,
+        /**
+         * Цена для фиксации прибыли
+         */
+        var takeProfit: BigDecimal? = null,
+        /**
+         * Цена для фиксации убытка
+         */
+        var stopLoss: BigDecimal? = null,
+        /**
+         * Заметка
+         */
+        var note: String? = null
+)

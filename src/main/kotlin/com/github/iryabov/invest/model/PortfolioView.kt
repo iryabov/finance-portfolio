@@ -1,6 +1,8 @@
 package com.github.iryabov.invest.model
 
 data class PortfolioView(
-        val id: Int,
-        val name: String
-)
+        var id: Int,
+        var name: String
+): ValueView() {
+    lateinit var assets: List<AssetView>
+}

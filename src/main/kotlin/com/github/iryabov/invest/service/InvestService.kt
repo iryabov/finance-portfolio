@@ -47,6 +47,9 @@ interface InvestService {
 
     fun getPortfolios(currency: Currency = Currency.RUB): List<PortfolioView>
 
+    //todo (portfolioId: Int, currency: Currency = Currency.RUB)
+    fun getPortfolio(currency: Currency = Currency.RUB, portfolioId: Int): PortfolioView
+
     fun createPortfolio(form: PortfolioForm): Int
 
     fun deletePortfolio(id: Int)
