@@ -296,12 +296,13 @@ private fun <T : ValueView> ValueView.calcTotal(items: List<T>) {
 
 private fun ValueView.calcAssets(assets: List<AssetView>) {
     assets.forEach { a -> a.calc() }
-    totalNetValue = assets.sumByBigDecimal { a -> a.netValue }
-    totalDeposit = assets.sumByBigDecimal { a -> a.deposit }
-    totalWithdrawals = assets.sumByBigDecimal { a -> a.withdrawals }
-    totalExpenses = assets.sumByBigDecimal { a -> a.expenses }
-    totalProceeds = assets.sumByBigDecimal { a -> a.proceeds }
-    totalMarketValue = assets.sumByBigDecimal { a -> a.marketValue }
+    val activeAssets = assets.filter { it.active }
+    totalNetValue = activeAssets.sumByBigDecimal { a -> a.netValue }
+    totalDeposit = activeAssets.sumByBigDecimal { a -> a.deposit }
+    totalWithdrawals = activeAssets.sumByBigDecimal { a -> a.withdrawals }
+    totalExpenses = activeAssets.sumByBigDecimal { a -> a.expenses }
+    totalProceeds = activeAssets.sumByBigDecimal { a -> a.proceeds }
+    totalMarketValue = activeAssets.sumByBigDecimal { a -> a.marketValue }
 
     totalValueProfit = totalMarketValue - totalNetValue
     totalDepositValueProfitPercent = calcProfitPercent(totalMarketValue, totalNetValue)
@@ -472,5 +473,6 @@ private fun Portfolio.toView(assets: List<AssetView>): PortfolioView {
     view.assets = assets
     view.calcAssets(view.assets)
     view.calcProportion(view.assets)
+    view.assets = view.assets.sortedByDescending { it.marketInterest }
     return view
 }
