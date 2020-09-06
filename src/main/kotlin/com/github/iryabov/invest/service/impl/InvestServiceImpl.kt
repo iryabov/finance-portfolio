@@ -223,6 +223,12 @@ class InvestServiceImpl(
 
     }
 
+    override fun deactivateTarget(portfolioId: Int, ticker: String) {
+        val deactivated = targetRepo.findByPortfolioIdAndTicker(portfolioId, ticker).orElseThrow()
+        deactivated.active = !deactivated.active
+        targetRepo.save(deactivated)
+    }
+
     override fun getTargetCandidates(portfolioId: Int, criteria: SecurityCriteria): List<SecurityView> {
         return assetRepo.findAllCandidates(
                 portfolioId = portfolioId,

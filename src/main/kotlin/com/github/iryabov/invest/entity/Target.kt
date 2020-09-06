@@ -10,7 +10,7 @@ data class Target(
     @Id
     var id: Long? = null,
     @Column
-    val active: Boolean = true,
+    var active: Boolean = true,
     @Column
     val ticker: String,
     @Column("portfolio_id")

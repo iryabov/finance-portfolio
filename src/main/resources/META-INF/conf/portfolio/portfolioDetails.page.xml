@@ -50,6 +50,11 @@
         <line>
             <table id="assets" name="Assets" query-id="portfolioAssets" route="/assets" selection="none" size="100">
                 <columns>
+                    <column text-field-id="active" label="A">
+                        <checkbox>
+                            <invoke operation-id="deactivateTarget" message-on-success="false"/>
+                        </checkbox>
+                    </column>
                     <column text-field-id="name" label="Name"/>
                     <column text-field-id="quantity" label="Quantity">
                         <text format="number 0,0"/>

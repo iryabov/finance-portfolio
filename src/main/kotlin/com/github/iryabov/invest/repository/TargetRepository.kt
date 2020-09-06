@@ -8,6 +8,7 @@ import org.springframework.data.jdbc.repository.query.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
+import java.util.*
 
 @Repository
 interface TargetRepository: CrudRepository<Target, Long> {
@@ -129,5 +130,6 @@ where t.portfolio_id = :portfolio_id
                      @Param("currency") currency: Currency,
                      @Param("ticker") ticker: String? = null): List<AssetView>
 
-
+    fun findByPortfolioIdAndTicker(portfolioId: Int,
+                                   ticker: String): Optional<Target>
 }

@@ -362,6 +362,12 @@ class InvestServiceTest(
         val test = investService.createPortfolio(PortfolioForm(name = "test"))
         val portfolios = investService.getPortfolios()
         assertThat(portfolios.find { it.id == test }).isNotNull
+        investService.addTarget(test, "AAA")
+        assertThat(investService.getPortfolio(portfolioId = test).assets.size).isEqualTo(1)
+        investService.deactivateTarget(test, "AAA")
+        assertThat(investService.getPortfolio(portfolioId = test).assets[0].active).isFalse()
+        investService.deactivateTarget(test, "AAA")
+        assertThat(investService.getPortfolio(portfolioId = test).assets[0].active).isTrue()
         investService.deletePortfolio(test)
         assertThat(investService.getPortfolios().size).isEqualTo(0)
     }
