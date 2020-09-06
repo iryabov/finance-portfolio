@@ -1,15 +1,31 @@
 package com.github.iryabov.invest.repository
 
 import com.github.iryabov.invest.entity.Asset
-import com.github.iryabov.invest.model.SecurityView
+import com.github.iryabov.invest.relation.AssetClass
+import com.github.iryabov.invest.relation.Country
 import com.github.iryabov.invest.relation.Currency
+import com.github.iryabov.invest.relation.Sector
 import org.springframework.data.jdbc.repository.query.Query
-import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
-import java.time.LocalDate
 
 @Repository
 interface AssetRepository: PagingAndSortingRepository<Asset, String> {
+
+    @Query("""
+select *
+from asset s                
+where not exists (select t.id from target t where t.portfolio_id = :portfolio_id and t.ticker = s.ticker)
+  and (:class is null or s.class = :class)
+  and (:sector is null or s.sector = :sector)
+  and (:country is null or s.country = :country)
+  and (:currency is null or s.currency = :currency)
+"""
+    )
+    fun findAllCandidates(@Param("portfolio_id") portfolioId: Int,
+                          @Param("class") assetClass: AssetClass? = null,
+                          @Param("sector") sector: Sector? = null,
+                          @Param("country") country: Country? = null,
+                          @Param("currency") currency: Currency? = null): List<Asset>
 }

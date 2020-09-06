@@ -1,6 +1,7 @@
 package com.github.iryabov.invest.service.impl
 
 import com.github.iryabov.invest.entity.*
+import com.github.iryabov.invest.entity.Target
 import com.github.iryabov.invest.etl.CurrencyRateLoader
 import com.github.iryabov.invest.model.*
 import com.github.iryabov.invest.relation.Currency
@@ -217,6 +218,20 @@ class InvestServiceImpl(
         portfolioRepo.deleteById(id)
     }
 
+    override fun addTarget(portfolioId: Int, ticker: String) {
+        val target = targetRepo.save(Target(ticker = ticker, portfolioId = portfolioId))
+
+    }
+
+    override fun getTargetCandidates(portfolioId: Int, criteria: SecurityCriteria): List<SecurityView> {
+        return assetRepo.findAllCandidates(
+                portfolioId = portfolioId,
+                assetClass = criteria.assetClass,
+                sector = criteria.sector,
+                country = criteria.country,
+                currency = criteria.currency).map {it.toView()}
+    }
+
     private fun writeOffByFifoAndRecalculation(deal: Deal, calc: Boolean = true) {
         if (deal.quantity >= 0) return
         writeOffRepo.deleteAllLaterThan(deal.accountId, deal.ticker, deal.date, deal.id!!)
@@ -246,7 +261,7 @@ class InvestServiceImpl(
 
 }
 
-private fun <T: ValueView> ValueView.calcTotal(items: List<T>) {
+private fun <T : ValueView> ValueView.calcTotal(items: List<T>) {
     totalDeposit = items.sumByBigDecimal { a -> a.totalDeposit }
     totalWithdrawals = items.sumByBigDecimal { a -> a.totalWithdrawals }
     totalNetValue = items.sumByBigDecimal { a -> a.totalNetValue }
@@ -359,7 +374,7 @@ private fun Deal.invert(): Deal {
             tax = tax)
 }
 
-private fun DealView.calcDividend(old : MutableList<DealView>) {
+private fun DealView.calcDividend(old: MutableList<DealView>) {
     if (!this.active)
         return
     if (type == DealType.DIVIDEND && (dividendQuantity ?: 0) > 0) {
@@ -382,7 +397,7 @@ private fun DealView.calcDividend(old : MutableList<DealView>) {
 
 private fun Asset.toView(securityHistory: List<SecurityHistoryView> = Collections.emptyList(),
                          currency: Currency = Currency.RUB): SecurityView {
-    return SecurityView(
+    val securityView = SecurityView(
             ticker = this.ticker,
             name = this.name,
             assetClass = this.assetClass,
@@ -392,9 +407,9 @@ private fun Asset.toView(securityHistory: List<SecurityHistoryView> = Collection
             api = this.api,
             priceNow = this.priceNow ?: P0,
             priceWeek = this.priceWeek ?: P0,
-            priceMonth = this.priceMonth ?: P0,
-            history = securityHistory
-    )
+            priceMonth = this.priceMonth ?: P0)
+    securityView.history = securityHistory
+    return securityView
 }
 
 private fun reduce(a: AssetHistoryView, b: AssetHistoryView): AssetHistoryView {

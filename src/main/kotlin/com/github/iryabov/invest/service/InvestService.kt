@@ -53,4 +53,8 @@ interface InvestService {
     fun createPortfolio(form: PortfolioForm): Int
 
     fun deletePortfolio(id: Int)
+
+    fun addTarget(portfolioId: Int, ticker: String)
+
+    fun getTargetCandidates(portfolioId: Int, criteria: SecurityCriteria): List<SecurityView>
 }

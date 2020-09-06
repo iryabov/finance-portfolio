@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<query xmlns="http://n2oapp.net/framework/config/schema/query-4.0"
+       name="Targets" object-id="portfolioTarget">
+    <list result-mapping="#this" count-mapping="size()">
+        <java method="getTargetCandidates" class="com.github.iryabov.invest.service.InvestService">
+            <spring/>
+            <arguments>
+                <argument type="primitive" name="portfolioId"/>
+                <argument type="criteria" name="criteria" class="com.github.iryabov.invest.model.SecurityCriteria"/>
+            </arguments>
+        </java>
+    </list>
+
+    <fields>
+        <field id="portfolioId">
+            <filters>
+                <eq filter-id="portfolioId" mapping="[0]"/>
+            </filters>
+        </field>
+        <field id="id">
+            <select mapping="ticker"/>
+        </field>
+        <field id="ticker">
+            <select mapping="ticker"/>
+        </field>
+        <field id="name">
+            <select mapping="name"/>
+        </field>
+        <field id="displayName">
+            <select mapping="name" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).fullName(#this, #data['ticker'])"/>
+        </field>
+        <field id="currency.id">
+            <select mapping="currency"/>
+            <filters>
+                <eq filter-id="currency.id" mapping="[1].currency" normalize="T(com.github.iryabov.invest.relation.Currency).valueOf(#this)"/>
+            </filters>
+        </field>
+        <field id="assetClass.id">
+            <select mapping="assetClass"/>
+            <filters>
+                <eq filter-id="assetClass.id" mapping="[1].assetClass" normalize="T(com.github.iryabov.invest.relation.AssetClass).valueOf(#this)"/>
+            </filters>
+        </field>
+        <field id="country.id">
+            <select mapping="assetCountry"/>
+            <filters>
+                <eq filter-id="country.id" mapping="[1].country" normalize="T(com.github.iryabov.invest.relation.Country).valueOf(#this)"/>
+            </filters>
+        </field>
+        <field id="sector.id">
+            <select mapping="assetSector"/>
+            <filters>
+                <eq filter-id="sector.id" mapping="[1].sector" normalize="T(com.github.iryabov.invest.relation.Sector).valueOf(#this)"/>
+            </filters>
+        </field>
+        <field id="price">
+            <select mapping="priceNow"/>
+        </field>
+    </fields>
+</query>

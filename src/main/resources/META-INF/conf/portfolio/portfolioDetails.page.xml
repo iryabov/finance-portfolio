@@ -2,6 +2,9 @@
 <page xmlns="http://n2oapp.net/framework/config/schema/page-2.0"
       name="{name}">
     <toolbar place="topLeft">
+        <button id="addAssets" label="Add assets" widget-id="portfolio">
+            <open-page page-id="portfolioAssetsAdd" route="/add"/>
+        </button>
 <!--        <button id="viewDeals" label="Deals history" widget-id="securities" model="filter"-->
 <!--                icon="fa fa-history" type="icon">-->
 <!--            <open-page page-id="accountDeals" route="/deals"/>-->

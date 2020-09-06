@@ -18,9 +18,11 @@ data class SecurityView(
         val assetClass: AssetClass?,
         val assetSector: Sector?,
         val assetCountry: Country?,
-        val api: FinanceApi,
-        var currency: Currency = Currency.RUB,
-        var history: List<SecurityHistoryView> = Collections.emptyList())
+        val api: FinanceApi = FinanceApi.CACHE,
+        var currency: Currency = Currency.RUB
+        ) {
+    var history: List<SecurityHistoryView> = Collections.emptyList()
+}
 
 data class SecurityHistoryView(
         val date: LocalDate,

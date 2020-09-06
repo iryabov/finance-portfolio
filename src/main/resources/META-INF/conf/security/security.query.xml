@@ -28,6 +28,9 @@
         <field id="name">
             <select mapping="name"/>
         </field>
+        <field id="displayName">
+            <select mapping="name" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).fullName(#this, #data['ticker'])"/>
+        </field>
         <field id="currency.id">
             <select mapping="currency"/>
         </field>
