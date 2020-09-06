@@ -21,11 +21,13 @@ where not exists (select t.id from target t where t.portfolio_id = :portfolio_id
   and (:sector is null or s.sector = :sector)
   and (:country is null or s.country = :country)
   and (:currency is null or s.currency = :currency)
+  and (:account_id is null or exists (select d.id from dial d where d.active = true and d.ticker = s.ticker and d.account_id = :account_id))
 """
     )
     fun findAllCandidates(@Param("portfolio_id") portfolioId: Int,
                           @Param("class") assetClass: AssetClass? = null,
                           @Param("sector") sector: Sector? = null,
                           @Param("country") country: Country? = null,
-                          @Param("currency") currency: Currency? = null): List<Asset>
+                          @Param("currency") currency: Currency? = null,
+                          @Param("account_id") accountId: Int? = null): List<Asset>
 }

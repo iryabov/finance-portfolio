@@ -220,7 +220,18 @@ class InvestServiceImpl(
 
     override fun addTarget(portfolioId: Int, ticker: String) {
         val target = targetRepo.save(Target(ticker = ticker, portfolioId = portfolioId))
+    }
 
+    override fun addTargets(portfolioId: Int, criteria: SecurityCriteria) {
+        assetRepo.findAllCandidates(
+                portfolioId = portfolioId,
+                assetClass = criteria.assetClass,
+                sector = criteria.sector,
+                country = criteria.country,
+                currency = criteria.currency,
+                accountId = criteria.accountId)
+                .map { it.toTarget(portfolioId) }
+                .forEach { targetRepo.save(it) }
     }
 
     override fun deactivateTarget(portfolioId: Int, ticker: String) {
@@ -239,7 +250,8 @@ class InvestServiceImpl(
                 assetClass = criteria.assetClass,
                 sector = criteria.sector,
                 country = criteria.country,
-                currency = criteria.currency).map {it.toView()}
+                currency = criteria.currency,
+                accountId = criteria.accountId).map { it.toView() }
     }
 
     private fun writeOffByFifoAndRecalculation(deal: Deal, calc: Boolean = true) {
@@ -421,6 +433,11 @@ private fun Asset.toView(securityHistory: List<SecurityHistoryView> = Collection
     securityView.history = securityHistory
     return securityView
 }
+
+private fun Asset.toTarget(portfolioId: Int): Target = Target(
+        portfolioId = portfolioId,
+        ticker = ticker,
+        active = true)
 
 private fun reduce(a: AssetHistoryView, b: AssetHistoryView): AssetHistoryView {
     val result = AssetHistoryView(b.date)

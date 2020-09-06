@@ -53,6 +53,11 @@
                 <eq filter-id="sector.id" mapping="[1].sector" normalize="T(com.github.iryabov.invest.relation.Sector).valueOf(#this)"/>
             </filters>
         </field>
+        <field id="account.id">
+            <filters>
+                <eq filter-id="account.id" mapping="[1].accountId"/>
+            </filters>
+        </field>
         <field id="price">
             <select mapping="priceNow"/>
         </field>

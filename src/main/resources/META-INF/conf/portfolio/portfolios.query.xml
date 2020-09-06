@@ -36,45 +36,39 @@
         <field id="name">
             <select mapping="name"/>
         </field>
-<!--        <field id="totalDeposit">-->
-<!--            <select mapping="totalDeposit"/>-->
-<!--        </field>-->
-<!--        <field id="totalWithdrawals">-->
-<!--            <select mapping="totalWithdrawals"/>-->
-<!--        </field>-->
-<!--        <field id="totalNetValue">-->
-<!--            <select mapping="totalNetValue"/>-->
-<!--        </field>-->
-<!--        <field id="totalMarketValue">-->
-<!--            <select mapping="totalMarketValue"/>-->
-<!--        </field>-->
-<!--        <field id="totalValueProfit">-->
-<!--            <select mapping="totalValueProfit" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitFormat(#this)"/>-->
-<!--        </field>-->
-<!--        <field id="totalDepositValueProfitPercent">-->
-<!--            <select mapping="totalDepositValueProfitPercent" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitPercentFormat(#this)"/>-->
-<!--        </field>-->
-<!--        <field id="totalFixedProfit">-->
-<!--            <select mapping="totalFixedProfit" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitFormat(#this)"/>-->
-<!--        </field>-->
-<!--        <field id="totalDepositFixedProfitPercent">-->
-<!--            <select mapping="totalDepositFixedProfitPercent" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitPercentFormat(#this)"/>-->
-<!--        </field>-->
-<!--        <field id="totalMarketProfit">-->
-<!--            <select mapping="totalMarketProfit" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitFormat(#this)"/>-->
-<!--        </field>-->
-<!--        <field id="totalDepositMarketProfitPercent">-->
-<!--            <select mapping="totalDepositMarketProfitPercent" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitPercentFormat(#this)"/>-->
-<!--        </field>-->
-<!--        <field id="totalDepositFixedProfitPercent">-->
-<!--            <select mapping="totalDepositFixedProfitPercent" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitPercentFormat(#this)"/>-->
-<!--        </field>-->
-<!--        <field id="totalDepositMarketProfitPercent">-->
-<!--            <select mapping="totalDepositMarketProfitPercent" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitPercentFormat(#this)"/>-->
-<!--        </field>-->
-<!--        <field id="totalMarketProfitColor">-->
-<!--            <select mapping="totalMarketProfit > 0 ? 'success' : 'danger'"/>-->
-<!--        </field>-->
+        <field id="totalDeposit">
+            <select mapping="totalDeposit"/>
+        </field>
+        <field id="totalWithdrawals">
+            <select mapping="totalWithdrawals"/>
+        </field>
+        <field id="totalNetValue">
+            <select mapping="totalNetValue"/>
+        </field>
+        <field id="totalMarketValue">
+            <select mapping="totalMarketValue"/>
+        </field>
+        <field id="totalValueProfit">
+            <select mapping="totalValueProfit" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitFormat(#this)"/>
+        </field>
+        <field id="totalDepositValueProfitPercent">
+            <select mapping="totalDepositValueProfitPercent" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitPercentFormat(#this)"/>
+        </field>
+        <field id="totalFixedProfit">
+            <select mapping="totalFixedProfit" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitFormat(#this)"/>
+        </field>
+        <field id="totalMarketProfit">
+            <select mapping="totalMarketProfit" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitFormat(#this)"/>
+        </field>
+        <field id="totalDepositFixedProfitPercent">
+            <select mapping="totalDepositFixedProfitPercent" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitPercentFormat(#this)"/>
+        </field>
+        <field id="totalDepositMarketProfitPercent">
+            <select mapping="totalDepositMarketProfitPercent" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitPercentFormat(#this)"/>
+        </field>
+        <field id="totalMarketProfitColor">
+            <select mapping="totalMarketProfit > 0 ? 'success' : 'danger'"/>
+        </field>
 
     </fields>
 

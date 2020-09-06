@@ -8,6 +8,9 @@
             </dependencies>
             <invoke operation-id="addTarget"/>
         </button>
+        <button id="addAll" label="Add all" widget-id="securities" model="filter">
+            <invoke operation-id="addTargets"/>
+        </button>
     </toolbar>
     <regions>
         <region>
@@ -50,14 +53,14 @@
                                 <option id="EUROPA" name="Europa"/>
                             </options>
                         </select>
-                        <select id="currency" label="Currency" param="currency">
-                            <default-value id="RUB"/>
+                        <select id="currency" label="Currency">
                             <options>
                                 <option id="RUB" name="RUB"/>
                                 <option id="USD" name="USD"/>
                                 <option id="EUR" name="EUR"/>
                             </options>
                         </select>
+                        <select id="account" label="Account" query-id="accounts"/>
                     </row>
                 </filters>
                 <columns>
