@@ -31,5 +31,20 @@
                 <field id="id" mapping="[1]"/>
             </in>
         </operation>
+        <operation id="deleteTarget">
+            <invocation>
+                <java method="deleteTarget" class="com.github.iryabov.invest.service.InvestService">
+                    <spring/>
+                    <arguments>
+                        <argument type="primitive" name="portfolioId"/>
+                        <argument type="primitive" name="ticker"/>
+                    </arguments>
+                </java>
+            </invocation>
+            <in>
+                <field id="portfolioId" param="portfolio_id" mapping="[0]"/>
+                <field id="id" mapping="[1]"/>
+            </in>
+        </operation>
     </operations>
 </object>

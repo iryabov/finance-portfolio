@@ -368,6 +368,8 @@ class InvestServiceTest(
         assertThat(investService.getPortfolio(portfolioId = test).assets[0].active).isFalse()
         investService.deactivateTarget(test, "AAA")
         assertThat(investService.getPortfolio(portfolioId = test).assets[0].active).isTrue()
+        investService.deleteTarget(test, "AAA")
+        assertThat(investService.getPortfolio(portfolioId = test).assets.size).isEqualTo(0)
         investService.deletePortfolio(test)
         assertThat(investService.getPortfolios().size).isEqualTo(0)
     }

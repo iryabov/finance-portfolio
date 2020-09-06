@@ -132,4 +132,5 @@ where t.portfolio_id = :portfolio_id
 
     fun findByPortfolioIdAndTicker(portfolioId: Int,
                                    ticker: String): Optional<Target>
+
 }

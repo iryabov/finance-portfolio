@@ -47,12 +47,12 @@
                 </pre-filters>
             </form>
         </region>
-        <line>
+        <region>
             <table id="assets" name="Assets" query-id="portfolioAssets" route="/assets" selection="none" size="100">
                 <columns>
-                    <column text-field-id="active" label="A">
+                    <column text-field-id="active" label="A" width="20px">
                         <checkbox>
-                            <invoke operation-id="deactivateTarget" message-on-success="false"/>
+                            <invoke operation-id="deactivateTarget" route="/deactivate" message-on-success="false"/>
                         </checkbox>
                     </column>
                     <column text-field-id="name" label="Name"/>
@@ -67,6 +67,13 @@
                     </column>
                     <column text-field-id="profitInterest" label="Proportion">
                         <badge text="{marketInterest}"/>
+                    </column>
+                    <column text-field-id="" width="20px">
+                        <toolbar>
+                            <button id="delete" type="icon" label="Delete asset" icon="fa fa-trash" confirm="false">
+                                <invoke operation-id="deleteTarget" route="/delete"/>
+                            </button>
+                        </toolbar>
                     </column>
                 </columns>
                 <rows>
@@ -83,7 +90,7 @@
                     <eq field-id="portfolioId" param="portfolio_id"/>
                 </pre-filters>
             </table>
-        </line>
+        </region>
     </regions>
 
 </page>

@@ -79,7 +79,7 @@
                 <columns>
                     <column text-field-id="active" label="A">
                         <checkbox>
-                            <invoke operation-id="deactivateDeal" message-on-success="false"/>
+                            <invoke operation-id="deactivateDeal" route="/deactivate" message-on-success="false"/>
                         </checkbox>
                     </column>
                     <!--            <column text-field-id="asset.ticker"/>-->

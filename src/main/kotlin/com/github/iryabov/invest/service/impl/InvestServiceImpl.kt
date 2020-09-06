@@ -229,6 +229,10 @@ class InvestServiceImpl(
         targetRepo.save(deactivated)
     }
 
+    override fun deleteTarget(portfolioId: Int, ticker: String) {
+        targetRepo.delete(targetRepo.findByPortfolioIdAndTicker(portfolioId, ticker).orElseThrow())
+    }
+
     override fun getTargetCandidates(portfolioId: Int, criteria: SecurityCriteria): List<SecurityView> {
         return assetRepo.findAllCandidates(
                 portfolioId = portfolioId,

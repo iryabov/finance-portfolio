@@ -58,5 +58,7 @@ interface InvestService {
 
     fun deactivateTarget(portfolioId: Int, ticker: String)
 
+    fun deleteTarget(portfolioId: Int, ticker: String)
+
     fun getTargetCandidates(portfolioId: Int, criteria: SecurityCriteria): List<SecurityView>
 }
