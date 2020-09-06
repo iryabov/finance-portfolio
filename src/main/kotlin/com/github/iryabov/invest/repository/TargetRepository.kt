@@ -41,29 +41,90 @@ from target t
 left join asset s on s.ticker = t.ticker
 left join (
     select 
-        a.ticker,
-        a.quantity,
-        a.volume_cur,
-        a.net_value,
-        a.deposit,
-        a.withdrawals,
-        a.expenses,
-        a.proceeds 
-    from (
+        d.ticker as asset_ticker,
+        sum(d.quantity) as quantity,
+        sum(volume_cur) as volume_cur,
+        sum(case when d.quantity > 0 
+            then  -1 * (d.volume_cur * (d.quantity - d.sold_quantity) / d.quantity)
+            else  0 
+            end  
+        ) as net_value,
+        sum(case  
+          when  d.type = 'DEPOSIT' then  -1*d.volume_cur
+          else  0 
+           end) as deposit,
+        sum(case  
+           when  d.type = 'WITHDRAWALS' then  d.volume_cur
+           else   0 
+           end) as withdrawals,
+        sum(case 
+           when  d.volume_cur < 0 then  -1*d.volume_cur
+           else  0 
+           end) as expenses,
+        sum(case 
+           when  d.volume_cur > 0 then  d.volume_cur
+           else   0 
+           end) as proceeds 
+    from
+        (select 
+            d.id,
+            d.ticker as ticker,
+            d.dt as dt,
+            (case when active = true then d.quantity else 0 end) as quantity,
+            d.currency as currency,
+            (case when active = true then d.volume else 0 end) as volume,
+            d.type as type,
+            (case when active = true then 
+            (case when d.currency = :currency then  d.volume
+             else coalesce((select r.price * d.volume from rate r where  r.dt = d.dt and  r.currency_purchase = d.currency and  r.currency_sale = :currency), 0) 
+             end 
+            ) else 0 end) as volume_cur,
+            (case when d.quantity > 0 
+             then (
+                 select coalesce(sum(w.quantity),0) as sold_quantity
+                 FROM writeoff w
+                 JOIN dial d2 ON d2.id = w.dial_to
+                 WHERE w.dial_from = d.id
+             )
+             else 0 end
+            ) as sold_quantity
+        from dial d
+        union 
         select 
-            s.ticker as ticker,
-            0 as quantity,
-            0 as volume_cur,
-            0 as net_value,
-            0 as deposit,
-            0 as withdrawals,
-            0 as expenses,
-            0 as proceeds
-        from asset s     
-    ) a
-) a on a.ticker = t.ticker
+            d.id,
+            d.currency as ticker,
+            d.dt as dt,
+            d.volume as quantity,
+            d.ticker as currency,
+            d.quantity as volume,
+            (case 
+                when d.type = 'SALE' then 'PURCHASE'
+                when d.type = 'PURCHASE' then 'SALE'
+                else d.type
+             end) as type,
+            (case when d.currency = :currency then -1*d.volume
+             else -1*coalesce((select r.price * d.volume from rate r where  r.dt = d.dt and  r.currency_purchase = d.currency and  r.currency_sale = :currency), 0) 
+             end 
+            ) as volume_cur,
+            (case when d.volume > 0 
+             then (
+                 select coalesce(sum(w.quantity),0) as sold_quantity
+                 FROM writeoff w
+                 JOIN dial d2 ON d2.id = w.dial_to
+                 WHERE w.dial_from = d.id
+             )
+             else 0 end
+            ) as sold_quantity
+        from dial d
+        where d.active = true
+          and d.ticker != d.currency
+        ) d  
+    where (:ticker is null or d.ticker = :ticker)
+    group by d.ticker    
+) a on a.asset_ticker = t.ticker
 where t.portfolio_id = :portfolio_id
     """)
     fun findAllViews(@Param("portfolio_id") portfolioId: Int,
-                     @Param("currency") currency: Currency): List<AssetView>
+                     @Param("currency") currency: Currency,
+                     @Param("ticker") ticker: String? = null): List<AssetView>
 }

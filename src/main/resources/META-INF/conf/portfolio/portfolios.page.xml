@@ -10,7 +10,7 @@
     </toolbar>
     <regions>
         <region>
-            <table id="portfolios" query-id="portfolios" route="/portfolios" selection="none">
+            <table id="portfolios" query-id="portfolios" route="/" selection="none">
                 <columns>
                     <column text-field-id="name" label="Name"/>
                     <column text-field-id="totalNetValue" label="Value">
