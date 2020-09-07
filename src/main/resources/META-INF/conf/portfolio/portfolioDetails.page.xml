@@ -63,10 +63,10 @@
                         <text format="number 0,0.00"/>
                     </column>
                     <column text-field-id="marketProfitPercent" label="Profit">
-                        <badge text="{marketProfit}" text-format="number 0,0.00" color="{marketProfitColor}"/>
+                        <badge text="{marketProfitPercent}" text-format="number 0,0.00" color="{marketProfitColor}"/>
                     </column>
-                    <column text-field-id="profitInterest" label="Proportion">
-                        <badge text="{marketInterest}"/>
+                    <column text-field-id="marketProfitProportion" label="Proportion">
+                        <badge text="{marketProportion}"/>
                     </column>
                     <column text-field-id="" width="20px">
                         <toolbar>

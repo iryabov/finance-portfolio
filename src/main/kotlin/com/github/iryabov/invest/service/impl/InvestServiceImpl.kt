@@ -317,28 +317,28 @@ private fun ValueView.calcAssets(assets: List<AssetView>) {
 private fun ValueView.calcProportion(assets: List<AssetView>) {
     if (assets.isEmpty()) return
     assets.forEach { a -> a.calcProportion(totalNetValue, totalMarketValue) }
-    assert(assets.sumByBigDecimal { a -> a.netInterest }.eq(P100))
-    assert(assets.sumByBigDecimal { a -> a.marketInterest }.eq(P100))
-    assert(assets.sumByBigDecimal { a -> a.profitInterest }.eq(P0))
+    assert(assets.sumByBigDecimal { a -> a.netProportion }.eq(P100))
+    assert(assets.sumByBigDecimal { a -> a.marketProportion }.eq(P100))
+    assert(assets.sumByBigDecimal { a -> a.marketProfitProportion }.eq(P0))
 }
 
 private fun AccountView.calcCurrencies() {
-    currencies = assets.filter { it.assetTicker.isCurrency() }.sortedByDescending { it.marketInterest }
-    securities = assets.filter { !it.assetTicker.isCurrency() }.sortedByDescending { it.marketInterest }
+    currencies = assets.filter { it.assetTicker.isCurrency() }.sortedByDescending { it.marketProportion }
+    securities = assets.filter { !it.assetTicker.isCurrency() }.sortedByDescending { it.marketProportion }
 }
 
 private fun AssetView.calc() {
     netValue = netValue.round()
     marketValue = if (assetPriceNow != null) (BigDecimal(quantity) * assetPriceNow!!).round() else netValue
-    valueProfit = calcProfitPercent(marketValue, netValue).round()
-    fixedProfit = calcProfitPercent(netValue + proceeds, expenses).round()
-    marketProfit = calcProfitPercent(marketValue + proceeds, expenses).round()
+    valueProfitPercent = calcProfitPercent(marketValue, netValue).round()
+    fixedProfitPercent = calcProfitPercent(netValue + proceeds, expenses).round()
+    marketProfitPercent = calcProfitPercent(marketValue + proceeds, expenses).round()
 }
 
 private fun AssetView.calcProportion(totalNetValue: BigDecimal, totalMarketValue: BigDecimal) {
-    netInterest = calcPercent(netValue, totalNetValue).round()
-    marketInterest = calcPercent(marketValue, totalMarketValue).round()
-    profitInterest = marketInterest - netInterest
+    netProportion = calcPercent(netValue, totalNetValue).round()
+    marketProportion = calcPercent(marketValue, totalMarketValue).round()
+    marketProfitProportion = marketProportion - netProportion
 }
 
 private fun DealForm.toEntityWith(accountId: Int): Deal {
@@ -473,6 +473,6 @@ private fun Portfolio.toView(assets: List<AssetView>): PortfolioView {
     view.assets = assets
     view.calcAssets(view.assets)
     view.calcProportion(view.assets)
-    view.assets = view.assets.sortedByDescending { it.marketInterest }
+    view.assets = view.assets.sortedByDescending { it.marketProportion }
     return view
 }

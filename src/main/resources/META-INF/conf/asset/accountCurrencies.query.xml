@@ -61,29 +61,29 @@
         <field id="marketValue">
             <select mapping="marketValue"/>
         </field>
-        <field id="valueProfit">
-            <select mapping="valueProfit" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitFormat(#this)"/>
+        <field id="valueProfitPercent">
+            <select mapping="valueProfitPercent" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitFormat(#this)"/>
         </field>
-        <field id="fixedProfit">
-            <select mapping="fixedProfit" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitFormat(#this)"/>
+        <field id="fixedProfitPercent">
+            <select mapping="fixedProfitPercent" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitFormat(#this)"/>
         </field>
         <field id="marketProfitPercent">
-            <select mapping="marketProfit" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitPercentFormat(#this)"/>
+            <select mapping="marketProfitPercent" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitPercentFormat(#this)"/>
         </field>
         <field id="marketProfit">
             <select mapping="marketValue + proceeds - expenses"/>
         </field>
         <field id="marketProfitColor">
-            <select mapping="marketProfit > 0 ? 'success' : 'danger'"/>
+            <select mapping="marketProfitPercent > 0 ? 'success' : 'danger'"/>
         </field>
-        <field id="netInterest">
-            <select mapping="netInterest" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).percentFormat(#this)"/>
+        <field id="netProportion">
+            <select mapping="netProportion" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).percentFormat(#this)"/>
         </field>
-        <field id="marketInterest">
-            <select mapping="marketInterest" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).percentFormat(#this)"/>
+        <field id="marketProportion">
+            <select mapping="marketProportion" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).percentFormat(#this)"/>
         </field>
-        <field id="profitInterest">
-            <select mapping="profitInterest" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitPercentFormat(#this)"/>
+        <field id="marketProfitProportion">
+            <select mapping="marketProfitProportion" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitPercentFormat(#this)"/>
         </field>
         <field id="assetActive" domain="boolean">
             <select mapping="quantity > 0"/>

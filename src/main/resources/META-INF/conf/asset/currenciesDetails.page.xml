@@ -28,8 +28,8 @@
                         <row>
                             <output-text id="quantity"/>
                             <output-text id="marketValue" format="number 0.00"/>
-                            <output-text id="marketProfit" format="number 0.00"/>
-                            <output-text id="valueProfit" format="number 0.00"/>
+                            <output-text id="marketProfitPercent" format="number 0.00"/>
+                            <output-text id="valueProfitPercent" format="number 0.00"/>
                         </row>
                     </set>
                 </fields>

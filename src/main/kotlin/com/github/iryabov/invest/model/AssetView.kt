@@ -61,31 +61,31 @@ data class AssetView(
         /**
          * Процент прибыли курсовой (рыночная стоимость относительно себестоимости)
          */
-        var valueProfit: BigDecimal = P0,
+        var valueProfitPercent: BigDecimal = P0,
         /**
          * Процент прибыли фиксированной относительно оборота
          */
-        var fixedProfit: BigDecimal = P0,
+        var fixedProfitPercent: BigDecimal = P0,
         /**
          * Процент прибыли фиксированной и курсовой относительно оборота
          */
-        var marketProfit: BigDecimal = P0,
+        var marketProfitPercent: BigDecimal = P0,
         /**
          * Процент доли по себестоимости относительно других активов
          */
-        var netInterest: BigDecimal = P0,
+        var netProportion: BigDecimal = P0,
         /**
          * Процент доли по рыночной стоимости относительно других активов
          */
-        var marketInterest: BigDecimal = P0,
+        var marketProportion: BigDecimal = P0,
         /**
          * Процент изменения доли по рыночной стоимости относительно других активов
          */
-        var profitInterest: BigDecimal = P0,
+        var marketProfitProportion: BigDecimal = P0,
         /**
          * Процент целевой доли по рыночной стоимости относительно других активов
          */
-        var targetInterest: BigDecimal? = null,
+        var targetProportion: BigDecimal? = null,
         /**
          * Цена для фиксации прибыли
          */
