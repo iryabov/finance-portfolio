@@ -32,7 +32,7 @@ n2o:
     monitoring:
       enabled: true
 portfolio:
-  currency: USD
+  currency: RUB
   client:
     unibit:
       access_key: Demo

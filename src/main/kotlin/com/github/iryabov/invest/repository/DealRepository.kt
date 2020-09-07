@@ -115,6 +115,7 @@ from (
             ) as sold_quantity
         from dial d
         where d.account_id = :account_id
+          and d.active = true
         union 
         select 
             d.id,

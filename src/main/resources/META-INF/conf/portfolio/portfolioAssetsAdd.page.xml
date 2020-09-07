@@ -1,17 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <page xmlns="http://n2oapp.net/framework/config/schema/page-2.0"
       name="Add assets">
-    <toolbar place="topLeft">
-        <button id="add" label="Add" widget-id="securities" model="resolve">
-            <dependencies>
-                <enabling ref-widget-id="securities" ref-model="resolve">!_.isEmpty(this)</enabling>
-            </dependencies>
-            <invoke operation-id="addTarget"/>
-        </button>
-        <button id="addAll" label="Add all" widget-id="securities" model="filter">
-            <invoke operation-id="addTargets"/>
-        </button>
-    </toolbar>
     <regions>
         <region>
             <table id="securities" query-id="portfolioTarget" selection="radio">
@@ -76,4 +65,19 @@
             </table>
         </region>
     </regions>
+    <toolbar place="bottomCenter">
+        <group>
+            <button id="add" label="Add" widget-id="securities" model="resolve" color="primary">
+                <dependencies>
+                    <enabling ref-widget-id="securities" ref-model="resolve">!_.isEmpty(this)</enabling>
+                </dependencies>
+                <invoke operation-id="addTarget"/>
+            </button>
+        </group>
+    </toolbar>
+    <toolbar place="bottomRight">
+        <button id="addAll" label="Add all" widget-id="securities" model="filter">
+            <invoke operation-id="addTargets"/>
+        </button>
+    </toolbar>
 </page>
