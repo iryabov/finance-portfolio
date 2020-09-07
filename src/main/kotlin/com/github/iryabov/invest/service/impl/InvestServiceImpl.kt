@@ -339,6 +339,11 @@ private fun AssetView.calcProportion(totalNetValue: BigDecimal, totalMarketValue
     netProportion = calcPercent(netValue, totalNetValue).round()
     marketProportion = calcPercent(marketValue, totalMarketValue).round()
     marketProfitProportion = marketProportion - netProportion
+    if (targetProportion != null) {
+        val targetValue = calcValue(totalMarketValue, targetProportion)
+        targetDeviation = marketValue - targetValue
+        targetDeviationPercent = targetProportion - marketProportion
+    }
 }
 
 private fun DealForm.toEntityWith(accountId: Int): Deal {

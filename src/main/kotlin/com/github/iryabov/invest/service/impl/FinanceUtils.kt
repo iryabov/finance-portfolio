@@ -24,6 +24,10 @@ fun calcPercent(a: BigDecimal, b: BigDecimal): BigDecimal {
     return if (b.compareTo(P0) != 0) a.divide(b, 2, RoundingMode.HALF_UP) * P100 else P100
 }
 
+fun calcValue(total: BigDecimal, percent: BigDecimal): BigDecimal {
+    return total.multiply(percent).divide(P100, 2, RoundingMode.HALF_UP)
+}
+
 inline fun <T> Iterable<T>.sumByBigDecimal(selector: (T) -> BigDecimal): BigDecimal {
     var sum: BigDecimal = BigDecimal.ZERO
     for (element in this) {

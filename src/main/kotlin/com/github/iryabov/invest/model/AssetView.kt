@@ -59,33 +59,17 @@ data class AssetView(
          */
         var marketValue: BigDecimal = P0,
         /**
-         * Процент прибыли курсовой (рыночная стоимость относительно себестоимости)
-         */
-        var valueProfitPercent: BigDecimal = P0,
-        /**
-         * Процент прибыли фиксированной относительно оборота
-         */
-        var fixedProfitPercent: BigDecimal = P0,
-        /**
-         * Процент прибыли фиксированной и курсовой относительно оборота
-         */
-        var marketProfitPercent: BigDecimal = P0,
-        /**
-         * Процент доли по себестоимости относительно других активов
-         */
-        var netProportion: BigDecimal = P0,
-        /**
-         * Процент доли по рыночной стоимости относительно других активов
-         */
-        var marketProportion: BigDecimal = P0,
-        /**
-         * Процент изменения доли по рыночной стоимости относительно других активов
-         */
-        var marketProfitProportion: BigDecimal = P0,
-        /**
          * Процент целевой доли по рыночной стоимости относительно других активов
          */
-        var targetProportion: BigDecimal? = null,
+        val targetProportion: BigDecimal? = null,
+        /**
+         * Отклонение от целевой доли по рыночной стоимости относительно других активов
+         */
+        var targetDeviation: BigDecimal? = null,
+        /**
+         * Процент отклонения от целевой доли по рыночной стоимости относительно других активов
+         */
+        var targetDeviationPercent: BigDecimal? = null,
         /**
          * Цена для фиксации прибыли
          */
@@ -98,4 +82,29 @@ data class AssetView(
          * Заметка
          */
         var note: String? = null
-)
+) {
+        /**
+         * Процент прибыли курсовой (рыночная стоимость относительно себестоимости)
+         */
+        lateinit var valueProfitPercent: BigDecimal
+        /**
+         * Процент прибыли фиксированной относительно оборота
+         */
+        lateinit var fixedProfitPercent: BigDecimal
+        /**
+         * Процент прибыли фиксированной и курсовой относительно оборота
+         */
+        lateinit var marketProfitPercent: BigDecimal
+        /**
+         * Процент доли по себестоимости относительно других активов
+         */
+        lateinit var netProportion: BigDecimal
+        /**
+         * Процент доли по рыночной стоимости относительно других активов
+         */
+        lateinit var marketProportion: BigDecimal
+        /**
+         * Процент изменения доли по рыночной стоимости относительно других активов
+         */
+        lateinit var marketProfitProportion: BigDecimal
+}
