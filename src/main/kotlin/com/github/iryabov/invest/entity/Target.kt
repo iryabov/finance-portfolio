@@ -16,7 +16,7 @@ data class Target(
     @Column("portfolio_id")
     val portfolioId: Int,
     @Column
-    val proportion: BigDecimal = BigDecimal.ZERO,
+    val proportion: BigDecimal? = null,
     @Column("take_profit")
     val takeProfit: BigDecimal? = null,
     @Column("stop_loss")

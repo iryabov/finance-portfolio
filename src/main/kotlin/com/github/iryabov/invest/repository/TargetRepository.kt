@@ -28,7 +28,7 @@ select
          order by r.dt desc limit 1) * s.price_now, 
         null) 
      end) as asset_price_now,
-    t.proportion,
+    t.proportion as target_proportion,
     t.take_profit,
     t.stop_loss,
     t.note,
@@ -91,6 +91,7 @@ left join (
              else 0 end
             ) as sold_quantity
         from dial d
+        where (:ticker is null or d.ticker = :ticker)
         union 
         select 
             d.id,
@@ -125,6 +126,7 @@ left join (
     group by d.ticker    
 ) a on a.asset_ticker = t.ticker
 where t.portfolio_id = :portfolio_id
+  and (:ticker is null or t.ticker = :ticker)
     """)
     fun findAllViews(@Param("portfolio_id") portfolioId: Int,
                      @Param("currency") currency: Currency,

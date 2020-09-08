@@ -63,14 +63,6 @@ data class AssetView(
          */
         val targetProportion: BigDecimal? = null,
         /**
-         * Отклонение от целевой доли по рыночной стоимости относительно других активов
-         */
-        var targetDeviation: BigDecimal? = null,
-        /**
-         * Процент отклонения от целевой доли по рыночной стоимости относительно других активов
-         */
-        var targetDeviationPercent: BigDecimal? = null,
-        /**
          * Цена для фиксации прибыли
          */
         var takeProfit: BigDecimal? = null,
@@ -107,4 +99,12 @@ data class AssetView(
          * Процент изменения доли по рыночной стоимости относительно других активов
          */
         lateinit var marketProfitProportion: BigDecimal
+        /**
+         * Отклонение от целевой доли по рыночной стоимости относительно других активов
+         */
+        var targetDeviation: BigDecimal? = null
+        /**
+         * Процент отклонения от целевой доли по рыночной стоимости относительно других активов
+         */
+        var targetDeviationPercent: BigDecimal? = null
 }

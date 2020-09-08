@@ -68,8 +68,21 @@
                     <column text-field-id="marketProfitProportion" label="Proportion">
                         <badge text="{marketProportion}"/>
                     </column>
+<!--                    <column text-field-id="marketProportionValue" tooltip-field-id="marketProportion" label="Proportion" width="30px">-->
+<!--                        <progress size="small" />-->
+<!--                    </column>-->
+<!--                    <column text-field-id="marketProfitProportion" label="">-->
+<!--                        <text/>-->
+<!--                    </column>-->
                     <column text-field-id="targetDeviationPercent" label="Target">
-                        <badge text="{targetProportion}"/>
+<!--                        <edit type="popup" action-id="">-->
+<!--                            <field id="targetPercent">-->
+<!--                                <controls>-->
+<!--                                    <slider id="targetPercent"/>-->
+<!--                                </controls>-->
+<!--                            </field>-->
+<!--                        </edit>-->
+                        <badge text="{targetProportion}" color="{targetDeviationColor}"/>
                     </column>
                     <column text-field-id="" width="20px">
                         <toolbar>
@@ -84,9 +97,9 @@
                         <case value="false">text-secondary</case>
                     </switch>
                     <click>
-<!--                        <open-page page-id="assetDetails" route="/:asset_id/details">-->
-<!--                            <path-param name="asset_id" value="{id}"/>-->
-<!--                        </open-page>-->
+                        <open-page page-id="portfolioTargetDetails" route="/:ticker/target">
+                            <path-param name="ticker" value="{id}"/>
+                        </open-page>
                     </click>
                 </rows>
                 <pre-filters>

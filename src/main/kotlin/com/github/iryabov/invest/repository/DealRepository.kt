@@ -28,7 +28,7 @@ interface DealRepository : CrudRepository<Deal, Long> {
         ) / abs(d.quantity)) as price,
         d.quantity as quantity
     from dial d
-    where d.account_id = :account_id
+    where (:account_id is null or d.account_id = :account_id)
       and d.active = true
       and d.ticker = :ticker 
       and d.type in ('PURCHASE', 'SALE') 
@@ -36,7 +36,7 @@ interface DealRepository : CrudRepository<Deal, Long> {
       and d.dt <= :till
     order by d.dt, d.id  
     """)
-    fun findAllByPeriod(@Param("account_id") accountId: Int,
+    fun findAllByPeriod(@Param("account_id") accountId: Int? = null,
                         @Param("ticker") ticker: String,
                         @Param("currency") currency: Currency,
                         @Param("from") from: LocalDate,

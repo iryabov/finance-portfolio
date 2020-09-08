@@ -35,6 +35,25 @@
                 <field id="account.id" mapping="[1].accountId"/>
             </in>
         </operation>
+        <operation id="updateTarget" success-text="Updated target for {ticker}">
+            <invocation>
+                <java method="updateTarget" class="com.github.iryabov.invest.service.InvestService">
+                    <spring/>
+                    <arguments>
+                        <argument type="primitive" name="portfolioId"/>
+                        <argument type="primitive" name="ticker"/>
+                        <argument type="entity" name="form" class="com.github.iryabov.invest.model.TargetForm"/>
+                    </arguments>
+                </java>
+            </invocation>
+            <in>
+                <field id="portfolioId" param="portfolio_id" mapping="[0]"/>
+                <field id="ticker" mapping="[1]"/>
+                <field id="targetProportion" mapping="targetProportion"/>
+                <field id="takeProfit" mapping="takeProfit"/>
+                <field id="stopLoss" mapping="stopLoss"/>
+            </in>
+        </operation>
         <operation id="deactivateTarget">
             <invocation>
                 <java method="deactivateTarget" class="com.github.iryabov.invest.service.InvestService">

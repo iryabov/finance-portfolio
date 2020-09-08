@@ -121,7 +121,7 @@ class InvestServiceImpl(
         return asset
     }
 
-    override fun getAssetHistory(accountId: Int, ticker: String, period: Period, currency: Currency): List<AssetHistoryView> {
+    override fun getAssetHistory(accountId: Int?, ticker: String, period: Period, currency: Currency): List<AssetHistoryView> {
         val from = period.from.invoke()
         val till = LocalDate.now()
         val assetHistory = dealRepo.findAllByPeriod(accountId, ticker, currency, from, till)
@@ -242,6 +242,21 @@ class InvestServiceImpl(
 
     override fun deleteTarget(portfolioId: Int, ticker: String) {
         targetRepo.delete(targetRepo.findByPortfolioIdAndTicker(portfolioId, ticker).orElseThrow())
+    }
+
+    override fun updateTarget(portfolioId: Int, ticker: String, form: TargetForm) {
+        val target = targetRepo.findByPortfolioIdAndTicker(portfolioId, ticker).orElseThrow()
+        targetRepo.save(form.toEntity(target.id!!, portfolioId, ticker))
+    }
+
+    override fun getTarget(currency: Currency, portfolioId: Int, ticker: String): AssetView {
+        val targets = targetRepo.findAllViews(portfolioId, currency, ticker)
+        if (targets.isEmpty())
+            return AssetView(assetTicker = ticker, quantity = 0, netValue = P0)
+        val target = targets.first()
+        target.calc()
+        target.calcProportion(P0, P0)
+        return target
     }
 
     override fun getTargetCandidates(portfolioId: Int, criteria: SecurityCriteria): List<SecurityView> {
@@ -481,3 +496,12 @@ private fun Portfolio.toView(assets: List<AssetView>): PortfolioView {
     view.assets = view.assets.sortedByDescending { it.marketProportion }
     return view
 }
+
+private fun TargetForm.toEntity(id: Long?, portfolioId: Int, ticker: String) = Target(
+        id = id,
+        portfolioId = portfolioId,
+        ticker = ticker,
+        proportion = if (targetProportion != null) BigDecimal(targetProportion!!) else null,
+        takeProfit = takeProfit,
+        stopLoss = stopLoss
+)

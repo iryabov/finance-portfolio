@@ -24,7 +24,7 @@ interface InvestService {
 
     fun getAsset(accountId: Int, currency: Currency = Currency.RUB, ticker: String): AssetView
 
-    fun getAssetHistory(accountId: Int, ticker: String, period: Period, currency: Currency = Currency.RUB): List<AssetHistoryView>
+    fun getAssetHistory(accountId: Int? = null, ticker: String, period: Period, currency: Currency = Currency.RUB): List<AssetHistoryView>
 
     fun getDeals(accountId: Int, currency: Currency = Currency.RUB, ticker: String? = null): List<DealView>
 
@@ -61,6 +61,11 @@ interface InvestService {
     fun deactivateTarget(portfolioId: Int, ticker: String)
 
     fun deleteTarget(portfolioId: Int, ticker: String)
+
+    fun updateTarget(portfolioId: Int, ticker: String, form: TargetForm)
+
+    //todo (portfolioId: Int, ticker: String, currency: Currency = Currency.RUB)
+    fun getTarget(currency: Currency = Currency.RUB, portfolioId: Int, ticker: String): AssetView
 
     fun getTargetCandidates(portfolioId: Int, criteria: SecurityCriteria): List<SecurityView>
 }

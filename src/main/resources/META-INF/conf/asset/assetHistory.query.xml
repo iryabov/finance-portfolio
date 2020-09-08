@@ -12,11 +12,23 @@
             </arguments>
         </java>
     </list>
+    <list result-mapping="#this" count-mapping="size()" filters="ticker,period.id,currency">
+        <java method="getAssetHistory" class="com.github.iryabov.invest.service.InvestService">
+            <spring/>
+            <arguments>
+                <argument type="primitive" name="accountId"/>
+                <argument type="primitive" name="ticker"/>
+                <argument type="primitive" name="period"/>
+                <argument type="primitive" name="currency"/>
+            </arguments>
+        </java>
+    </list>
 
     <fields>
         <field id="accountId">
             <filters>
-                <eq filter-id="accountId" mapping="[0]"/>
+                <eq filter-id="accountId" mapping="[0]" domain="integer"
+                    default-value="-1" normalize="#this == -1 ? null: #this"/><!--todo remove it!-->
             </filters>
         </field>
         <field id="currency">

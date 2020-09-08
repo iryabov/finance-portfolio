@@ -10,16 +10,16 @@
             </arguments>
         </java>
     </list>
-<!--    <unique result-mapping="#this" filters="portfolioId,ticker,currency">-->
-<!--        <java method="getAsset" class="com.github.iryabov.invest.service.InvestService">-->
-<!--            <spring/>-->
-<!--            <arguments>-->
-<!--                <argument type="primitive" name="accountId"/>-->
-<!--                <argument type="primitive" name="currency"/>-->
-<!--                <argument type="primitive" name="ticker"/>-->
-<!--            </arguments>-->
-<!--        </java>-->
-<!--    </unique>-->
+    <unique result-mapping="#this" filters="portfolioId,ticker,currency">
+        <java method="getTarget" class="com.github.iryabov.invest.service.InvestService">
+            <spring/>
+            <arguments>
+                <argument type="primitive" name="currency"/>
+                <argument type="primitive" name="portfolioId"/>
+                <argument type="primitive" name="ticker"/>
+            </arguments>
+        </java>
+    </unique>
 
     <fields>
         <field id="portfolioId">
@@ -85,8 +85,20 @@
         <field id="marketProportion">
             <select mapping="marketProportion" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).percentFormat(#this)"/>
         </field>
+        <field id="marketProportionValue">
+            <select mapping="marketProportion"/>
+        </field>
         <field id="marketProfitProportion">
             <select mapping="marketProfitProportion" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitPercentFormat(#this)"/>
+        </field>
+        <field id="targetProportion">
+            <select mapping="targetProportion" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).percentFormat(#this)"/>
+        </field>
+        <field id="targetDeviationPercent">
+            <select mapping="targetDeviationPercent" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).percentFormat(#this)"/>
+        </field>
+        <field id="targetDeviationColor">
+            <select mapping="targetDeviationPercent > 0 ? 'success' : 'danger'"/>/>
         </field>
         <field id="assetActive" domain="boolean">
             <select mapping="quantity > 0"/>
