@@ -69,7 +69,9 @@
         <field id="totalMarketProfitColor">
             <select mapping="totalMarketProfit > 0 ? 'success' : 'danger'"/>
         </field>
-
+        <field id="totalTargetProportion">
+            <select mapping="totalTargetProportion"/>
+        </field>
     </fields>
 
 </query>

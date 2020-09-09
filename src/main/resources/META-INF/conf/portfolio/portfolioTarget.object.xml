@@ -49,7 +49,7 @@
             <in>
                 <field id="portfolioId" param="portfolio_id" mapping="[0]"/>
                 <field id="ticker" mapping="[1]"/>
-                <field id="targetProportion" mapping="targetProportion"/>
+                <field id="targetProportionValue" mapping="targetProportion"/>
                 <field id="takeProfit" mapping="takeProfit"/>
                 <field id="stopLoss" mapping="stopLoss"/>
             </in>

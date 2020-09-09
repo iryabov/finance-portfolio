@@ -52,4 +52,8 @@ abstract class ValueView {
      * Процент изменения стоимости по рыночному курсу
      */
     lateinit var totalDepositValueProfitPercent: BigDecimal
+    /**
+     * Сумма целей в процентах
+     */
+    lateinit var totalTargetProportion: BigDecimal
 }

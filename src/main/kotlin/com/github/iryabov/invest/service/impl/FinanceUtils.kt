@@ -21,7 +21,7 @@ fun calcProfitPercent(a: BigDecimal, b: BigDecimal): BigDecimal {
 }
 
 fun calcPercent(a: BigDecimal, b: BigDecimal): BigDecimal {
-    return if (b.compareTo(P0) != 0) a.divide(b, 2, RoundingMode.HALF_UP) * P100 else P100
+    return if (b.compareTo(P0) != 0) a.divide(b, 2, RoundingMode.HALF_UP) * P100 else P0
 }
 
 fun calcValue(total: BigDecimal, percent: BigDecimal): BigDecimal {
@@ -70,6 +70,16 @@ fun BigDecimal?.isZero(): Boolean {
 
 fun BigDecimal.eq(other: BigDecimal, scale: Int = 0): Boolean {
     return this.setScale(scale, RoundingMode.HALF_UP).compareTo(other.setScale(scale, RoundingMode.HALF_UP)) == 0
+}
+
+fun BigDecimal.eqOr(first: BigDecimal, second: BigDecimal, scale: Int = 0): Boolean {
+    val self = this.setScale(scale, RoundingMode.HALF_UP)
+    return self.compareTo(first.setScale(scale, RoundingMode.HALF_UP)) == 0 ||
+            self.compareTo(second.setScale(scale, RoundingMode.HALF_UP)) == 0
+}
+
+fun BigDecimal.eq(other: Int, scale: Int = 0): Boolean {
+    return this.setScale(scale, RoundingMode.HALF_UP).compareTo(BigDecimal(other).setScale(scale, RoundingMode.HALF_UP)) == 0
 }
 
 fun BigDecimal.less(other: BigDecimal, scale: Int = 0): Boolean {

@@ -380,6 +380,44 @@ class InvestServiceTest(
         assertThat(investService.getPortfolios().size).isEqualTo(0)
     }
 
+    @Test
+    internal fun target() {
+        val test = investService.createPortfolio(PortfolioForm(name = "test"))
+        investService.addTarget(test, "AAA")
+        investService.addTarget(test, "BBB")
+        investService.addTarget(test, "CCC")
+
+        investService.updateTarget(portfolioId = test, ticker = "AAA", form = TargetForm(targetProportion = 50))
+        assertThat(investService.getPortfolio(portfolioId = test)).matches { p ->
+            p.assets.find { it.assetTicker == "AAA" }!!.targetProportion.eq(50) &&
+                    p.assets.find { it.assetTicker == "BBB" }!!.targetProportion.eq(0) &&
+                    p.assets.find { it.assetTicker == "CCC" }!!.targetProportion.eq(0)
+        }
+
+        investService.updateTarget(portfolioId = test, ticker = "BBB", form = TargetForm(targetProportion = 50))
+        assertThat(investService.getPortfolio(portfolioId = test)).matches { p ->
+            p.assets.find { it.assetTicker == "AAA" }!!.targetProportion.eq(50) &&
+                    p.assets.find { it.assetTicker == "BBB" }!!.targetProportion.eq(50) &&
+                    p.assets.find { it.assetTicker == "CCC" }!!.targetProportion.eq(0)
+        }
+
+//        investService.updateTarget(portfolioId = test, ticker = "CCC", form = TargetForm(targetProportion = 50))
+//        assertThat(investService.getPortfolio(portfolioId = test)).matches { p ->
+//            p.assets.find { it.assetTicker == "AAA" }!!.targetProportion.eq(25) &&
+//                    p.assets.find { it.assetTicker == "BBB" }!!.targetProportion.eq(25) &&
+//                    p.assets.find { it.assetTicker == "CCC" }!!.targetProportion.eq(50)
+//        }
+//
+//        investService.updateTarget(portfolioId = test, ticker = "AAA", form = TargetForm(targetProportion = 15))
+//        assertThat(investService.getPortfolio(portfolioId = test)).matches { p ->
+//            p.assets.find { it.assetTicker == "AAA" }!!.targetProportion.eq(15) &&
+//                    p.assets.find { it.assetTicker == "BBB" }!!.targetProportion.eq(25) &&
+//                    p.assets.find { it.assetTicker == "CCC" }!!.targetProportion.eq(50)
+//        }
+
+        investService.deletePortfolio(test)
+        assertThat(investService.getPortfolios().size).isEqualTo(0)
+    }
 
     @Test
     @Disabled
@@ -445,7 +483,8 @@ class InvestServiceTest(
     }
 
     private fun assertThatAsset(accountId: Int, ticker: String, predicate: (AssetView) -> Boolean): AssertContinue<AssetView> {
-        val found = investService.getAccount(accountId).assets.find { it.assetTicker == ticker } ?: AssetView(assetTicker = ticker, quantity = 0, netValue = P0)
+        val found = investService.getAccount(accountId).assets.find { it.assetTicker == ticker }
+                ?: AssetView(assetTicker = ticker, quantity = 0, netValue = P0)
         assertThat(found).matches(predicate)
         return AssertContinue(found)
     }

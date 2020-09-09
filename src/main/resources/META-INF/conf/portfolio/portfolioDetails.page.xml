@@ -22,22 +22,33 @@
         <region>
             <form id="portfolio" query-id="portfolios" route="/">
                 <fields>
-                    <set field-label-location="left" field-label-align="right">
+                    <set field-label-location="left" field-label-align="left" field-label-width="100px">
                         <row>
                             <col>
-                                <output-text id="totalMarketValue" format="number 0,0.00"/>
+                                <output-text id="totalMarketValue" label="Market value" format="number 0,0.00"/>
                             </col>
                             <col>
-                                <output-text id="totalValueProfit" format="number 0,0.00" class="text-success"/>
+                                <output-text id="totalMarketProfit" format="number 0,0.00" label="Market profit"/>
                             </col>
                             <col>
-                                <output-text id="totalDepositValueProfitPercent"/>
+                                <output-text id="totalDepositMarketProfitPercent" label="Market profit"/>
                             </col>
                             <col>
-                                <output-text id="totalMarketProfit" format="number 0,0.00"/>
+                                <output-text id="totalTargetProportion" label="Target"/>
+                            </col>
+                        </row>
+                        <row>
+                            <col>
+                                <output-text id="totalNetValue" label="Net value" format="number 0,0.00"/>
                             </col>
                             <col>
-                                <output-text id="totalDepositMarketProfitPercent"/>
+                                <output-text id="totalFixedProfit" label="Fixed profit" format="number 0,0.00"/>
+                            </col>
+                            <col>
+                                <output-text id="totalDepositFixedProfitPercent" label="Fixed profit"/>
+                            </col>
+                            <col>
+
                             </col>
                         </row>
                     </set>

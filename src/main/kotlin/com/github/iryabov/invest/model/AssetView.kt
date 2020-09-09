@@ -61,7 +61,7 @@ data class AssetView(
         /**
          * Процент целевой доли по рыночной стоимости относительно других активов
          */
-        val targetProportion: BigDecimal? = null,
+        val targetProportion: BigDecimal = P0,
         /**
          * Цена для фиксации прибыли
          */

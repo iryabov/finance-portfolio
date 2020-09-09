@@ -327,14 +327,16 @@ private fun ValueView.calcAssets(assets: List<AssetView>) {
     totalMarketProfit = (totalMarketValue + totalProceeds) - totalExpenses
     totalDepositMarketProfitPercent = calcProfitPercent(totalDeposit + totalMarketProfit, totalDeposit)
     totalDepositMarketProfitPercent = calcPercent(totalMarketValue + (totalProceeds - totalExpenses), totalNetValue)
+
+    totalTargetProportion = activeAssets.sumByBigDecimal { a -> a.targetProportion }
 }
 
 private fun ValueView.calcProportion(assets: List<AssetView>) {
     if (assets.isEmpty()) return
     assets.forEach { a -> a.calcProportion(totalNetValue, totalMarketValue) }
-    assert(assets.sumByBigDecimal { a -> a.netProportion }.eq(P100))
-    assert(assets.sumByBigDecimal { a -> a.marketProportion }.eq(P100))
-    assert(assets.sumByBigDecimal { a -> a.marketProfitProportion }.eq(P0))
+    assert(assets.sumByBigDecimal { a -> a.netProportion }.eqOr(P100, P0) )
+    assert(assets.sumByBigDecimal { a -> a.marketProportion }.eqOr(P100, P0))
+    assert(assets.sumByBigDecimal { a -> a.marketProfitProportion }.eqOr(P0, P0))
 }
 
 private fun AccountView.calcCurrencies() {
@@ -354,11 +356,9 @@ private fun AssetView.calcProportion(totalNetValue: BigDecimal, totalMarketValue
     netProportion = calcPercent(netValue, totalNetValue).round()
     marketProportion = calcPercent(marketValue, totalMarketValue).round()
     marketProfitProportion = marketProportion - netProportion
-    if (targetProportion != null) {
-        val targetValue = calcValue(totalMarketValue, targetProportion)
-        targetDeviation = marketValue - targetValue
-        targetDeviationPercent = targetProportion - marketProportion
-    }
+    val targetValue = calcValue(totalMarketValue, targetProportion)
+    targetDeviation = marketValue - targetValue
+    targetDeviationPercent = targetProportion - marketProportion
 }
 
 private fun DealForm.toEntityWith(accountId: Int): Deal {

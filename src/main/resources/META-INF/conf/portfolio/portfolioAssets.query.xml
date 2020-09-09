@@ -94,6 +94,9 @@
         <field id="targetProportion">
             <select mapping="targetProportion" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).percentFormat(#this)"/>
         </field>
+        <field id="targetProportionValue" domain="numeric">
+            <select mapping="targetProportion" normalize="#this?.intValue()"/>
+        </field>
         <field id="targetDeviationPercent">
             <select mapping="targetDeviationPercent" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).percentFormat(#this)"/>
         </field>
