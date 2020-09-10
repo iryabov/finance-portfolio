@@ -70,7 +70,7 @@
             <select mapping="totalMarketProfit > 0 ? 'success' : 'danger'"/>
         </field>
         <field id="totalTargetProportion">
-            <select mapping="totalTargetProportion"/>
+            <select mapping="totalTargetProportion" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).percentFormat(#this)"/>
         </field>
     </fields>
 

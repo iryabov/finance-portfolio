@@ -4,7 +4,9 @@
     <toolbar place="topLeft">
         <group>
             <button icon="fa fa-plus" label="Add portfolio" color="primary" widget-id="portfolios" model="filter">
-                <open-page page-id="portfolioForm" submit-operation-id="addPortfolio" route="/add"/>
+                <open-page page-id="portfolioForm" submit-operation-id="addPortfolio"
+                           route="/add"
+                           redirect-url-after-submit="../:id/details"/>
             </button>
         </group>
     </toolbar>
@@ -13,7 +15,7 @@
             <table id="portfolios" query-id="portfolios" route="/" selection="none">
                 <columns>
                     <column text-field-id="name" label="Name"/>
-                    <column text-field-id="totalNetValue" label="Value">
+                    <column text-field-id="totalMarketValue" label="Value">
                         <text format="number 0,0.00"/>
                     </column>
                     <column text-field-id="totalDepositMarketProfitPercent" label="Profit">

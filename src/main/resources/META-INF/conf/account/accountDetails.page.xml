@@ -25,22 +25,33 @@
         <region>
             <form id="account" query-id="account" route="/">
                 <fields>
-                    <set field-label-location="left" field-label-align="right">
+                    <set field-label-location="left" field-label-align="right" field-label-width="100px">
                         <row>
                             <col>
-                                <output-text id="totalMarketValue" format="number 0,0.00"/>
+                                <output-text id="totalMarketValue" label="Market value" format="number 0,0.00"/>
                             </col>
                             <col>
-                                <output-text id="totalValueProfit" format="number 0,0.00" class="text-success"/>
+                                <output-text id="totalMarketProfit" format="number 0,0.00" label="Market profit"/>
                             </col>
                             <col>
-                                <output-text id="totalDepositValueProfitPercent"/>
+                                <output-text id="totalDepositMarketProfitPercent" label="Market profit"/>
                             </col>
                             <col>
-                                <output-text id="totalMarketProfit" format="number 0,0.00"/>
+                                <output-text id="totalDeposit" format="number 0,0.00" label="Deposit"/>
+                            </col>
+                        </row>
+                        <row>
+                            <col>
+                                <output-text id="totalNetValue" label="Net value" format="number 0,0.00"/>
                             </col>
                             <col>
-                                <output-text id="totalDepositMarketProfitPercent"/>
+                                <output-text id="totalFixedProfit" label="Fixed profit" format="number 0,0.00"/>
+                            </col>
+                            <col>
+                                <output-text id="totalDepositFixedProfitPercent" label="Fixed profit"/>
+                            </col>
+                            <col>
+                                <output-text id="totalWithdrawals" format="number 0,0.00" label="Withdrawals"/>
                             </col>
                         </row>
                     </set>
