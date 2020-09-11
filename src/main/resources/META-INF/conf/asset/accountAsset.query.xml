@@ -52,6 +52,9 @@
         <field id="asset.class">
             <select mapping="assetClass"/>
         </field>
+        <field id="asset.priceNow">
+            <select mapping="assetPriceNow"/>
+        </field>
         <field id="quantity">
             <select mapping="quantity"/>
         </field>
@@ -65,7 +68,7 @@
             <select mapping="valueProfitPercent" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitFormat(#this)"/>
         </field>
         <field id="fixedProfitPercent">
-            <select mapping="fixedProfitPercent" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitFormat(#this)"/>
+            <select mapping="fixedProfitPercent" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitPercentFormat(#this)"/>
         </field>
         <field id="marketProfitPercent">
             <select mapping="marketProfitPercent" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitPercentFormat(#this)"/>
@@ -75,6 +78,9 @@
         </field>
         <field id="marketProfitColor">
             <select mapping="marketProfitPercent > 0 ? 'success' : 'danger'"/>
+        </field>
+        <field id="fixedProfit">
+            <select mapping="netValue + proceeds - expenses"/>
         </field>
         <field id="netProportion">
             <select mapping="netProportion" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).percentFormat(#this)"/>

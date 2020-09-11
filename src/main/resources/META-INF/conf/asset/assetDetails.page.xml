@@ -24,12 +24,34 @@
         <region>
             <form id="asset" query-id="accountAsset" route="/">
                 <fields>
-                    <set field-label-location="left">
+                    <set field-label-location="left" field-label-align="left" field-label-width="100px">
                         <row>
-                            <output-text id="quantity"/>
-                            <output-text id="marketValue" format="number 0,0.00"/>
-                            <output-text id="marketProfit" format="number 0,0.00"/>
-                            <output-text id="marketProfitPercent"/>
+                            <col>
+                                <output-text id="quantity" label="Quantity" format="number 0,0"/>
+                            </col>
+                            <col>
+                                <output-text id="marketValue" format="number 0,0.00" label="Market value"/>
+                            </col>
+                            <col>
+                                <output-text id="marketProfit" label="Market profit" format="number 0,0.00"/>
+                            </col>
+                            <col>
+                                <output-text id="marketProfitPercent" label="Market profit"/>
+                            </col>
+                        </row>
+                        <row>
+                            <col>
+                                <output-text id="asset.priceNow" label="Price" format="number 0,0.00"/>
+                            </col>
+                            <col>
+                                <output-text id="netValue" label="Net value" format="number 0,0.00"/>
+                            </col>
+                            <col>
+                                <output-text id="fixedProfit" label="Fixed profit" format="number 0,0.00"/>
+                            </col>
+                            <col>
+                                <output-text id="fixedProfitPercent" label="Fixed profit"/>
+                            </col>
                         </row>
                     </set>
                 </fields>
