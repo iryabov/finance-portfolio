@@ -1,6 +1,9 @@
 package com.github.iryabov.invest.model
 
 import com.github.iryabov.invest.relation.AssetClass
+import com.github.iryabov.invest.relation.Country
+import com.github.iryabov.invest.relation.Currency
+import com.github.iryabov.invest.relation.Sector
 import com.github.iryabov.invest.service.impl.P0
 import org.springframework.data.relational.core.mapping.Embedded
 import java.math.BigDecimal
@@ -26,6 +29,18 @@ data class AssetView(
          * Класс актива
          */
         var assetClass: AssetClass? = null,
+        /**
+         * Сектор актива
+         */
+        var assetSector: Sector? = null,
+        /**
+         * Страна актива
+         */
+        var assetCountry: Country? = null,
+        /**
+         * Валюта актива
+         */
+        var assetCurrency: Currency? = null,
         /**
          * Цена на данный момент
          */

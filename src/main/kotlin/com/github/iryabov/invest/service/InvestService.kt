@@ -2,6 +2,7 @@ package com.github.iryabov.invest.service
 
 import com.github.iryabov.invest.entity.Asset
 import com.github.iryabov.invest.model.*
+import com.github.iryabov.invest.relation.AnalyticsType
 import com.github.iryabov.invest.relation.Currency
 import com.github.iryabov.invest.relation.Period
 
@@ -68,4 +69,6 @@ interface InvestService {
     fun getTarget(currency: Currency = Currency.RUB, portfolioId: Int, ticker: String): AssetView
 
     fun getTargetCandidates(portfolioId: Int, criteria: SecurityCriteria): List<SecurityView>
+
+    fun getAnalytics(type: AnalyticsType, portfolioId: Int, currency: Currency = Currency.RUB): List<ChartView>
 }

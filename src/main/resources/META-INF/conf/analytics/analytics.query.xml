@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<query xmlns="http://n2oapp.net/framework/config/schema/query-4.0">
+    <list filters="type,portfolioId,currency" count-mapping="size()">
+        <java method="getAnalytics" class="com.github.iryabov.invest.service.InvestService">
+            <spring/>
+            <arguments>
+                <argument type="primitive" name="type"/>
+                <argument type="primitive" name="portfolioId"/>
+                <argument type="primitive" name="currency"/>
+            </arguments>
+        </java>
+    </list>
+
+    <fields>
+        <field id="portfolioId">
+            <filters>
+                <eq filter-id="portfolioId" mapping="[1]"/>
+            </filters>
+        </field>
+        <field id="currency">
+            <filters>
+                <eq filter-id="currency" default-value="${portfolio.currency}"
+                    normalize="T(com.github.iryabov.invest.relation.Currency).valueOf(#this)"
+                    mapping="[2]"/>
+            </filters>
+        </field>
+        <field id="type">
+            <filters>
+                <eq filter-id="type"
+                    normalize="T(com.github.iryabov.invest.relation.AnalyticsType).valueOf(#this)"
+                    mapping="[0]"/>
+            </filters>
+        </field>
+        <field id="name">
+            <select mapping="name"/>
+        </field>
+        <field id="value">
+            <select mapping="value" normalize="#this.longValue()"/>
+        </field>
+    </fields>
+</query>

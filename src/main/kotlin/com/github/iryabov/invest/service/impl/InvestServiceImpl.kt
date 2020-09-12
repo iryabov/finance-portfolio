@@ -4,9 +4,8 @@ import com.github.iryabov.invest.entity.*
 import com.github.iryabov.invest.entity.Target
 import com.github.iryabov.invest.etl.CurrencyRateLoader
 import com.github.iryabov.invest.model.*
+import com.github.iryabov.invest.relation.*
 import com.github.iryabov.invest.relation.Currency
-import com.github.iryabov.invest.relation.DealType
-import com.github.iryabov.invest.relation.Period
 import com.github.iryabov.invest.repository.*
 import com.github.iryabov.invest.service.InvestService
 import org.springframework.data.domain.Sort
@@ -269,6 +268,14 @@ class InvestServiceImpl(
                 accountId = criteria.accountId).map { it.toView() }
     }
 
+    override fun getAnalytics(type: AnalyticsType, portfolioId: Int, currency: Currency): List<ChartView> {
+        val assets = targetRepo.findAllViews(portfolioId, currency)
+        assets.forEach { it.calc() }
+        return assets.groupBy { it.typeOf(type) }
+                .mapValues { it.value.sumByBigDecimal { v -> v.marketValue } }
+                .map { ChartView(name = it.key, value = it.value) }
+    }
+
     private fun writeOffByFifoAndRecalculation(deal: Deal, calc: Boolean = true) {
         if (deal.quantity >= 0) return
         writeOffRepo.deleteAllLaterThan(deal.accountId, deal.ticker, deal.date, deal.id!!)
@@ -505,3 +512,12 @@ private fun TargetForm.toEntity(id: Long?, portfolioId: Int, ticker: String) = T
         takeProfit = takeProfit,
         stopLoss = stopLoss
 )
+
+private fun AssetView.typeOf(type: AnalyticsType): String {
+    return when (type) {
+        AnalyticsType.CLASS -> this.assetClass?.name ?: ""
+        AnalyticsType.SECTOR -> this.assetSector?.name ?: ""
+        AnalyticsType.COUNTRY -> this.assetCountry?.name ?: ""
+        AnalyticsType.CURRENCY -> this.assetCurrency?.name ?: ""
+    }
+}
