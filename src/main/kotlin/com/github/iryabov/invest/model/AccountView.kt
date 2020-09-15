@@ -1,8 +1,5 @@
 package com.github.iryabov.invest.model
 
-import com.github.iryabov.invest.relation.AssetClass
-import java.math.BigDecimal
-
 /**
  * Счет
  */

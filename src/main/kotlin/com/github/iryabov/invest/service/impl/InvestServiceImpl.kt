@@ -19,7 +19,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 @Service
-@Transactional
+@Transactional(timeout = 30000)
 class InvestServiceImpl(
         val accountRepo: AccountRepository,
         val dealRepo: DealRepository,
@@ -200,12 +200,12 @@ class InvestServiceImpl(
     }
 
     override fun getPortfolios(currency: Currency): List<PortfolioView> {
-        return portfolioRepo.findAll().map { it.toView(targetRepo.findAllViews(it.id!!, currency)) }
+        return portfolioRepo.findAll().map { it.toView(targetRepo.findAllAssetsViews(it.id!!, currency)) }
     }
 
     override fun getPortfolio(currency: Currency, portfolioId: Int): PortfolioView {
         val portfolioEntity = portfolioRepo.findById(portfolioId).orElseThrow()
-        return portfolioEntity.toView(targetRepo.findAllViews(portfolioId, currency))
+        return portfolioEntity.toView(targetRepo.findAllAssetsViews(portfolioId, currency))
     }
 
     override fun createPortfolio(form: PortfolioForm): Int {
@@ -217,11 +217,11 @@ class InvestServiceImpl(
         portfolioRepo.deleteById(id)
     }
 
-    override fun addTarget(portfolioId: Int, ticker: String) {
+    override fun addAsset(portfolioId: Int, ticker: String) {
         val target = targetRepo.save(Target(ticker = ticker, portfolioId = portfolioId))
     }
 
-    override fun addTargets(portfolioId: Int, criteria: SecurityCriteria) {
+    override fun addAssets(portfolioId: Int, criteria: SecurityCriteria) {
         assetRepo.findAllCandidates(
                 portfolioId = portfolioId,
                 assetClass = criteria.assetClass,
@@ -249,7 +249,7 @@ class InvestServiceImpl(
     }
 
     override fun getTarget(currency: Currency, portfolioId: Int, ticker: String): AssetView {
-        val targets = targetRepo.findAllViews(portfolioId, currency, ticker)
+        val targets = targetRepo.findAllAssetsViews(portfolioId, currency, ticker)
         if (targets.isEmpty())
             return AssetView(assetTicker = ticker, quantity = 0, netValue = P0)
         val target = targets.first()
@@ -269,7 +269,7 @@ class InvestServiceImpl(
     }
 
     override fun getAnalytics(type: AnalyticsType, portfolioId: Int, currency: Currency): List<ChartView> {
-        val assets = targetRepo.findAllViews(portfolioId, currency)
+        val assets = targetRepo.findAllAssetsViews(portfolioId, currency)
         assets.forEach { it.calc() }
         return assets.groupBy { it.typeOf(type) }
                 .mapValues { it.value.sumByBigDecimal { v -> v.marketValue } }

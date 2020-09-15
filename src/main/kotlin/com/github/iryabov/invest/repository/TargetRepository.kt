@@ -129,11 +129,12 @@ left join (
     group by d.ticker    
 ) a on a.asset_ticker = t.ticker
 where t.portfolio_id = :portfolio_id
+  and t.type = 'ASSET'
   and (:ticker is null or t.ticker = :ticker)
     """)
-    fun findAllViews(@Param("portfolio_id") portfolioId: Int,
-                     @Param("currency") currency: Currency,
-                     @Param("ticker") ticker: String? = null): List<AssetView>
+    fun findAllAssetsViews(@Param("portfolio_id") portfolioId: Int,
+                           @Param("currency") currency: Currency,
+                           @Param("ticker") ticker: String? = null): List<AssetView>
 
     fun findByPortfolioIdAndTicker(portfolioId: Int,
                                    ticker: String): Optional<Target>

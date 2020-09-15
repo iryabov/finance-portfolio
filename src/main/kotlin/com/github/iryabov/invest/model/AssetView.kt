@@ -5,6 +5,7 @@ import com.github.iryabov.invest.relation.Country
 import com.github.iryabov.invest.relation.Currency
 import com.github.iryabov.invest.relation.Sector
 import com.github.iryabov.invest.service.impl.P0
+import org.springframework.data.annotation.AccessType
 import org.springframework.data.relational.core.mapping.Embedded
 import java.math.BigDecimal
 import java.util.*

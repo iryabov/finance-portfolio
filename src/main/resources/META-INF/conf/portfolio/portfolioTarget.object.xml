@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <object xmlns="http://n2oapp.net/framework/config/schema/object-4.0">
     <operations>
-        <operation id="addTarget" success-text="Added {ticker}">
+        <operation id="addAsset" success-text="Added {ticker}">
             <invocation>
-                <java method="addTarget" class="com.github.iryabov.invest.service.InvestService">
+                <java method="addAsset" class="com.github.iryabov.invest.service.InvestService">
                     <spring/>
                     <arguments>
                         <argument type="primitive" name="portfolioId"/>
@@ -16,9 +16,9 @@
                 <field id="ticker" mapping="[1]"/>
             </in>
         </operation>
-        <operation id="addTargets" success-text="Added all targets">
+        <operation id="addAssets" success-text="Added all targets">
             <invocation>
-                <java method="addTargets" class="com.github.iryabov.invest.service.InvestService">
+                <java method="addAssets" class="com.github.iryabov.invest.service.InvestService">
                     <spring/>
                     <arguments>
                         <argument type="primitive" name="portfolioId"/>

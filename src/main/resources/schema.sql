@@ -110,6 +110,7 @@ CREATE TABLE IF NOT EXISTS public.target
     active boolean NOT NULL DEFAULT true,
     portfolio_id integer,
     ticker character varying NOT NULL,
+    type character varying NOT NULL DEFAULT 'ASSET',
     proportion numeric,
     take_profit numeric,
     stop_loss numeric,

@@ -71,13 +71,13 @@
                 <dependencies>
                     <enabling ref-widget-id="securities" ref-model="resolve">!_.isEmpty(this)</enabling>
                 </dependencies>
-                <invoke operation-id="addTarget"/>
+                <invoke operation-id="addAsset"/>
             </button>
         </group>
     </toolbar>
     <toolbar place="bottomRight">
         <button id="addAll" label="Add all" widget-id="securities" model="filter">
-            <invoke operation-id="addTargets"/>
+            <invoke operation-id="addAssets"/>
         </button>
     </toolbar>
 </page>

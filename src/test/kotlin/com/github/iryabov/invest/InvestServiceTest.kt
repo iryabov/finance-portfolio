@@ -7,7 +7,6 @@ import com.github.iryabov.invest.repository.DealRepository
 import com.github.iryabov.invest.repository.CurrencyRateRepository
 import com.github.iryabov.invest.client.impl.CurrenciesClientCBRF
 import com.github.iryabov.invest.client.impl.CurrenciesClientECB
-import com.github.iryabov.invest.client.impl.SecuritiesClientMoex
 import com.github.iryabov.invest.etl.CurrencyRateLoader
 import com.github.iryabov.invest.service.InvestService
 import com.github.iryabov.invest.etl.DealsCsvLoader
@@ -362,7 +361,7 @@ class InvestServiceTest(
         val test = investService.createPortfolio(PortfolioForm(name = "test"))
         val portfolios = investService.getPortfolios()
         assertThat(portfolios.find { it.id == test }).isNotNull
-        investService.addTarget(test, "AAA")
+        investService.addAsset(test, "AAA")
         assertThat(investService.getPortfolio(portfolioId = test).assets.size).isEqualTo(1)
         investService.updateTarget(portfolioId = test, ticker = "AAA", form = TargetForm(
                 targetProportion = 50,
@@ -383,9 +382,9 @@ class InvestServiceTest(
     @Test
     internal fun target() {
         val test = investService.createPortfolio(PortfolioForm(name = "test"))
-        investService.addTarget(test, "AAA")
-        investService.addTarget(test, "BBB")
-        investService.addTarget(test, "CCC")
+        investService.addAsset(test, "AAA")
+        investService.addAsset(test, "BBB")
+        investService.addAsset(test, "CCC")
 
         investService.updateTarget(portfolioId = test, ticker = "AAA", form = TargetForm(targetProportion = 50))
         assertThat(investService.getPortfolio(portfolioId = test)).matches { p ->
