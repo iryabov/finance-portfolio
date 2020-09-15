@@ -2,8 +2,8 @@
 <left-right-page xmlns="http://n2oapp.net/framework/config/schema/page-2.0"
                  name="Analytics">
     <left>
-        <region>
-            <chart id="class" query-id="analytics">
+        <panel collapsible="false">
+            <chart id="class" query-id="analytics" name="Classes">
                 <pie inner-radius="50"
                      outer-radius="80"
                      name-field-id="name"
@@ -15,46 +15,50 @@
                     <eq field-id="type" value="CLASS"/>
                 </pre-filters>
             </chart>
-            <chart id="country" query-id="analytics">
+        </panel>
+        <panel collapsible="false">
+            <chart id="country" query-id="analytics" name="Countries">
                 <pie inner-radius="50"
                      outer-radius="80"
                      name-field-id="name"
                      value-field-id="value"
-                     color="#82ca9d"
+                     color="#db4646"
                      has-label="true"/>
                 <pre-filters>
                     <eq field-id="portfolioId" param="portfolio_id"/>
                     <eq field-id="type" value="COUNTRY"/>
                 </pre-filters>
             </chart>
-        </region>
+        </panel>
     </left>
     <right>
-        <region>
-            <chart id="sector" query-id="analytics">
+        <panel collapsible="false">
+            <chart id="sector" query-id="analytics" name="Sectors">
                 <pie inner-radius="50"
                      outer-radius="80"
                      name-field-id="name"
                      value-field-id="value"
-                     color="#82ca9d"
+                     color="#17a2b8"
                      has-label="true"/>
                 <pre-filters>
                     <eq field-id="portfolioId" param="portfolio_id"/>
                     <eq field-id="type" value="SECTOR"/>
                 </pre-filters>
             </chart>
-            <chart id="currency" query-id="analytics">
+        </panel>
+        <panel collapsible="false">
+            <chart id="currency" query-id="analytics" name="Currencies">
                 <pie inner-radius="50"
                      outer-radius="80"
                      name-field-id="name"
                      value-field-id="value"
-                     color="#82ca9d"
+                     color="#ffc107"
                      has-label="true"/>
                 <pre-filters>
                     <eq field-id="portfolioId" param="portfolio_id"/>
                     <eq field-id="type" value="CURRENCY"/>
                 </pre-filters>
             </chart>
-        </region>
+        </panel>
     </right>
 </left-right-page>
