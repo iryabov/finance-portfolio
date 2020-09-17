@@ -217,8 +217,9 @@ class InvestServiceImpl(
         portfolioRepo.deleteById(id)
     }
 
-    override fun addAsset(portfolioId: Int, ticker: String) {
+    override fun addAsset(portfolioId: Int, ticker: String): Int {
         val target = targetRepo.save(Target(ticker = ticker, portfolioId = portfolioId))
+        return target.id!!
     }
 
     override fun addAssets(portfolioId: Int, criteria: SecurityCriteria) {
@@ -231,6 +232,30 @@ class InvestServiceImpl(
                 accountId = criteria.accountId)
                 .map { it.toTarget(portfolioId) }
                 .forEach { targetRepo.save(it) }
+    }
+
+    override fun getTargets(portfolioId: Int, type: TargetType, currency: Currency): List<TargetView> {
+        val assets = targetRepo.findAllAssetsViews(portfolioId, currency)
+        val targets = assets.groupBy { it.typeOf(type) }
+                .map { TargetView(type = type, ticker = it.key, assets = it.value) }
+        targets.forEach {
+            it.calcAssets(it.assets)
+            it.calcProportion(it.assets)
+        }
+        val totalNetValue = targets.sumByBigDecimal { it.totalNetValue }
+        val totalMarketValue = targets.sumByBigDecimal { it.totalMarketValue }
+        targets.forEach {
+            it.totalNetProportion = calcPercent(it.totalNetValue, totalNetValue).round()
+        }
+        return targets
+    }
+
+    override fun saveTarget(portfolioId: Int, type: TargetType, ticker: String, proportion: Int): Int {
+        val target = targetRepo.findByPortfolioIdAndTickerAndType(portfolioId, ticker, type)
+                .orElse(Target(portfolioId = portfolioId, type = type, ticker = ticker))
+        target.proportion = proportion.toBigDecimal()
+        val saved = targetRepo.save(target)
+        return saved.id!!
     }
 
     override fun deactivateTarget(portfolioId: Int, ticker: String) {
@@ -268,7 +293,7 @@ class InvestServiceImpl(
                 accountId = criteria.accountId).map { it.toView() }
     }
 
-    override fun getAnalytics(type: AnalyticsType, portfolioId: Int, currency: Currency): List<ChartView> {
+    override fun getAnalytics(type: TargetType, portfolioId: Int, currency: Currency): List<ChartView> {
         val assets = targetRepo.findAllAssetsViews(portfolioId, currency)
         assets.forEach { it.calc() }
         return assets.groupBy { it.typeOf(type) }
@@ -339,11 +364,11 @@ private fun ValueView.calcAssets(assets: List<AssetView>) {
 }
 
 private fun ValueView.calcProportion(assets: List<AssetView>) {
-    if (assets.isEmpty()) return
-    assets.forEach { a -> a.calcProportion(totalNetValue, totalMarketValue) }
-    assert(assets.sumByBigDecimal { a -> a.netProportion }.eqOr(P100, P0) )
-    assert(assets.sumByBigDecimal { a -> a.marketProportion }.eqOr(P100, P0))
-    assert(assets.sumByBigDecimal { a -> a.marketProfitProportion }.eqOr(P0, P0))
+    val activeAssets = assets.filter { it.active }
+    activeAssets.forEach { a -> a.calcProportion(totalNetValue, totalMarketValue) }
+    assert(activeAssets.sumByBigDecimal { a -> a.netProportion }.eqOr(P100, P0))
+    assert(activeAssets.sumByBigDecimal { a -> a.marketProportion }.eqOr(P100, P0))
+    assert(activeAssets.sumByBigDecimal { a -> a.marketProfitProportion }.eqOr(P0, P0))
 }
 
 private fun AccountView.calcCurrencies() {
@@ -504,7 +529,7 @@ private fun Portfolio.toView(assets: List<AssetView>): PortfolioView {
     return view
 }
 
-private fun TargetForm.toEntity(id: Long?, portfolioId: Int, ticker: String) = Target(
+private fun TargetForm.toEntity(id: Int?, portfolioId: Int, ticker: String) = Target(
         id = id,
         portfolioId = portfolioId,
         ticker = ticker,
@@ -513,11 +538,12 @@ private fun TargetForm.toEntity(id: Long?, portfolioId: Int, ticker: String) = T
         stopLoss = stopLoss
 )
 
-private fun AssetView.typeOf(type: AnalyticsType): String {
+private fun AssetView.typeOf(type: TargetType): String {
     return when (type) {
-        AnalyticsType.CLASS -> this.assetClass?.name ?: ""
-        AnalyticsType.SECTOR -> this.assetSector?.name ?: ""
-        AnalyticsType.COUNTRY -> this.assetCountry?.name ?: ""
-        AnalyticsType.CURRENCY -> this.assetCurrency?.name ?: ""
+        TargetType.ASSET -> this.assetTicker
+        TargetType.CLASS -> this.assetClass?.name ?: ""
+        TargetType.SECTOR -> this.assetSector?.name ?: ""
+        TargetType.COUNTRY -> this.assetCountry?.name ?: ""
+        TargetType.CURRENCY -> this.assetCurrency?.name ?: ""
     }
 }

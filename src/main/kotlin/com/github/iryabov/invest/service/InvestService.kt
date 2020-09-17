@@ -2,9 +2,9 @@ package com.github.iryabov.invest.service
 
 import com.github.iryabov.invest.entity.Asset
 import com.github.iryabov.invest.model.*
-import com.github.iryabov.invest.relation.AnalyticsType
 import com.github.iryabov.invest.relation.Currency
 import com.github.iryabov.invest.relation.Period
+import com.github.iryabov.invest.relation.TargetType
 
 interface InvestService {
     fun createAccount(form: AccountForm): Int
@@ -55,9 +55,13 @@ interface InvestService {
 
     fun deletePortfolio(id: Int)
 
-    fun addAsset(portfolioId: Int, ticker: String)
+    fun addAsset(portfolioId: Int, ticker: String): Int
 
     fun addAssets(portfolioId: Int, criteria: SecurityCriteria)
+
+    fun getTargets(portfolioId: Int, type: TargetType, currency: Currency = Currency.RUB): List<TargetView>
+
+    fun saveTarget(portfolioId: Int, type: TargetType, ticker: String, proportion: Int): Int
 
     fun deactivateTarget(portfolioId: Int, ticker: String)
 
@@ -70,5 +74,5 @@ interface InvestService {
 
     fun getTargetCandidates(portfolioId: Int, criteria: SecurityCriteria): List<SecurityView>
 
-    fun getAnalytics(type: AnalyticsType, portfolioId: Int, currency: Currency = Currency.RUB): List<ChartView>
+    fun getAnalytics(type: TargetType, portfolioId: Int, currency: Currency = Currency.RUB): List<ChartView>
 }

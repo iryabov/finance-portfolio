@@ -9,7 +9,7 @@ import java.math.BigDecimal
 @Table("target")
 data class Target(
         @Id
-        var id: Long? = null,
+        var id: Int? = null,
         @Column
         var active: Boolean = true,
         @Column
@@ -19,7 +19,7 @@ data class Target(
         @Column("portfolio_id")
         val portfolioId: Int,
         @Column
-        val proportion: BigDecimal? = null,
+        var proportion: BigDecimal? = null,
         @Column("take_profit")
         val takeProfit: BigDecimal? = null,
         @Column("stop_loss")

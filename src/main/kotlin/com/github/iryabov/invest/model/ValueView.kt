@@ -56,4 +56,12 @@ abstract class ValueView {
      * Сумма целей в процентах
      */
     lateinit var totalTargetProportion: BigDecimal
+    /**
+     * Сумма рыночной стоимости в процентах
+     */
+    lateinit var totalMarketProportion: BigDecimal
+    /**
+     * Сумма себестоимости в процентах
+     */
+    lateinit var totalNetProportion: BigDecimal
 }

@@ -4,6 +4,7 @@ import com.github.iryabov.invest.entity.Target
 import com.github.iryabov.invest.model.AssetView
 import com.github.iryabov.invest.model.SecurityView
 import com.github.iryabov.invest.relation.Currency
+import com.github.iryabov.invest.relation.TargetType
 import org.springframework.data.jdbc.repository.query.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.query.Param
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Repository
 import java.util.*
 
 @Repository
-interface TargetRepository: CrudRepository<Target, Long> {
+interface TargetRepository : CrudRepository<Target, Long> {
     @Query("""
 select 
     t.active,
@@ -138,5 +139,9 @@ where t.portfolio_id = :portfolio_id
 
     fun findByPortfolioIdAndTicker(portfolioId: Int,
                                    ticker: String): Optional<Target>
+
+    fun findByPortfolioIdAndTickerAndType(portfolioId: Int,
+                                          ticker: String,
+                                          type: TargetType): Optional<Target>
 
 }
