@@ -1,0 +1,98 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<query xmlns="http://n2oapp.net/framework/config/schema/query-4.0"
+       name="Portfolio asset" object-id="portfolioTarget">
+    <list result-mapping="#this" filters="portfolioId,type,currency" count-mapping="#this.size()">
+        <java method="getTargets" class="com.github.iryabov.invest.service.InvestService">
+            <spring/>
+            <arguments>
+                <argument type="primitive" name="currency"/>
+                <argument type="primitive" name="portfolioId"/>
+                <argument type="primitive" name="type"/>
+            </arguments>
+        </java>
+    </list>
+
+    <fields>
+        <field id="portfolioId">
+            <filters>
+                <eq filter-id="portfolioId" mapping="[1]" required="true"/>
+            </filters>
+        </field>
+        <field id="type">
+            <filters>
+                <eq filter-id="type"
+                    mapping="[2]"
+                    default-value="ASSET"
+                    normalize="T(com.github.iryabov.invest.relation.TargetType).valueOf(#this)"/>
+            </filters>
+        </field>
+        <field id="currency">
+            <filters>
+                <eq filter-id="currency" default-value="${portfolio.currency}"
+                    normalize="T(com.github.iryabov.invest.relation.Currency).valueOf(#this)"
+                    mapping="[0]"/>
+            </filters>
+        </field>
+        <field id="id">
+            <select mapping="ticker"/>
+        </field>
+        <field id="asset.ticker">
+            <select mapping="ticker"/>
+        </field>
+        <field id="asset.name">
+
+        </field>
+        <field id="name">
+            <select mapping="ticker"/>
+        </field>
+        <field id="quantity">
+            <select mapping="assets.size()"/>
+        </field>
+        <field id="netValue">
+            <select mapping="totalNetValue"/>
+        </field>
+        <field id="marketValue">
+            <select mapping="totalMarketValue"/>
+        </field>
+        <field id="valueProfitPercent">
+            <select mapping="totalDepositValueProfitPercent" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitFormat(#this)"/>
+        </field>
+        <field id="fixedProfitPercent">
+            <select mapping="totalDepositFixedProfitPercent" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitFormat(#this)"/>
+        </field>
+        <field id="marketProfitPercent">
+            <select mapping="totalDepositMarketProfitPercent" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitPercentFormat(#this)"/>
+        </field>
+        <field id="marketProfit">
+            <select mapping="totalMarketProfit"/>
+        </field>
+        <field id="marketProfitColor">
+            <select mapping="totalDepositMarketProfitPercent > 0 ? 'success' : 'danger'"/>
+        </field>
+        <field id="netProportion">
+            <select mapping="totalNetProportion" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).percentFormat(#this)"/>
+        </field>
+        <field id="marketProportion">
+            <select mapping="totalMarketProportion" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).percentFormat(#this)"/>
+        </field>
+        <field id="marketProfitProportion">
+            <select mapping="totalMarketProportion - totalNetProportion" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitPercentFormat(#this)"/>
+        </field>
+        <field id="targetProportion">
+            <select mapping="totalTargetProportion" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).percentFormat(#this)"/>
+        </field>
+        <field id="targetDeviationPercent">
+            <select mapping="totalTargetProportion - totalMarketProportion" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).percentFormat(#this)"/>
+        </field>
+        <field id="targetDeviationColor">
+            <select mapping="totalTargetProportion - totalMarketProportion" normalize="#this > 0 ? 'success' : 'danger'"/>/>
+        </field>
+        <field id="assetActive" domain="boolean">
+            <select mapping="assets.size() > 0"/>
+        </field>
+        <field id="children" domain="object[]"><!-- todo <list id="children" mapping="assets"> ... </list> -->
+            <select mapping="assets" normalize="T(com.github.iryabov.invest.service.impl.UiUtilsKt).serializeAssets(#this)"/>
+        </field>
+    </fields>
+
+</query>

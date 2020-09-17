@@ -22,8 +22,7 @@
 <!--            </input-select> -->
             <auto-complete id="asset.id" label="Ticker" param="asset_id"
                            query-id="security" value-field-id="id"
-                           search-filter-id="ticker"
-                           required="true">
+                           search-filter-id="ticker">
             </auto-complete>
             
             <radio-group id="currency" label="Currency" required="true" inline="true">

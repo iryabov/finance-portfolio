@@ -1,9 +1,9 @@
 package com.github.iryabov.invest.relation
 
-enum class TargetType {
-    ASSET,
-    CLASS,
-    SECTOR,
-    COUNTRY,
-    CURRENCY
+enum class TargetType(val displayName: String) {
+    ASSET("Assets"),
+    CLASS("Classes"),
+    SECTOR("Sectors"),
+    COUNTRY("Countries"),
+    CURRENCY("Currencies")
 }

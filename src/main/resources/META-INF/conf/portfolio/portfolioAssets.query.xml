@@ -40,9 +40,6 @@
                 <eq filter-id="ticker" mapping="[2]"/>
             </filters>
         </field>
-        <field id="active">
-            <select mapping="active"/>
-        </field>
         <field id="asset.ticker">
             <select mapping="assetTicker"/>
         </field>
@@ -51,9 +48,6 @@
         </field>
         <field id="name">
             <select mapping="assetName" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).fullName(#this, #data['asset.ticker'])"/>
-        </field>
-        <field id="asset.class">
-            <select mapping="assetClass"/>
         </field>
         <field id="quantity">
             <select mapping="quantity"/>
@@ -85,17 +79,11 @@
         <field id="marketProportion">
             <select mapping="marketProportion" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).percentFormat(#this)"/>
         </field>
-        <field id="marketProportionValue">
-            <select mapping="marketProportion"/>
-        </field>
         <field id="marketProfitProportion">
             <select mapping="marketProfitProportion" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitPercentFormat(#this)"/>
         </field>
         <field id="targetProportion">
             <select mapping="targetProportion" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).percentFormat(#this)"/>
-        </field>
-        <field id="targetProportionValue" domain="numeric">
-            <select mapping="targetProportion" normalize="#this?.intValue()"/>
         </field>
         <field id="targetDeviationPercent">
             <select mapping="targetDeviationPercent" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).percentFormat(#this)"/>

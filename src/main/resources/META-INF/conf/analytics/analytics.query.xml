@@ -27,7 +27,7 @@
         <field id="type">
             <filters>
                 <eq filter-id="type"
-                    normalize="T(com.github.iryabov.invest.relation.AnalyticsType).valueOf(#this)"
+                    normalize="T(com.github.iryabov.invest.relation.TargetType).valueOf(#this)"
                     mapping="[0]"/>
             </filters>
         </field>

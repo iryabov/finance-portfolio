@@ -59,7 +59,8 @@ interface InvestService {
 
     fun addAssets(portfolioId: Int, criteria: SecurityCriteria)
 
-    fun getTargets(portfolioId: Int, type: TargetType, currency: Currency = Currency.RUB): List<TargetView>
+    //todo (portfolioId: Int, type: TargetType, currency: Currency = Currency.RUB)
+    fun getTargets(currency: Currency = Currency.RUB, portfolioId: Int, type: TargetType): List<TargetView>
 
     fun saveTarget(portfolioId: Int, type: TargetType, ticker: String, proportion: Int): Int
 

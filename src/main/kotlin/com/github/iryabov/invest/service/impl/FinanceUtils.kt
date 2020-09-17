@@ -95,7 +95,7 @@ fun BigDecimal.round(scale: Int = 0): BigDecimal {
 }
 
 fun BigDecimal.invert(): BigDecimal {
-    return BigDecimal(1.000000001) / this
+    return if (!this.eq(0)) BigDecimal(1.000000001) / this else P0
 }
 
 fun Int.negate(): Int {

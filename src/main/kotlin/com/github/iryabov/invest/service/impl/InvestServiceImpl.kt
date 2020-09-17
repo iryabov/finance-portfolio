@@ -234,7 +234,7 @@ class InvestServiceImpl(
                 .forEach { targetRepo.save(it) }
     }
 
-    override fun getTargets(portfolioId: Int, type: TargetType, currency: Currency): List<TargetView> {
+    override fun getTargets(currency: Currency, portfolioId: Int, type: TargetType): List<TargetView> {
         val assets = targetRepo.findAllAssetsViews(portfolioId, currency)
         val targets = assets.groupBy { it.typeOf(type) }
                 .map { TargetView(type = type, ticker = it.key, assets = it.value) }
@@ -246,6 +246,7 @@ class InvestServiceImpl(
         val totalMarketValue = targets.sumByBigDecimal { it.totalMarketValue }
         targets.forEach {
             it.totalNetProportion = calcPercent(it.totalNetValue, totalNetValue).round()
+            it.totalMarketProportion = calcPercent(it.totalMarketValue, totalMarketValue).round()
         }
         return targets
     }

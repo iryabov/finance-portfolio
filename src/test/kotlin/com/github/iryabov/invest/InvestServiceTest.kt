@@ -220,11 +220,11 @@ class InvestServiceTest(
         assertThatAsset(accountId, "AAA") { it.quantity == 0 && it.netValue.eq(money(0)) }
         assertThatDial(sale10For1000) { it.profit!!.eq(money(50)) }
 
-        val withdrawals = investService.addDeal(accountId, DealForm("RUB", date("2020-10-01"),
+        val withdrawals = investService.addDeal(accountId, DealForm("RUB", date("2020-09-12"),
                 WITHDRAWALS, RUB, money(2050)))
         assertThatAsset(accountId, "RUB") { it.quantity == 95 && it.netValue.eq(money(95)) }
 
-        val tax10 = investService.addDeal(accountId, DealForm("AAA", date("2021-01-10"),
+        val tax10 = investService.addDeal(accountId, DealForm("AAA", date("2020-09-15"),
                 TAX, RUB, money(10)))
         assertThatAsset(accountId, "RUB") { it.quantity == 85 && it.netValue.eq(money(85)) }
 
