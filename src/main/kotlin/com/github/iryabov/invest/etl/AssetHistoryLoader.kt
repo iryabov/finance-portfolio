@@ -32,6 +32,7 @@ class AssetHistoryLoader(
         val currencyRateLoader: CurrencyRateLoader
 ) {
     fun load(ticker: String, from: LocalDate, till: LocalDate) {
+        if (from >= till) return
         var client: SecuritiesClient = securitiesClientMoex
         val assetFound = assetRepo.findById(ticker).orElseThrow()
         client = when (assetFound.api) {

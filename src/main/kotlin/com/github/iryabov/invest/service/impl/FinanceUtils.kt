@@ -61,7 +61,7 @@ fun maxAbs(a: Int, b: Int): Int {
 }
 
 fun BigDecimal?.notZero(): Boolean {
-    return if (this != null) !this.eq(P0) else false
+    return if (this != null) !this.eq(P0, 4) else false
 }
 
 fun BigDecimal?.isZero(): Boolean {
@@ -95,7 +95,7 @@ fun BigDecimal.round(scale: Int = 0): BigDecimal {
 }
 
 fun BigDecimal.invert(): BigDecimal {
-    return if (!this.eq(0)) BigDecimal(1.000000001) / this else P0
+    return if (this.notZero()) BigDecimal(1.000000001) / this else P0
 }
 
 fun Int.negate(): Int {

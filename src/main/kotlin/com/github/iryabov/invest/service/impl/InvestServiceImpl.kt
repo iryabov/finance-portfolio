@@ -540,11 +540,12 @@ private fun TargetForm.toEntity(id: Int?, portfolioId: Int, ticker: String) = Ta
 )
 
 private fun AssetView.typeOf(type: TargetType): String {
+    val other = "OTHER"
     return when (type) {
         TargetType.ASSET -> this.assetTicker
-        TargetType.CLASS -> this.assetClass?.name ?: ""
-        TargetType.SECTOR -> this.assetSector?.name ?: ""
-        TargetType.COUNTRY -> this.assetCountry?.name ?: ""
-        TargetType.CURRENCY -> this.assetCurrency?.name ?: ""
+        TargetType.CLASS -> this.assetClass?.name ?: other
+        TargetType.SECTOR -> this.assetSector?.name ?: other
+        TargetType.COUNTRY -> this.assetCountry?.name ?: other
+        TargetType.CURRENCY -> this.assetCurrency?.name ?: other
     }
 }
