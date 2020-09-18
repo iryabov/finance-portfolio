@@ -241,14 +241,14 @@ class InvestServiceImpl(
         targets.forEach {
             it.calcAssets(it.assets)
             it.calcProportion(it.assets)
+            it.assets = it.assets.sortedByDescending { a -> a.marketProportion }
         }
         val totalNetValue = targets.sumByBigDecimal { it.totalNetValue }
         val totalMarketValue = targets.sumByBigDecimal { it.totalMarketValue }
         targets.forEach {
-            it.totalNetProportion = calcPercent(it.totalNetValue, totalNetValue).round()
-            it.totalMarketProportion = calcPercent(it.totalMarketValue, totalMarketValue).round()
+            it.calcProportion(totalNetValue, totalMarketValue)
         }
-        return targets
+        return targets.sortedByDescending { it.totalMarketProportion }
     }
 
     override fun saveTarget(portfolioId: Int, type: TargetType, ticker: String, proportion: Int): Int {
@@ -370,6 +370,11 @@ private fun ValueView.calcProportion(assets: List<AssetView>) {
     assert(activeAssets.sumByBigDecimal { a -> a.netProportion }.eqOr(P100, P0))
     assert(activeAssets.sumByBigDecimal { a -> a.marketProportion }.eqOr(P100, P0))
     assert(activeAssets.sumByBigDecimal { a -> a.marketProfitProportion }.eqOr(P0, P0))
+}
+
+private fun ValueView.calcProportion(totalNetValue: BigDecimal, totalMarketValue: BigDecimal) {
+    this.totalNetProportion = calcPercent(this.totalNetValue, totalNetValue).round()
+    this.totalMarketProportion = calcPercent(this.totalMarketValue, totalMarketValue).round()
 }
 
 private fun AccountView.calcCurrencies() {

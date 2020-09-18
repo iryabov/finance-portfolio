@@ -21,7 +21,7 @@
     </toolbar>
     <regions>
         <region>
-            <form id="portfolio" query-id="portfolios" route="/">
+            <form id="portfolio" object-id="portfolio" default-values-query-id="portfolios" route="/" upload="defaults">
                 <fields>
                     <set field-label-location="left" field-label-align="left" field-label-width="100px">
                         <row>
@@ -66,61 +66,6 @@
                 </pre-filters>
             </form>
         </region>
-        <!--        <region>-->
-        <!--            <table id="assets" name="Assets" query-id="portfolioAssets" route="/assets" selection="none" size="100">-->
-        <!--                <columns>-->
-        <!--                    <column text-field-id="name" label="Name"/>-->
-        <!--                    <column text-field-id="quantity" label="Quantity">-->
-        <!--                        <text format="number 0,0"/>-->
-        <!--                    </column>-->
-        <!--                    <column text-field-id="marketValue" label="Value">-->
-        <!--                        <text format="number 0,0.00"/>-->
-        <!--                    </column>-->
-        <!--                    <column text-field-id="marketProfitPercent" label="Profit">-->
-        <!--                        <badge text="{marketProfit}" text-format="number 0,0.00" color="{marketProfitColor}"/>-->
-        <!--                    </column>-->
-        <!--                    <column text-field-id="marketProfitProportion" label="Proportion">-->
-        <!--                        <badge text="{marketProportion}"/>-->
-        <!--                    </column>-->
-        <!--                    &lt;!&ndash;                    <column text-field-id="marketProportionValue" tooltip-field-id="marketProportion" label="Proportion" width="30px">&ndash;&gt;-->
-        <!--                    &lt;!&ndash;                        <progress size="small" />&ndash;&gt;-->
-        <!--                    &lt;!&ndash;                    </column>&ndash;&gt;-->
-        <!--                    &lt;!&ndash;                    <column text-field-id="marketProfitProportion" label="">&ndash;&gt;-->
-        <!--                    &lt;!&ndash;                        <text/>&ndash;&gt;-->
-        <!--                    &lt;!&ndash;                    </column>&ndash;&gt;-->
-        <!--                    <column text-field-id="targetDeviationPercent" label="Target">-->
-        <!--                        &lt;!&ndash;                        <edit type="popup" action-id="">&ndash;&gt;-->
-        <!--                        &lt;!&ndash;                            <field id="targetPercent">&ndash;&gt;-->
-        <!--                        &lt;!&ndash;                                <controls>&ndash;&gt;-->
-        <!--                        &lt;!&ndash;                                    <slider id="targetPercent"/>&ndash;&gt;-->
-        <!--                        &lt;!&ndash;                                </controls>&ndash;&gt;-->
-        <!--                        &lt;!&ndash;                            </field>&ndash;&gt;-->
-        <!--                        &lt;!&ndash;                        </edit>&ndash;&gt;-->
-        <!--                        <badge text="{targetProportion}" color="{targetDeviationColor}"/>-->
-        <!--                    </column>-->
-        <!--                    <column text-field-id="" width="20px">-->
-        <!--                        <toolbar>-->
-        <!--                            <button id="delete" type="icon" label="Delete asset" icon="fa fa-trash" confirm="false">-->
-        <!--                                <invoke operation-id="deleteTarget" route="/delete"/>-->
-        <!--                            </button>-->
-        <!--                        </toolbar>-->
-        <!--                    </column>-->
-        <!--                </columns>-->
-        <!--                <rows>-->
-        <!--                    <switch value-field-id="assetActive">-->
-        <!--                        <case value="false">text-secondary</case>-->
-        <!--                    </switch>-->
-        <!--                    <click>-->
-        <!--                        <open-page page-id="portfolioTargetDetails" route="/:ticker/target">-->
-        <!--                            <path-param name="ticker" value="{id}"/>-->
-        <!--                        </open-page>-->
-        <!--                    </click>-->
-        <!--                </rows>-->
-        <!--                <pre-filters>-->
-        <!--                    <eq field-id="portfolioId" param="portfolio_id"/>-->
-        <!--                </pre-filters>-->
-        <!--            </table>-->
-        <!--        </region>-->
         <region>
             <table id="assets" name="Assets" query-id="portfolioTargets" route="/targets" selection="none" size="100"
                    depends-on="portfolio">
@@ -138,21 +83,8 @@
                     <column text-field-id="marketProfitProportion" label="Proportion">
                         <badge text="{marketProportion}"/>
                     </column>
-                    <!--                    <column text-field-id="marketProportionValue" tooltip-field-id="marketProportion" label="Proportion" width="30px">-->
-                    <!--                        <progress size="small" />-->
-                    <!--                    </column>-->
-                    <!--                    <column text-field-id="marketProfitProportion" label="">-->
-                    <!--                        <text/>-->
-                    <!--                    </column>-->
                     <column text-field-id="targetDeviationPercent" label="Target">
-                        <!--                        <edit type="popup" action-id="">-->
-                        <!--                            <field id="targetPercent">-->
-                        <!--                                <controls>-->
-                        <!--                                    <slider id="targetPercent"/>-->
-                        <!--                                </controls>-->
-                        <!--                            </field>-->
-                        <!--                        </edit>-->
-                        <badge text="{targetProportion}" color="{targetDeviationColor}"/>
+                        <badge text="{targetProportion}"/>
                     </column>
                     <column text-field-id="" width="20px">
                         <toolbar>
