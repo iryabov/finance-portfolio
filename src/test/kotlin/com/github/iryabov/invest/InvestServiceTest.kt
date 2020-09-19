@@ -1,23 +1,19 @@
 package com.github.iryabov.invest
 
 import com.github.iryabov.invest.etl.AssetHistoryLoader
-import com.github.iryabov.invest.relation.Currency
-import com.github.iryabov.invest.repository.AccountRepository
-import com.github.iryabov.invest.repository.DealRepository
-import com.github.iryabov.invest.repository.CurrencyRateRepository
 import com.github.iryabov.invest.client.impl.CurrenciesClientCBRF
 import com.github.iryabov.invest.client.impl.CurrenciesClientECB
+import com.github.iryabov.invest.entity.Asset
 import com.github.iryabov.invest.etl.CurrencyRateLoader
 import com.github.iryabov.invest.service.InvestService
 import com.github.iryabov.invest.etl.DealsCsvLoader
 import com.github.iryabov.invest.model.*
-import com.github.iryabov.invest.relation.Currency.RUB
+import com.github.iryabov.invest.relation.*
+import com.github.iryabov.invest.relation.Currency.*
 import com.github.iryabov.invest.relation.DealType.*
-import com.github.iryabov.invest.relation.Period
-import com.github.iryabov.invest.repository.PortfolioRepository
+import com.github.iryabov.invest.repository.*
 import com.github.iryabov.invest.service.impl.*
-import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -42,6 +38,8 @@ class InvestServiceTest(
         @Autowired
         val accountRepo: AccountRepository,
         @Autowired
+        val assetRepository: AssetRepository,
+        @Autowired
         val investService: InvestService,
         @Autowired
         val csvLoader: DealsCsvLoader,
@@ -63,6 +61,7 @@ class InvestServiceTest(
     internal fun setUp() {
         accountRepo.deleteAll()
         portfolioRepo.deleteAll()
+        assetRepository.deleteAll()
 //        rateRepo.deleteAll()
     }
 
@@ -385,34 +384,59 @@ class InvestServiceTest(
         investService.addAsset(test, "AAA")
         investService.addAsset(test, "BBB")
         investService.addAsset(test, "CCC")
+        investService.addSecurity(Asset(ticker = "AAA", name = "AAA",
+                assetClass = AssetClass.SHARE, sector = Sector.FINANCE, currency = RUB, country = Country.RUSSIA))
+        investService.addSecurity(Asset(ticker = "BBB", name = "BBB",
+                assetClass = AssetClass.SHARE, sector = Sector.TECHNOLOGY, currency = USD, country = Country.USA))
+        investService.addSecurity(Asset(ticker = "CCC", name = "CCC",
+                assetClass = AssetClass.BOND, sector = Sector.GOVERNMENT, currency = EUR, country = Country.EUROPA))
 
-        investService.updateTarget(portfolioId = test, ticker = "AAA", form = TargetForm(targetProportion = 50))
+        investService.saveTarget(portfolioId = test, type = TargetType.ASSET, ticker = "AAA", proportion = 50)
+
         assertThat(investService.getPortfolio(portfolioId = test)).matches { p ->
             p.assets.find { it.assetTicker == "AAA" }!!.targetProportion.eq(50) &&
                     p.assets.find { it.assetTicker == "BBB" }!!.targetProportion.eq(0) &&
                     p.assets.find { it.assetTicker == "CCC" }!!.targetProportion.eq(0)
         }
 
-        investService.updateTarget(portfolioId = test, ticker = "BBB", form = TargetForm(targetProportion = 50))
+        investService.saveTarget(portfolioId = test, type = TargetType.ASSET, ticker = "BBB",proportion = 50)
         assertThat(investService.getPortfolio(portfolioId = test)).matches { p ->
             p.assets.find { it.assetTicker == "AAA" }!!.targetProportion.eq(50) &&
                     p.assets.find { it.assetTicker == "BBB" }!!.targetProportion.eq(50) &&
                     p.assets.find { it.assetTicker == "CCC" }!!.targetProportion.eq(0)
         }
 
-//        investService.updateTarget(portfolioId = test, ticker = "CCC", form = TargetForm(targetProportion = 50))
-//        assertThat(investService.getPortfolio(portfolioId = test)).matches { p ->
-//            p.assets.find { it.assetTicker == "AAA" }!!.targetProportion.eq(25) &&
-//                    p.assets.find { it.assetTicker == "BBB" }!!.targetProportion.eq(25) &&
-//                    p.assets.find { it.assetTicker == "CCC" }!!.targetProportion.eq(50)
-//        }
-//
-//        investService.updateTarget(portfolioId = test, ticker = "AAA", form = TargetForm(targetProportion = 15))
-//        assertThat(investService.getPortfolio(portfolioId = test)).matches { p ->
-//            p.assets.find { it.assetTicker == "AAA" }!!.targetProportion.eq(15) &&
-//                    p.assets.find { it.assetTicker == "BBB" }!!.targetProportion.eq(25) &&
-//                    p.assets.find { it.assetTicker == "CCC" }!!.targetProportion.eq(50)
-//        }
+        investService.getTargets(portfolioId = test, type = TargetType.CLASS).forEach {
+            when (AssetClass.valueOf(it.ticker)) {
+                AssetClass.SHARE -> assertThat(it.assets.size).isEqualTo(2)
+                AssetClass.BOND -> assertThat(it.assets.size).isEqualTo(1)
+                else -> fail("Class $it.ticker not exists")
+            }
+        }
+        investService.getTargets(portfolioId = test, type = TargetType.COUNTRY).forEach {
+            when (Country.valueOf(it.ticker)) {
+                Country.USA -> assertThat(it.assets.size).isEqualTo(1)
+                Country.RUSSIA -> assertThat(it.assets.size).isEqualTo(1)
+                Country.EUROPA -> assertThat(it.assets.size).isEqualTo(1)
+                else -> fail("Country $it.ticker not exists")
+            }
+        }
+        investService.getTargets(portfolioId = test, type = TargetType.SECTOR).forEach {
+            when (Sector.valueOf(it.ticker)) {
+                Sector.GOVERNMENT -> assertThat(it.assets.size).isEqualTo(1)
+                Sector.FINANCE -> assertThat(it.assets.size).isEqualTo(1)
+                Sector.TECHNOLOGY -> assertThat(it.assets.size).isEqualTo(1)
+                else -> fail("Sector $it.ticker not exists")
+            }
+        }
+        investService.getTargets(portfolioId = test, type = TargetType.CURRENCY).forEach {
+            when (Currency.valueOf(it.ticker)) {
+                USD -> assertThat(it.assets.size).isEqualTo(1)
+                RUB -> assertThat(it.assets.size).isEqualTo(1)
+                EUR -> assertThat(it.assets.size).isEqualTo(1)
+                else -> fail("Currency $it.ticker not exists")
+            }
+        }
 
         investService.deletePortfolio(test)
         assertThat(investService.getPortfolios().size).isEqualTo(0)
