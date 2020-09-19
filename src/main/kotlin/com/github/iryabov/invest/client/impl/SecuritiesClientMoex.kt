@@ -153,6 +153,7 @@ class SecuritiesClientMoex: SecuritiesClient {
         val market = when {
             tickerRow.getAttribute("type").contains("share") -> "shares"
             tickerRow.getAttribute("type").contains("etf") -> "shares"
+            tickerRow.getAttribute("type").contains("depositary") -> "shares"
             tickerRow.getAttribute("type").contains("bond") -> "bonds"
             tickerRow.getAttribute("type").contains("index") -> "index"
             else -> tickerRow.getAttribute("type")
