@@ -236,12 +236,15 @@ class InvestServiceImpl(
 
     override fun getTargets(currency: Currency, portfolioId: Int, type: TargetType): List<TargetView> {
         val assets = targetRepo.findAllAssetsViews(portfolioId, currency)
+        val proportions = targetRepo.findByPortfolioIdAndType(portfolioId, type).groupBy { it.ticker }
+                .mapValues { if (it.value.isEmpty()) null else it.value[0].proportion }
         val targets = assets.groupBy { it.typeOf(type) }
                 .map { TargetView(type = type, ticker = it.key, assets = it.value) }
         targets.forEach {
             it.calcAssets(it.assets)
             it.calcProportion(it.assets)
             it.assets = it.assets.sortedByDescending { a -> a.marketProportion }
+            it.totalTargetProportion = proportions[it.ticker]
         }
         val totalNetValue = targets.sumByBigDecimal { it.totalNetValue }
         val totalMarketValue = targets.sumByBigDecimal { it.totalMarketValue }
