@@ -3,7 +3,7 @@
       name="Add assets">
     <regions>
         <region>
-            <table id="securities" query-id="portfolioTarget" selection="radio">
+            <table id="securities" query-id="targetCandidates" selection="radio">
                 <filters search-on-change="true">
                     <row>
                         <select id="assetClass" label="Class">

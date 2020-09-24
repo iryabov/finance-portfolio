@@ -5,6 +5,7 @@ import com.github.iryabov.invest.model.*
 import com.github.iryabov.invest.relation.Currency
 import com.github.iryabov.invest.relation.Period
 import com.github.iryabov.invest.relation.TargetType
+import java.math.BigDecimal
 
 interface InvestService {
     fun createAccount(form: AccountForm): Int
@@ -62,7 +63,12 @@ interface InvestService {
     //todo (portfolioId: Int, type: TargetType, currency: Currency = Currency.RUB)
     fun getTargets(currency: Currency = Currency.RUB, portfolioId: Int, type: TargetType): List<TargetView>
 
+    //todo (portfolioId: Int, ticker: String, currency: Currency = Currency.RUB)
+    fun getTarget(currency: Currency = Currency.RUB, portfolioId: Int, ticker: String): AssetView
+
     fun saveTarget(portfolioId: Int, type: TargetType, ticker: String, proportion: Int): Int
+
+    fun saveTargets(portfolioId: Int, type: TargetType, data: Map<String, Int>): Map<String, Int>
 
     fun deactivateTarget(portfolioId: Int, ticker: String)
 
@@ -70,10 +76,9 @@ interface InvestService {
 
     fun updateTarget(portfolioId: Int, ticker: String, form: TargetForm)
 
-    //todo (portfolioId: Int, ticker: String, currency: Currency = Currency.RUB)
-    fun getTarget(currency: Currency = Currency.RUB, portfolioId: Int, ticker: String): AssetView
-
     fun getTargetCandidates(portfolioId: Int, criteria: SecurityCriteria): List<SecurityView>
 
     fun getAnalytics(type: TargetType, portfolioId: Int, currency: Currency = Currency.RUB): List<ChartView>
+
+    fun getTargetProportions(portfolioId: Int, type: TargetType): List<ChartView>
 }

@@ -1,0 +1,84 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<left-right-page xmlns="http://n2oapp.net/framework/config/schema/page-2.0">
+    <left>
+        <panel title="Classes">
+            <form id="classes" query-id="targets" object-id="target" route="/classes">
+                <submit route="/save" operation-id="saveTargets">
+                    <form-param name="type" value="CLASS"/>
+                </submit>
+                <fields>
+                    <slider id="data.SHARE" label="Shares" max="100"/>
+                    <slider id="data.BOND" label="Bonds" max="100"/>
+                    <slider id="data.CACHE" label="Caches" max="100"/>
+                    <slider id="data.GOLD" label="Gold" max="100"/>
+                    <slider id="data.DEPOSIT" label="Deposits" max="100"/>
+                </fields>
+                <pre-filters>
+                    <eq field-id="portfolioId" param="portfolio_id"/>
+                    <eq field-id="type" value="CLASS"/>
+                </pre-filters>
+            </form>
+        </panel>
+        <panel title="Countries">
+            <form id="country" query-id="targets" route="/countries">
+                <submit route="/save" operation-id="saveTargets">
+                    <form-param name="type" value="COUNTRY"/>
+                </submit>
+                <fields>
+                    <slider id="data.USA" label="USA" max="100"/>
+                    <slider id="data.RUSSIA" label="Russia" max="100"/>
+                    <slider id="data.CHINA" label="China" max="100"/>
+                    <slider id="data.EUROPE" label="Europe" max="100"/>
+                </fields>
+                <pre-filters>
+                    <eq field-id="portfolioId" param="portfolio_id"/>
+                    <eq field-id="type" value="COUNTRY"/>
+                </pre-filters>
+            </form>
+        </panel>
+    </left>
+    <right>
+        <panel title="Sectors">
+            <form id="sector" query-id="targets" route="/sectors">
+                <submit route="/save" operation-id="saveTargets">
+                    <form-param name="type" value="SECTOR"/>
+                </submit>
+                <fields>
+                    <slider id="data.GOVERNMENT" label="Government" max="100"/>
+                    <slider id="data.FOND" label="Fonds" max="100"/>
+                    <slider id="data.TECHNOLOGY" label="Technologies" max="100"/>
+                    <slider id="data.FINANCE" label="Finances" max="100"/>
+                    <slider id="data.OIL_GAS" label="Oil &amp; Gas" max="100"/>
+                    <slider id="data.METAL" label="Metal" max="100"/>
+                    <slider id="data.ENERGY" label="Energy" max="100"/>
+                    <slider id="data.RETAIL" label="Retail" max="100"/>
+                    <slider id="data.REALTY" label="Realty" max="100"/>
+                    <slider id="data.TRANSPORT" label="Transport" max="100"/>
+                    <slider id="data.TOURISM" label="Tourism" max="100"/>
+                    <slider id="data.HEALTH" label="Health" max="100"/>
+                    <slider id="data.GOLD" label="Gold" max="100"/>
+                </fields>
+                <pre-filters>
+                    <eq field-id="portfolioId" param="portfolio_id"/>
+                    <eq field-id="type" value="SECTOR"/>
+                </pre-filters>
+            </form>
+        </panel>
+        <panel title="Currencies">
+            <form id="currency" query-id="targets" route="/currencies">
+                <submit route="/save" operation-id="saveTargets">
+                    <form-param name="type" value="CURRENCY"/>
+                </submit>
+                <fields>
+                    <slider id="data.USD" label="Dollar" max="100"/>
+                    <slider id="data.EUR" label="Euro" max="100"/>
+                    <slider id="data.RUB" label="Ruble" max="100"/>
+                </fields>
+                <pre-filters>
+                    <eq field-id="portfolioId" param="portfolio_id"/>
+                    <eq field-id="type" value="CURRENCY"/>
+                </pre-filters>
+            </form>
+        </panel>
+    </right>
+</left-right-page>

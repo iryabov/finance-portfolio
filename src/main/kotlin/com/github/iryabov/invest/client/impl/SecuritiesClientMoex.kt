@@ -41,7 +41,7 @@ class SecuritiesClientMoex: SecuritiesClient {
                         date = LocalDate.parse(row.getAttribute("TRADEDATE"), DateTimeFormatter.ISO_DATE),
                         ticker = row.getAttribute("SECID"),
                         shortName = row.getAttribute("SHORTNAME"),
-                        settlementPrice = BigDecimal(row.getAttribute("CLOSE")),
+                        settlementPrice = getPrice(row.getAttribute("CLOSE"), market),
                         settlementCurrency = currencyOf(row.getAttribute("CURRENCYID")),
                         faceCurrency = currencyOf(row.getAttribute("FACEUNIT"))
                 ))
@@ -75,10 +75,15 @@ class SecuritiesClientMoex: SecuritiesClient {
                     date = LocalDate.parse(sec0.getAttribute("PREVDATE"), DateTimeFormatter.ISO_DATE),
                     ticker = sec0.getAttribute("SECID"),
                     shortName = sec0.getAttribute("SHORTNAME"),
-                    settlementPrice = BigDecimal(sec0.getAttribute("PREVADMITTEDQUOTE")),
+                    settlementPrice = getPrice(sec0.getAttribute("PREVADMITTEDQUOTE"), market),
                     settlementCurrency = currencyOf(sec0.getAttribute("CURRENCYID")),
                     faceCurrency = currencyOf(sec0.getAttribute("FACEUNIT")))
         }
+    }
+
+    private fun getPrice(price: String, market: String): BigDecimal {
+        val k = if (market == "bonds") 10 else 1
+        return BigDecimal(k) * BigDecimal(price)
     }
 
     override fun findByName(name: String): List<Security> {

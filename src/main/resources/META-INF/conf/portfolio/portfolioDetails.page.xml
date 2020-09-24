@@ -12,6 +12,13 @@
         </button>
     </toolbar>
     <toolbar place="topRight">
+        <group>
+            <button id="target" label="Targets" icon="fa fa-bullseye" widget-id="portfolio">
+                <open-page page-id="portfolioTarget" route="/targets">
+
+                </open-page>
+            </button>
+        </group>
         <button id="deletePortfolio" label="Delete portfolio" widget-id="portfolio"
                 icon="fa fa-trash" type="icon" color="danger"
                 confirm="true" confirm-text="Are you sure to delete portfolio {name}?">
@@ -67,7 +74,7 @@
             </form>
         </region>
         <region>
-            <table id="assets" name="Assets" query-id="portfolioTargets" route="/targets" selection="none" size="100"
+            <table id="assets" name="Assets" query-id="portfolioTargets" route="/assets" selection="none" size="100"
                    depends-on="portfolio">
                 <columns>
                     <column text-field-id="name" label="Name"/>
@@ -88,7 +95,11 @@
                     </column>
                     <column text-field-id="" width="20px">
                         <toolbar>
-                            <button id="delete" type="icon" label="Delete asset" icon="fa fa-trash" confirm="false">
+                            <button id="target" type="icon" label="Set target" icon="fa fa-percentage" confirm="false">
+                                <open-page page-id="portfolioTarget">
+                                </open-page>
+                            </button>
+                            <button id="delete" type="icon" label="Delete asset" icon="fa fa-trash" confirm="true">
                                 <invoke operation-id="deleteTarget" route="/delete"/>
                             </button>
                         </toolbar>

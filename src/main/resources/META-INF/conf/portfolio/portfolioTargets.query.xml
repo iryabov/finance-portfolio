@@ -91,7 +91,7 @@
             <select mapping="assets.size() > 0"/>
         </field>
         <field id="children" domain="object[]"><!-- todo <list id="children" mapping="assets"> ... </list> -->
-            <select mapping="assets" normalize="T(com.github.iryabov.invest.service.impl.UiUtilsKt).serializeAssets(#this)"/>
+            <select mapping="assets" normalize="T(com.github.iryabov.invest.ui.UiUtilsKt).serializeAssets(#this)"/>
         </field>
     </fields>
 

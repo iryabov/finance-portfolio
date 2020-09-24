@@ -251,12 +251,35 @@ class InvestServiceImpl(
         return targets.sortedByDescending { it.totalMarketProportion }
     }
 
+    override fun getTarget(currency: Currency, portfolioId: Int, ticker: String): AssetView {
+        val targets = targetRepo.findAllAssetsViews(portfolioId, currency, ticker)
+        if (targets.isEmpty())
+            return AssetView(assetTicker = ticker, quantity = 0, netValue = P0)
+        val target = targets.first()
+        target.calc()
+        target.calcProportion(P0, P0)
+        return target
+    }
+
     override fun saveTarget(portfolioId: Int, type: TargetType, ticker: String, proportion: Int): Int {
         val target = targetRepo.findByPortfolioIdAndTickerAndType(portfolioId, ticker, type)
                 .orElse(Target(portfolioId = portfolioId, type = type, ticker = ticker))
         target.proportion = proportion.toBigDecimal()
         val saved = targetRepo.save(target)
         return saved.id!!
+    }
+
+    override fun saveTargets(portfolioId: Int, type: TargetType, data: Map<String, Int>): Map<String, Int> {
+        val targets = targetRepo.findByPortfolioIdAndType(portfolioId, type).groupBy { it.ticker }
+        data.entries.forEach {
+            targetRepo.save(Target(
+                        id = targets[it.key]?.get(0)?.id,
+                        portfolioId = portfolioId,
+                        type = type,
+                        ticker = it.key,
+                        proportion = it.value.toBigDecimal()))
+        }
+        return data
     }
 
     override fun deactivateTarget(portfolioId: Int, ticker: String) {
@@ -272,16 +295,6 @@ class InvestServiceImpl(
     override fun updateTarget(portfolioId: Int, ticker: String, form: TargetForm) {
         val target = targetRepo.findByPortfolioIdAndTicker(portfolioId, ticker).orElseThrow()
         targetRepo.save(form.toEntity(target.id!!, portfolioId, ticker))
-    }
-
-    override fun getTarget(currency: Currency, portfolioId: Int, ticker: String): AssetView {
-        val targets = targetRepo.findAllAssetsViews(portfolioId, currency, ticker)
-        if (targets.isEmpty())
-            return AssetView(assetTicker = ticker, quantity = 0, netValue = P0)
-        val target = targets.first()
-        target.calc()
-        target.calcProportion(P0, P0)
-        return target
     }
 
     override fun getTargetCandidates(portfolioId: Int, criteria: SecurityCriteria): List<SecurityView> {
@@ -300,6 +313,12 @@ class InvestServiceImpl(
         return assets.groupBy { it.typeOf(type) }
                 .mapValues { it.value.sumByBigDecimal { v -> v.marketValue } }
                 .map { ChartView(name = it.key, value = it.value) }
+    }
+
+    override fun getTargetProportions(portfolioId: Int, type: TargetType): List<ChartView> {
+        return targetRepo.findByPortfolioIdAndType(portfolioId, type).map {
+            ChartView(name = it.ticker, value = it.proportion ?: P0)
+        }
     }
 
     private fun writeOffByFifoAndRecalculation(deal: Deal, calc: Boolean = true) {

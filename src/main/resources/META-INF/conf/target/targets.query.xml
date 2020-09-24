@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<query xmlns="http://n2oapp.net/framework/config/schema/query-4.0"
+       name="Portfolio asset" object-id="target">
+    <list result-mapping="T(com.github.iryabov.invest.ui.UiUtilsKt).mapTargets(#this)" filters="portfolioId,type" count-mapping="1">
+        <java method="getTargetProportions" class="com.github.iryabov.invest.service.InvestService">
+            <spring/>
+            <arguments>
+                <argument type="primitive" name="portfolioId"/>
+                <argument type="primitive" name="type"/>
+            </arguments>
+        </java>
+    </list>
+
+    <fields>
+        <field id="id"><!--fixme-->
+            <select default-value="1"/>
+        </field>
+        <field id="portfolioId">
+            <filters>
+                <eq filter-id="portfolioId" mapping="[0]" required="true"/>
+            </filters>
+        </field>
+        <field id="type">
+            <filters>
+                <eq filter-id="type"
+                    mapping="[1]"
+                    default-value="ASSET"
+                    normalize="T(com.github.iryabov.invest.relation.TargetType).valueOf(#this)"/>
+            </filters>
+        </field>
+        <field id="data">
+            <select mapping="['data']"/>
+        </field>
+    </fields>
+
+</query>

@@ -1,6 +1,11 @@
-package com.github.iryabov.invest.service.impl
+package com.github.iryabov.invest.ui
 
 import com.github.iryabov.invest.model.AssetView
+import com.github.iryabov.invest.model.ChartView
+import com.github.iryabov.invest.service.impl.color
+import com.github.iryabov.invest.service.impl.percentFormat
+import com.github.iryabov.invest.service.impl.profitFormat
+import com.github.iryabov.invest.service.impl.profitPercentFormat
 import net.n2oapp.criteria.dataset.DataSet
 
 fun serializeAssets(assets: List<AssetView>): List<DataSet> {
@@ -26,4 +31,12 @@ fun serializeAssets(assets: List<AssetView>): List<DataSet> {
         map["assetActive"] = asset.quantity > 0
         map
     }
+}
+
+fun mapTargets(view: List<ChartView>): DataSet {
+    val data = DataSet()
+    view.forEach {
+        data["data.${it.name}"] = it.value.toLong()
+    }
+    return data
 }

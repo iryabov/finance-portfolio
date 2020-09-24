@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<object xmlns="http://n2oapp.net/framework/config/schema/object-4.0">
+    <operations>
+        <operation id="saveTarget" success-text="Save target for {ticker}">
+            <invocation>
+                <java method="saveTarget" class="com.github.iryabov.invest.service.InvestService">
+                    <spring/>
+                    <arguments>
+                        <argument type="primitive" name="portfolioId"/>
+                        <argument type="primitive" name="type"/>
+                        <argument type="primitive" name="ticker"/>
+                        <argument type="primitive" name="proportion"/>
+                    </arguments>
+                </java>
+            </invocation>
+            <in>
+                <field id="portfolioId" param="portfolio_id" mapping="[0]"/>
+                <field id="type" mapping="[1]" normalize="T(com.github.iryabov.invest.relation.TargetType).valueOf(#this)"/>
+                <field id="ticker" mapping="[2]"/>
+                <field id="proportion" mapping="[3]"/>
+            </in>
+        </operation>
+        <operation id="saveTargets" success-text="Save targets">
+            <invocation>
+                <java method="saveTargets" class="com.github.iryabov.invest.service.InvestService">
+                    <spring/>
+                    <arguments>
+                        <argument type="primitive" name="portfolioId"/>
+                        <argument type="primitive" name="type"/>
+                        <argument type="primitive" name="data"/>
+                    </arguments>
+                </java>
+            </invocation>
+            <in>
+                <field id="portfolioId" param="portfolio_id" mapping="[0]"/>
+                <field id="type" mapping="[1]" normalize="T(com.github.iryabov.invest.relation.TargetType).valueOf(#this)"/>
+                <field id="data" mapping="[2]"/>
+            </in>
+        </operation>
+    </operations>
+</object>
