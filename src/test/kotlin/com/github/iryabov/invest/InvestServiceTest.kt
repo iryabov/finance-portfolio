@@ -389,7 +389,7 @@ class InvestServiceTest(
         investService.addSecurity(Asset(ticker = "BBB", name = "BBB",
                 assetClass = AssetClass.SHARE, sector = Sector.TECHNOLOGY, currency = USD, country = Country.USA))
         investService.addSecurity(Asset(ticker = "CCC", name = "CCC",
-                assetClass = AssetClass.BOND, sector = Sector.GOVERNMENT, currency = EUR, country = Country.EUROPA))
+                assetClass = AssetClass.BOND, sector = Sector.GOVERNMENT, currency = EUR, country = Country.EUROPE))
 
         investService.saveTarget(portfolioId = test, type = TargetType.ASSET, ticker = "AAA", proportion = 50)
 
@@ -417,7 +417,7 @@ class InvestServiceTest(
             when (Country.valueOf(it.ticker)) {
                 Country.USA -> assertThat(it.assets.size).isEqualTo(1)
                 Country.RUSSIA -> assertThat(it.assets.size).isEqualTo(1)
-                Country.EUROPA -> assertThat(it.assets.size).isEqualTo(1)
+                Country.EUROPE -> assertThat(it.assets.size).isEqualTo(1)
                 else -> fail("Country $it.ticker not exists")
             }
         }

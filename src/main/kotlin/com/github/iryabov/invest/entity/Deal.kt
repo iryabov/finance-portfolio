@@ -9,7 +9,7 @@ import java.math.BigDecimal
 import java.time.LocalDate
 
 @Table("dial")
-class Deal(
+data class Deal(
         @Id
         var id: Long? = null,
         @Column

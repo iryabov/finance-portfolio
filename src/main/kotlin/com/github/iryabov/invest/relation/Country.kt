@@ -7,5 +7,5 @@ enum class Country {
     JAPAN,
     GERMANY,
     UK,
-    EUROPA
+    EUROPE
 }

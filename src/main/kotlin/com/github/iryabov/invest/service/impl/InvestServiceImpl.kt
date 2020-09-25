@@ -238,8 +238,11 @@ class InvestServiceImpl(
         val assets = targetRepo.findAllAssetsViews(portfolioId, currency)
         val proportions = targetRepo.findByPortfolioIdAndType(portfolioId, type).groupBy { it.ticker }
                 .mapValues { if (it.value.isEmpty()) null else it.value[0].proportion }
-        val targets = assets.groupBy { it.typeOf(type) }
-                .map { TargetView(type = type, ticker = it.key, assets = it.value) }
+        val targets = if (type == TargetType.ASSET) {
+            assets.map { TargetView(type = type, ticker = it.assetTicker, assets = Collections.singletonList(it)) }
+        } else {
+            type.enumValues().map { TargetView(type = type, ticker = it, assets = assets.filter { a -> a.typeOf(type) == it }) }
+        }
         targets.forEach {
             it.calcAssets(it.assets)
             it.calcProportion(it.assets)
@@ -574,5 +577,15 @@ private fun AssetView.typeOf(type: TargetType): String {
         TargetType.SECTOR -> this.assetSector?.name ?: other
         TargetType.COUNTRY -> this.assetCountry?.name ?: other
         TargetType.CURRENCY -> this.assetCurrency?.name ?: other
+    }
+}
+
+private fun TargetType.enumValues(): List<String> {
+    return when (this) {
+        TargetType.ASSET -> Collections.emptyList()
+        TargetType.CLASS -> AssetClass.values().map { it.name }
+        TargetType.SECTOR -> Sector.values().map { it.name }
+        TargetType.COUNTRY -> Country.values().map { it.name }
+        TargetType.CURRENCY -> Currency.values().map { it.name }
     }
 }
