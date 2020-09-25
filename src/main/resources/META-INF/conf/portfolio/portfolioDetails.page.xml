@@ -95,11 +95,8 @@
                     </column>
                     <column text-field-id="" width="20px">
                         <toolbar>
-                            <button id="target" type="icon" label="Set target" icon="fa fa-percentage" confirm="false">
-                                <open-page page-id="portfolioTarget">
-                                </open-page>
-                            </button>
-                            <button id="delete" type="icon" label="Delete asset" icon="fa fa-trash" confirm="true">
+                            <button id="delete" type="icon" label="Delete asset" icon="fa fa-trash" confirm="true"
+                                    visible="{typeof children == 'undefined'}">
                                 <invoke operation-id="deleteTarget" route="/delete"/>
                             </button>
                         </toolbar>
