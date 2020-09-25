@@ -64,7 +64,7 @@
                     <option id="GERMANY" name="Germany"/>
                     <option id="JAPAN" name="Japan"/>
                     <option id="UK" name="UK"/>
-                    <option id="EUROPA" name="Europa"/>
+                    <option id="EUROPE" name="Europe"/>
                 </options>
             </select>
             <select id="api" label="API">
