@@ -410,7 +410,7 @@ class InvestServiceTest(
             when (AssetClass.valueOf(it.ticker)) {
                 AssetClass.SHARE -> assertThat(it.assets.size).isEqualTo(2)
                 AssetClass.BOND -> assertThat(it.assets.size).isEqualTo(1)
-                else -> fail("Class $it.ticker not exists")
+                else -> assertThat(it.assets.size).isEqualTo(0)
             }
         }
         investService.getTargets(portfolioId = test, type = TargetType.COUNTRY).forEach {
@@ -418,7 +418,7 @@ class InvestServiceTest(
                 Country.USA -> assertThat(it.assets.size).isEqualTo(1)
                 Country.RUSSIA -> assertThat(it.assets.size).isEqualTo(1)
                 Country.EUROPE -> assertThat(it.assets.size).isEqualTo(1)
-                else -> fail("Country $it.ticker not exists")
+                else -> assertThat(it.assets.size).isEqualTo(0)
             }
         }
         investService.getTargets(portfolioId = test, type = TargetType.SECTOR).forEach {
@@ -426,7 +426,7 @@ class InvestServiceTest(
                 Sector.GOVERNMENT -> assertThat(it.assets.size).isEqualTo(1)
                 Sector.FINANCE -> assertThat(it.assets.size).isEqualTo(1)
                 Sector.TECHNOLOGY -> assertThat(it.assets.size).isEqualTo(1)
-                else -> fail("Sector $it.ticker not exists")
+                else -> assertThat(it.assets.size).isEqualTo(0)
             }
         }
         investService.getTargets(portfolioId = test, type = TargetType.CURRENCY).forEach {
@@ -434,7 +434,34 @@ class InvestServiceTest(
                 USD -> assertThat(it.assets.size).isEqualTo(1)
                 RUB -> assertThat(it.assets.size).isEqualTo(1)
                 EUR -> assertThat(it.assets.size).isEqualTo(1)
-                else -> fail("Currency $it.ticker not exists")
+                else -> assertThat(it.assets.size).isEqualTo(0)
+            }
+        }
+
+        investService.deletePortfolio(test)
+        assertThat(investService.getPortfolios().size).isEqualTo(0)
+    }
+
+    @Test
+    fun targets() {
+        val test = investService.createPortfolio(PortfolioForm(name = "test"))
+
+        investService.saveTargets(portfolioId = test, type = TargetType.CURRENCY,
+                data = mapOf("RUB" to 50, "USD" to  50))
+        investService.getTargets(portfolioId = test, type = TargetType.CURRENCY).forEach {
+            when (Currency.valueOf(it.ticker)) {
+                RUB -> assertThat(it.totalTargetProportion).isEqualTo(percent(50))
+                USD -> assertThat(it.totalTargetProportion).isEqualTo(percent(50))
+                EUR -> assertThat(it.totalTargetProportion).isNull()
+            }
+        }
+        investService.saveTargets(portfolioId = test, type = TargetType.CURRENCY,
+                data = mapOf("RUB" to 50, "USD" to  50, "EUR" to 10))
+        investService.getTargets(portfolioId = test, type = TargetType.CURRENCY).forEach {
+            when (Currency.valueOf(it.ticker)) {
+                RUB -> assertThat(it.totalTargetProportion).isEqualTo(percent(45))
+                USD -> assertThat(it.totalTargetProportion).isEqualTo(percent(45))
+                EUR -> assertThat(it.totalTargetProportion).isEqualTo(percent(10))
             }
         }
 

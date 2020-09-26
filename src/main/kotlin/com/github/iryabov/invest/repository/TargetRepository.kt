@@ -145,7 +145,7 @@ where t.portfolio_id = :portfolio_id
                                           ticker: String,
                                           type: TargetType): Optional<Target>
 
-    fun findByPortfolioIdAndType(portfolioId: Int, type: TargetType): List<Target>
+    fun findAllByPortfolioIdAndType(portfolioId: Int, type: TargetType): List<Target>
 
 
 }

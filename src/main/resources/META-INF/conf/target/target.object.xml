@@ -36,6 +36,9 @@
                 <field id="type" mapping="[1]" normalize="T(com.github.iryabov.invest.relation.TargetType).valueOf(#this)"/>
                 <field id="data" mapping="[2]"/>
             </in>
+            <out>
+                <field id="data" mapping="#this"/>
+            </out>
         </operation>
     </operations>
 </object>

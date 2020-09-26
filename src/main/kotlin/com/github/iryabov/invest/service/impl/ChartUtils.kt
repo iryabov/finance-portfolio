@@ -2,7 +2,10 @@ package com.github.iryabov.invest.service.impl
 
 import java.math.BigDecimal
 import java.time.LocalDate
+import java.util.*
 import java.util.stream.Collectors
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 /**
  * The list is evenly filled with dates by period
@@ -43,4 +46,19 @@ fun split(from: LocalDate, till: LocalDate,
 
 fun Pair<LocalDate, LocalDate>.contains(date: LocalDate): Boolean {
     return date >= this.first && date < this.second
+}
+
+fun normalizeProportions(map: Map<String, BigDecimal>, vararg locks: String): Map<String, BigDecimal> {
+    val excess = map.values.sumByBigDecimal { it } - P100
+    if (excess.lessOrEq(P0))
+        return emptyMap()
+    val result = HashMap(map)
+    locks.forEach { result.remove(it) }
+    result.filter { it.value.isZero() }.forEach { result.remove(it.key) }
+    val balance = result.values.sumByBigDecimal { it }
+    val minus = (balance - excess) * P100 / balance
+    result.forEach {
+        result[it.key] = it.value * minus / P100
+    }
+    return result
 }

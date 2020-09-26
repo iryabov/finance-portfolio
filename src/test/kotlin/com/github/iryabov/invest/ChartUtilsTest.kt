@@ -1,6 +1,10 @@
 package com.github.iryabov.invest
 
 import com.github.iryabov.invest.service.impl.fillChart
+import com.github.iryabov.invest.service.impl.money
+import com.github.iryabov.invest.service.impl.normalizeProportions
+import com.github.iryabov.invest.service.impl.percent
+import org.assertj.core.api.Assert
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -68,6 +72,21 @@ class ChartUtilsTest {
         assertThat(chart[5].quantity).isEqualTo(3)
         assertThat(chart[6].date).isEqualTo(LocalDate.of(2020, 7, 7))
         assertThat(chart[6].quantity).isEqualTo(4)
+    }
+
+    @Test
+    fun normalizeProportion() {
+        val result = normalizeProportions(mapOf(
+                "a" to percent(25),
+                "b" to percent(25),
+                "c" to percent(10),
+                "d" to percent(50),
+                "e" to percent(0)), "d")
+        assertThat(result["d"]).isNull()
+        assertThat(result["e"]).isNull()
+        assertThat(result["a"]).isEqualTo(percent(21))
+        assertThat(result["b"]).isEqualTo(percent(21))
+        assertThat(result["c"]).isEqualTo(percent(8))
     }
 }
 

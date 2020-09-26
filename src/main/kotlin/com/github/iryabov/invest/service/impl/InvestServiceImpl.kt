@@ -236,7 +236,7 @@ class InvestServiceImpl(
 
     override fun getTargets(currency: Currency, portfolioId: Int, type: TargetType): List<TargetView> {
         val assets = targetRepo.findAllAssetsViews(portfolioId, currency)
-        val proportions = targetRepo.findByPortfolioIdAndType(portfolioId, type).groupBy { it.ticker }
+        val proportions = targetRepo.findAllByPortfolioIdAndType(portfolioId, type).groupBy { it.ticker }
                 .mapValues { if (it.value.isEmpty()) null else it.value[0].proportion }
         val targets = if (type == TargetType.ASSET) {
             assets.map { TargetView(type = type, ticker = it.assetTicker, assets = Collections.singletonList(it)) }
@@ -268,22 +268,41 @@ class InvestServiceImpl(
     }
 
     override fun saveTarget(portfolioId: Int, type: TargetType, ticker: String, proportion: Int): Int {
-        val target = targetRepo.findByPortfolioIdAndTickerAndType(portfolioId, ticker, type)
-                .orElse(Target(portfolioId = portfolioId, type = type, ticker = ticker))
+        val targets = targetRepo.findAllByPortfolioIdAndType(portfolioId, type)
+        val map = targets.groupBy { it.ticker }.mapValues { it.value[0] }
+        val target = map[ticker] ?: Target(portfolioId = portfolioId, type = type, ticker = ticker)
         target.proportion = proportion.toBigDecimal()
         val saved = targetRepo.save(target)
+        normalizeProportions(map.mapValues { it.value.proportion ?: P0 }, ticker).forEach {
+            val other = map[it.key]
+            if (other != null) {
+                other.proportion = it.value
+                targetRepo.save(other)
+            }
+        }
         return saved.id!!
     }
 
     override fun saveTargets(portfolioId: Int, type: TargetType, data: Map<String, Int>): Map<String, Int> {
-        val targets = targetRepo.findByPortfolioIdAndType(portfolioId, type).groupBy { it.ticker }
-        data.entries.forEach {
-            targetRepo.save(Target(
-                        id = targets[it.key]?.get(0)?.id,
+        val targets = targetRepo.findAllByPortfolioIdAndType(portfolioId, type).groupBy { it.ticker }.mapValues { it.value[0] }
+        val locks = ArrayList<String>()
+        data.forEach {
+            if ((targets[it.key]?.proportion ?: P0).notEq(it.value)) {
+                targetRepo.save(Target(
+                        id = targets[it.key]?.id,
                         portfolioId = portfolioId,
                         type = type,
                         ticker = it.key,
                         proportion = it.value.toBigDecimal()))
+                locks.add(it.key)
+            }
+        }
+        normalizeProportions(data.mapValues { it.value.toBigDecimal() }, *locks.toTypedArray()).forEach {
+            val other = targets[it.key]
+            if (other != null) {
+                other.proportion = it.value
+                targetRepo.save(other)
+            }
         }
         return data
     }
@@ -322,7 +341,7 @@ class InvestServiceImpl(
     }
 
     override fun getTargetProportions(portfolioId: Int, type: TargetType): List<ChartView> {
-        return targetRepo.findByPortfolioIdAndType(portfolioId, type).map {
+        return targetRepo.findAllByPortfolioIdAndType(portfolioId, type).map {
             ChartView(name = it.ticker, value = it.proportion ?: P0)
         }
     }
