@@ -37,6 +37,8 @@
                     <option id="BOND" name="Bonds"/>
                     <option id="CACHE" name="Cache"/>
                     <option id="DEPOSIT" name="Deposit"/>
+                    <option id="COMMODITY" name="Commodity"/>
+                    <option id="GOLD" name="Gold"/>
                 </options>
             </select>
             <select id="sector" label="Sector">
@@ -61,10 +63,10 @@
                     <option id="RUSSIA" name="Russia"/>
                     <option id="USA" name="USA"/>
                     <option id="CHINA" name="China"/>
-                    <option id="GERMANY" name="Germany"/>
-                    <option id="JAPAN" name="Japan"/>
-                    <option id="UK" name="UK"/>
                     <option id="EUROPE" name="Europe"/>
+                    <option id="JAPAN" name="Japan"/>
+                    <option id="GERMANY" name="Germany"/>
+                    <option id="WORLD" name="World"/>
                 </options>
             </select>
             <select id="api" label="API">

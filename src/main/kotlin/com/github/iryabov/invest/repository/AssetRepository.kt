@@ -16,7 +16,7 @@ interface AssetRepository: PagingAndSortingRepository<Asset, String> {
     @Query("""
 select *
 from asset s                
-where not exists (select t.id from target t where t.portfolio_id = :portfolio_id and t.ticker = s.ticker)
+where not exists (select t.id from target t where t.portfolio_id = :portfolio_id and t.ticker = s.ticker and t.type = 'ASSET')
   and (:class is null or s.class = :class)
   and (:sector is null or s.sector = :sector)
   and (:country is null or s.country = :country)
