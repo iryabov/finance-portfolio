@@ -30,7 +30,7 @@
         <region>
             <form id="portfolio" object-id="portfolio" default-values-query-id="portfolios" route="/" upload="defaults">
                 <fields>
-                    <set field-label-location="left" field-label-align="left" field-label-width="100px">
+                    <set field-label-location="left" field-label-align="right" field-label-width="100px">
                         <row>
                             <col>
                                 <output-text id="totalMarketValue" label="Market value" format="number 0,0.00"/>

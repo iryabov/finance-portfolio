@@ -96,7 +96,7 @@ left join (
              else 0 end
             ) as sold_quantity
         from dial d
-        where (:ticker is null or d.ticker = :ticker)
+        where d.active = true
         union 
         select 
             d.id,
@@ -128,7 +128,7 @@ left join (
           and d.ticker != d.currency
         ) d  
     where (:ticker is null or d.ticker = :ticker)
-    group by d.ticker    
+    group by d.ticker   
 ) a on a.asset_ticker = t.ticker
 where t.portfolio_id = :portfolio_id
   and t.type = 'ASSET'

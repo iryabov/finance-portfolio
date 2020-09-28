@@ -239,14 +239,14 @@ class InvestServiceImpl(
         val proportions = targetRepo.findAllByPortfolioIdAndType(portfolioId, type).groupBy { it.ticker }
                 .mapValues { if (it.value.isEmpty()) null else it.value[0].proportion }
         val targets = if (type == TargetType.ASSET) {
-            assets.map { TargetView(type = type, ticker = it.assetTicker, assets = Collections.singletonList(it)) }
+            assets.map { TargetView(type = type, ticker = it.assetTicker, name = it.assetName, assets = Collections.singletonList(it)) }
         } else {
-            type.enumValues().map { TargetView(type = type, ticker = it, assets = assets.filter { a -> a.typeOf(type) == it }) }
+            type.enumValues().map { TargetView(type = type, ticker = it, name = it, assets = assets.filter { a -> a.typeOf(type) == it }) }
         }
         targets.forEach {
             it.calcAssets(it.assets)
             it.calcProportion(it.assets)
-            it.assets = it.assets.sortedByDescending { a -> a.marketProportion }
+            it.assets = it.assets.sortedByDescending { a -> a.marketValue }
             it.totalTargetProportion = proportions[it.ticker]
         }
         val totalNetValue = targets.sumByBigDecimal { it.totalNetValue }
@@ -254,7 +254,7 @@ class InvestServiceImpl(
         targets.forEach {
             it.calcProportion(totalNetValue, totalMarketValue)
         }
-        return targets.sortedByDescending { it.totalMarketProportion }
+        return targets.sortedByDescending { it.totalMarketValue }
     }
 
     override fun getTarget(currency: Currency, portfolioId: Int, ticker: String): AssetView {
@@ -388,13 +388,12 @@ private fun <T : ValueView> ValueView.calcTotal(items: List<T>) {
 
 private fun ValueView.calcAssets(assets: List<AssetView>) {
     assets.forEach { a -> a.calc() }
-    val activeAssets = assets.filter { it.active }
-    totalNetValue = activeAssets.sumByBigDecimal { a -> a.netValue }
-    totalDeposit = activeAssets.sumByBigDecimal { a -> a.deposit }
-    totalWithdrawals = activeAssets.sumByBigDecimal { a -> a.withdrawals }
-    totalExpenses = activeAssets.sumByBigDecimal { a -> a.expenses }
-    totalProceeds = activeAssets.sumByBigDecimal { a -> a.proceeds }
-    totalMarketValue = activeAssets.sumByBigDecimal { a -> a.marketValue }
+    totalNetValue = assets.sumByBigDecimal { a -> a.netValue }
+    totalDeposit = assets.sumByBigDecimal { a -> a.deposit }
+    totalWithdrawals = assets.sumByBigDecimal { a -> a.withdrawals }
+    totalExpenses = assets.sumByBigDecimal { a -> a.expenses }
+    totalProceeds = assets.sumByBigDecimal { a -> a.proceeds }
+    totalMarketValue = assets.sumByBigDecimal { a -> a.marketValue }
 
     totalValueProfit = totalMarketValue - totalNetValue
     totalDepositValueProfitPercent = calcProfitPercent(totalMarketValue, totalNetValue)
@@ -405,15 +404,14 @@ private fun ValueView.calcAssets(assets: List<AssetView>) {
     totalDepositMarketProfitPercent = calcProfitPercent(totalDeposit + totalMarketProfit, totalDeposit)
     totalDepositMarketProfitPercent = calcPercent(totalMarketValue + (totalProceeds - totalExpenses), totalNetValue)
 
-    totalTargetProportion = activeAssets.sumByBigDecimal { a -> a.targetProportion }
+    totalTargetProportion = assets.sumByBigDecimal { a -> a.targetProportion }
 }
 
 private fun ValueView.calcProportion(assets: List<AssetView>) {
-    val activeAssets = assets.filter { it.active }
-    activeAssets.forEach { a -> a.calcProportion(totalNetValue, totalMarketValue) }
-    assert(activeAssets.sumByBigDecimal { a -> a.netProportion }.eqOr(P100, P0))
-    assert(activeAssets.sumByBigDecimal { a -> a.marketProportion }.eqOr(P100, P0))
-    assert(activeAssets.sumByBigDecimal { a -> a.marketProfitProportion }.eqOr(P0, P0))
+    assets.forEach { a -> a.calcProportion(totalNetValue, totalMarketValue) }
+    assert(assets.sumByBigDecimal { a -> a.netProportion }.eqOr(P100, P0))
+    assert(assets.sumByBigDecimal { a -> a.marketProportion }.eqOr(P100, P0))
+    assert(assets.sumByBigDecimal { a -> a.marketProfitProportion }.eqOr(P0, P0))
 }
 
 private fun ValueView.calcProportion(totalNetValue: BigDecimal, totalMarketValue: BigDecimal) {
@@ -422,8 +420,8 @@ private fun ValueView.calcProportion(totalNetValue: BigDecimal, totalMarketValue
 }
 
 private fun AccountView.calcCurrencies() {
-    currencies = assets.filter { it.assetTicker.isCurrency() }.sortedByDescending { it.marketProportion }
-    securities = assets.filter { !it.assetTicker.isCurrency() }.sortedByDescending { it.marketProportion }
+    currencies = assets.filter { it.assetTicker.isCurrency() }.sortedByDescending { it.marketValue }
+    securities = assets.filter { !it.assetTicker.isCurrency() }.sortedByDescending { it.marketValue }
 }
 
 private fun AssetView.calc() {
@@ -575,7 +573,7 @@ private fun Portfolio.toView(assets: List<AssetView>): PortfolioView {
     view.assets = assets
     view.calcAssets(view.assets)
     view.calcProportion(view.assets)
-    view.assets = view.assets.sortedByDescending { it.marketProportion }
+    view.assets = view.assets.sortedByDescending { it.marketValue }
     return view
 }
 

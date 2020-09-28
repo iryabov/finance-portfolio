@@ -2,10 +2,7 @@ package com.github.iryabov.invest.ui
 
 import com.github.iryabov.invest.model.AssetView
 import com.github.iryabov.invest.model.ChartView
-import com.github.iryabov.invest.service.impl.color
-import com.github.iryabov.invest.service.impl.percentFormat
-import com.github.iryabov.invest.service.impl.profitFormat
-import com.github.iryabov.invest.service.impl.profitPercentFormat
+import com.github.iryabov.invest.service.impl.*
 import net.n2oapp.criteria.dataset.DataSet
 
 fun serializeAssets(assets: List<AssetView>): List<DataSet> {
@@ -13,7 +10,7 @@ fun serializeAssets(assets: List<AssetView>): List<DataSet> {
         val map = DataSet()
         map["id"] = asset.assetTicker
         map["asset.ticker"] = asset.assetTicker
-        map["name"] = asset.assetName
+        map["name"] = fullName(asset.assetName, asset.assetTicker)
         map["quantity"] = asset.quantity
         map["netValue"] = asset.netValue
         map["marketValue"] = asset.marketValue

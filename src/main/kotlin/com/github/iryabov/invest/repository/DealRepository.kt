@@ -47,6 +47,9 @@ select
     a.asset_ticker,
     s.name as asset_name,
     s.class as asset_class,
+    s.sector as asset_sector,
+    s.country as asset_country,
+    s.currency as asset_currency,
     (case when s.currency = :currency then s.price_now
      else coalesce(
         (select r.price
