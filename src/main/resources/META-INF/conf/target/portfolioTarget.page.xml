@@ -12,6 +12,19 @@
                     <slider id="data.CACHE" label="Caches" max="100"/>
                     <slider id="data.GOLD" label="Gold" max="100"/>
                     <slider id="data.DEPOSIT" label="Deposits" max="100"/>
+                    <output-text id="other" label="Other">
+                        <dependencies>
+                            <set-value on="data" >
+                                var sum = 0;
+                                for( var el in data ) {
+                                if( data.hasOwnProperty( el ) ) {
+                                sum += parseFloat( obj[el] );
+                                }
+                                }
+                                return sum;
+                            </set-value>
+                        </dependencies>
+                    </output-text>
                 </fields>
                 <pre-filters>
                     <eq field-id="portfolioId" param="portfolio_id"/>
@@ -29,6 +42,20 @@
                     <slider id="data.RUSSIA" label="Russia" max="100"/>
                     <slider id="data.CHINA" label="China" max="100"/>
                     <slider id="data.EUROPE" label="Europe" max="100"/>
+                    <slider id="data.WORLD" label="World" max="100"/>
+                    <output-text id="other" label="Other">
+                        <dependencies>
+                            <set-value on="data" >
+                                var sum = 0;
+                                for( var el in data ) {
+                                if( data.hasOwnProperty( el ) ) {
+                                sum += parseFloat( obj[el] );
+                                }
+                                }
+                                return sum;
+                            </set-value>
+                        </dependencies>
+                    </output-text>
                 </fields>
                 <pre-filters>
                     <eq field-id="portfolioId" param="portfolio_id"/>
@@ -57,6 +84,19 @@
                     <slider id="data.TOURISM" label="Tourism" max="100"/>
                     <slider id="data.HEALTH" label="Health" max="100"/>
                     <slider id="data.GOLD" label="Gold" max="100"/>
+                    <output-text id="other" label="Other">
+                        <dependencies>
+                            <set-value on="data" >
+                                var sum = 0;
+                                for( var el in data ) {
+                                    if( data.hasOwnProperty( el ) ) {
+                                        sum += parseFloat( obj[el] );
+                                    }
+                                }
+                                return sum;
+                            </set-value>
+                        </dependencies>
+                    </output-text>
                 </fields>
                 <pre-filters>
                     <eq field-id="portfolioId" param="portfolio_id"/>
@@ -73,6 +113,19 @@
                     <slider id="data.USD" label="Dollar" max="100"/>
                     <slider id="data.EUR" label="Euro" max="100"/>
                     <slider id="data.RUB" label="Ruble" max="100"/>
+                    <output-text id="other" label="Other">
+                        <dependencies>
+                            <set-value on="data" >
+                                var sum = 0;
+                                for( var el in data ) {
+                                if( data.hasOwnProperty( el ) ) {
+                                sum += parseFloat( obj[el] );
+                                }
+                                }
+                                return sum;
+                            </set-value>
+                        </dependencies>
+                    </output-text>
                 </fields>
                 <pre-filters>
                     <eq field-id="portfolioId" param="portfolio_id"/>

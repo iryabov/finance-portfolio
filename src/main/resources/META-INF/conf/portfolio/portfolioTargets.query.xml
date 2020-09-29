@@ -79,10 +79,12 @@
             <select mapping="totalTargetProportion" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).percentFormat(#this)"/>
         </field>
         <field id="targetDeviationPercent">
-            <select mapping="(totalTargetProportion != null ? totalTargetProportion : 0) - totalMarketProportion" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).percentFormat(#this)"/>
+            <select mapping="totalTargetProportion != null ? totalTargetProportion - totalMarketProportion : null"
+                    normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).percentFormat(#this)"/>
         </field>
         <field id="targetDeviationColor">
-            <select mapping="(totalTargetProportion != null ? totalTargetProportion : 0) - totalMarketProportion" normalize="#this > 0 ? 'success' : 'danger'"/>/>
+            <select mapping="(totalTargetProportion != null ? totalTargetProportion : 0) - totalMarketProportion"
+                    normalize="#this > 0 ? 'success' : 'danger'"/>/>
         </field>
         <field id="assetActive" domain="boolean">
             <select mapping="assets.size() > 0"/>

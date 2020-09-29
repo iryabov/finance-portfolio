@@ -236,7 +236,9 @@ class InvestServiceImpl(
 
     override fun getTargets(currency: Currency, portfolioId: Int, type: TargetType): List<TargetView> {
         val assets = targetRepo.findAllAssetsViews(portfolioId, currency)
-        val proportions = targetRepo.findAllByPortfolioIdAndType(portfolioId, type).groupBy { it.ticker }
+        val proportions = targetRepo.findAllByPortfolioIdAndType(portfolioId, type)
+                .filter { it.proportion?.greater(P0) ?: false }
+                .groupBy { it.ticker }
                 .mapValues { if (it.value.isEmpty()) null else it.value[0].proportion }
         val targets = if (type == TargetType.ASSET) {
             assets.map { TargetView(type = type, ticker = it.assetTicker, name = it.assetName, assets = Collections.singletonList(it)) }
@@ -437,8 +439,8 @@ private fun AssetView.calcProportion(totalNetValue: BigDecimal, totalMarketValue
     marketProportion = calcPercent(marketValue, totalMarketValue).round()
     marketProfitProportion = marketProportion - netProportion
     val targetValue = calcValue(totalMarketValue, targetProportion)
-    targetDeviation = marketValue - targetValue
-    targetDeviationPercent = targetProportion - marketProportion
+    targetDeviation = if (targetProportion.greater(P0)) marketValue - targetValue else null
+    targetDeviationPercent = if (targetProportion.greater(P0)) targetProportion - marketProportion else null
 }
 
 private fun DealForm.toEntityWith(accountId: Int): Deal {

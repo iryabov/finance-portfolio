@@ -74,6 +74,10 @@ fun BigDecimal.eq(other: BigDecimal, scale: Int = 0): Boolean {
     return this.setScale(scale, RoundingMode.HALF_UP).compareTo(other.setScale(scale, RoundingMode.HALF_UP)) == 0
 }
 
+fun BigDecimal.notEq(other: BigDecimal, scale: Int = 0): Boolean {
+    return !eq(other, scale)
+}
+
 fun BigDecimal.eqOr(first: BigDecimal, second: BigDecimal, scale: Int = 0): Boolean {
     val self = this.setScale(scale, RoundingMode.HALF_UP)
     return self.compareTo(first.setScale(scale, RoundingMode.HALF_UP)) == 0 ||
