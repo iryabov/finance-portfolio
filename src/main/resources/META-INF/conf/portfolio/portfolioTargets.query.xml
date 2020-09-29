@@ -43,7 +43,7 @@
             <select mapping="name" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).fullName(#this, #data['asset.ticker'])"/>
         </field>
         <field id="quantity">
-            <select mapping="assets.size()"/>
+            <select mapping="quantity"/>
         </field>
         <field id="netValue">
             <select mapping="totalNetValue"/>
@@ -87,7 +87,7 @@
                     normalize="#this > 0 ? 'success' : 'danger'"/>/>
         </field>
         <field id="assetActive" domain="boolean">
-            <select mapping="assets.size() > 0"/>
+            <select mapping="quantity > 0"/>
         </field>
         <field id="children" domain="object[]"><!-- todo <list id="children" mapping="assets"> ... </list> -->
             <select mapping="assets" normalize="T(com.github.iryabov.invest.ui.UiUtilsKt).serializeAssets(#this)"/>

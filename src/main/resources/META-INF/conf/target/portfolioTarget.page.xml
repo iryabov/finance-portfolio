@@ -16,9 +16,9 @@
                         <dependencies>
                             <set-value on="data" >
                                 var sum = 0;
-                                for( var el in data ) {
-                                if( data.hasOwnProperty( el ) ) {
-                                sum += parseFloat( obj[el] );
+                                for (var el in data) {
+                                if (data.hasOwnProperty(el)) {
+                                sum += data[el];
                                 }
                                 }
                                 return sum;
@@ -47,10 +47,10 @@
                         <dependencies>
                             <set-value on="data" >
                                 var sum = 0;
-                                for( var el in data ) {
-                                if( data.hasOwnProperty( el ) ) {
-                                sum += parseFloat( obj[el] );
-                                }
+                                for (var el in data) {
+                                    if (data.hasOwnProperty(el)) {
+                                        sum += data[el];
+                                    }
                                 }
                                 return sum;
                             </set-value>
@@ -88,10 +88,10 @@
                         <dependencies>
                             <set-value on="data" >
                                 var sum = 0;
-                                for( var el in data ) {
-                                    if( data.hasOwnProperty( el ) ) {
-                                        sum += parseFloat( obj[el] );
-                                    }
+                                for (var el in data) {
+                                if (data.hasOwnProperty(el)) {
+                                sum += data[el];
+                                }
                                 }
                                 return sum;
                             </set-value>
@@ -117,9 +117,9 @@
                         <dependencies>
                             <set-value on="data" >
                                 var sum = 0;
-                                for( var el in data ) {
-                                if( data.hasOwnProperty( el ) ) {
-                                sum += parseFloat( obj[el] );
+                                for (var el in data) {
+                                if (data.hasOwnProperty(el)) {
+                                sum += data[el];
                                 }
                                 }
                                 return sum;

@@ -7,4 +7,7 @@ data class TargetView(
         val ticker: String,
         val name: String?,
         var assets: List<AssetView>
-): ValueView()
+): ValueView() {
+    val quantity: Int
+        get() = assets.filter { it.quantity > 0 }.count()
+}
