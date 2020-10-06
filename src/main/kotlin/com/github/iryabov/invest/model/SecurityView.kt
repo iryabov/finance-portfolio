@@ -28,3 +28,9 @@ data class SecurityHistoryView(
         val date: LocalDate,
         val price: BigDecimal
 )
+
+data class SecuritiesHistoryView(
+        val date: LocalDate,
+        val ticker: String,
+        val price: BigDecimal
+)

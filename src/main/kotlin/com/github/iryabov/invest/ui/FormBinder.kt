@@ -7,7 +7,7 @@ import net.n2oapp.framework.api.metadata.meta.widget.form.Form
 import net.n2oapp.framework.config.metadata.compile.BaseMetadataBinder
 import org.springframework.stereotype.Component
 
-@Component
+//@Component todo remove class
 class FormBinder: BaseMetadataBinder<Form> {
     override fun bind(form: Form, p: BindProcessor): Form {
         if (form.formDataProvider != null) {

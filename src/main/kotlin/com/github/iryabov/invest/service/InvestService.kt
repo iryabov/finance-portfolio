@@ -52,6 +52,10 @@ interface InvestService {
     //todo (portfolioId: Int, currency: Currency = Currency.RUB)
     fun getPortfolio(currency: Currency = Currency.RUB, portfolioId: Int): PortfolioView
 
+    fun getPortfolioHistory(portfolioId: Int,
+                            period: Period = Period.FIVE_YEARS,
+                            currency: Currency = Currency.RUB): List<TargetHistoryView>
+
     fun createPortfolio(form: PortfolioForm): Int
 
     fun deletePortfolio(id: Int)

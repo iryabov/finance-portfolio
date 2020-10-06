@@ -46,10 +46,22 @@ fun notZero(a: BigDecimal, b: BigDecimal): BigDecimal {
     }
 }
 
+fun maxStrong(a: Int, b: Int): Int {
+    return kotlin.math.max(a, b)
+}
+
 fun max(a: BigDecimal?, b: BigDecimal?): BigDecimal? {
     return when {
         a?.greater(b ?: P0) ?: false -> a
         b?.greater(a ?: P0) ?: false -> b
+        else -> a
+    }
+}
+
+fun maxStrong(a: BigDecimal, b: BigDecimal): BigDecimal {
+    return when {
+        a.greater(b) -> a
+        b.greater(a) -> b
         else -> a
     }
 }
@@ -60,6 +72,14 @@ fun maxAbs(a: Int, b: Int): Int {
         abs(a) < abs(b) -> b
         else -> a
     }
+}
+
+fun avg(a: Int, b: Int): Int {
+    return (a + b) / 2
+}
+
+fun avg(a: BigDecimal, b: BigDecimal): BigDecimal {
+    return (a + b) / BigDecimal(2)
 }
 
 fun BigDecimal?.notZero(): Boolean {
