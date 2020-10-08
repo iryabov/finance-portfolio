@@ -8,19 +8,6 @@ data class TargetHistoryView(
         val date: LocalDate,
         var netValue: BigDecimal = P0,
         var marketValue: BigDecimal = P0,
-        var dividendValue: BigDecimal = P0,
-        var assets: List<CumulativeAssetHistoryView>
-)
-
-data class CumulativeAssetHistoryView(
-        val date: LocalDate,
-        val ticker: String,
-        val quantity: Int = 0,
-        val netValue: BigDecimal = P0,
-        val profit: BigDecimal = P0
-)
-
-data class TargetSecurityHistoryView(
-        val date: LocalDate,
-        val securities: List<SecuritiesHistoryView>
+        var profitValue: BigDecimal = P0,
+        var quantity: Int = 0
 )

@@ -7,9 +7,16 @@
                 <open-page page-id="portfolioAssetsAdd" route="/add"/>
             </button>
         </group>
-        <button id="viewStatistic" label="Analytics" widget-id="portfolio" icon="fa fa-pie-chart" type="icon">
-            <open-page page-id="portfolioAnalytics" route="/analytics"/>
-        </button>
+        <group>
+            <button id="viewStatistic" label="Analytics" widget-id="portfolio" icon="fa fa-pie-chart" type="icon">
+                <open-page page-id="portfolioAnalytics" route="/analytics"/>
+            </button>
+        </group>
+        <group>
+            <button id="viewHistory" label="History" widget-id="portfolio" icon="fa fa-line-chart" type="icon">
+                <open-page page-id="portfolioHistory" route="/history"/>
+            </button>
+        </group>
     </toolbar>
     <toolbar place="topRight">
         <group>

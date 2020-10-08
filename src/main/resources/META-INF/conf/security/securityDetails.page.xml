@@ -34,7 +34,6 @@
                     </row>
                     <row>
                         <radio-group id="period" label="Period" param="period" inline="true">
-                            <default-value id="FIVE_YEARS"/>
                             <options>
                                 <option id="WEEK" name="Week"/>
                                 <option id="MONTH" name="Month"/>

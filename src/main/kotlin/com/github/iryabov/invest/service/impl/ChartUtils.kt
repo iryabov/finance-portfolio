@@ -2,6 +2,8 @@ package com.github.iryabov.invest.service.impl
 
 import java.math.BigDecimal
 import java.time.LocalDate
+import java.time.Period
+import java.time.temporal.ChronoUnit
 import java.util.*
 import java.util.stream.Collectors
 import kotlin.collections.ArrayList
@@ -14,7 +16,7 @@ fun <T> fillChart(history: List<T>, fromDate: LocalDate, tillDate: LocalDate,
                   step: java.time.Period,
                   extractor: (T) -> LocalDate,
                   constructor: (LocalDate, T?) -> T,
-                  aggregator: (T, T) -> T = { a, b -> b }): List<T> {
+                  aggregator: (T, T) -> T = { a, b -> b }, normalizer: (T) -> T = { t -> t } ): List<T> {
     val result = ArrayList<T>()
     val intervals = split(fromDate, tillDate, step)
     val historyCopy = ArrayList(history)
@@ -22,10 +24,10 @@ fun <T> fillChart(history: List<T>, fromDate: LocalDate, tillDate: LocalDate,
         val list = historyCopy.filter { pair.contains(extractor(it)) }
         if (list.isNotEmpty()) {
             val t = list.reduce { a, b -> aggregator(a, b) }
-            result.add(t)
+            result.add(normalizer.invoke(t))
             historyCopy.removeAll(list)
         } else {
-            result.add(constructor(pair.first, if (result.isNotEmpty()) result.last() else null))
+            result.add(normalizer.invoke(constructor(pair.first, if (result.isNotEmpty()) result.last() else null)))
         }
     }
     return result

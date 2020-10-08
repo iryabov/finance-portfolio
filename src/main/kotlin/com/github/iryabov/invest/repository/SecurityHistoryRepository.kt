@@ -53,8 +53,8 @@ interface SecurityHistoryRepository : CrudRepository<SecurityHistory, Long> {
 
     @Query("""
 select 
-    h.dt, 
-    a.ticker, 
+    h.dt as date, 
+    a.ticker as ticker, 
     (case when a.currency = :currency then h.price
      else coalesce(r.price * h.price, 0) 
      end) as price
@@ -64,7 +64,7 @@ join target t on t.ticker = a.ticker
 left join rate r on r.dt = h.dt and r.currency_purchase = a.currency and r.currency_sale = :currency
 where t.type = 'ASSET'
   and t.portfolio_id = :portfolio_id
-  and (:from is null or h.dt >= :from) and (:till is null or h.dt <= :till) 
+  and (:from::date is null or h.dt >= :from::date) and (:till::date is null or h.dt <= :till::date) 
 order by h.dt
     """)
     fun findAllHistoryByPortfolioId(@Param("portfolio_id") portfolioId: Int,

@@ -207,25 +207,17 @@ class InvestServiceImpl(
                                      currency: Currency): List<TargetHistoryView> {
         val from = period.from.invoke()
         val till = LocalDate.now()
-        val assets = targetRepo.findAllCumulativeAssetHistoryViews(portfolioId, currency, null, till)
-                .groupBy { it.date }.map { TargetHistoryView(date = it.key, assets = it.value) }
-        val assetChart = fillChart(assets, from, till, period.step,
+        val assets = targetRepo.findAllTargetHistoryViews(portfolioId, currency, from, till, period.interval)
+        return fillChart(assets, from, till, period.step,
                 { it.date },
-                { d, prev -> TargetHistoryView(date = d, assets = prev?.assets ?: emptyList()) },
-                ::reduce)
-
-        val securities = securityHistoryRepo.findAllHistoryByPortfolioId(portfolioId, currency, from, till)
-                .groupBy { it.date }.map { TargetSecurityHistoryView(date = it.key, securities = it.value) }
-        val securityChart = fillChart(securities, from, till, period.step,
-                { it.date },
-                { d, prev -> TargetSecurityHistoryView(date = d, securities = prev?.securities ?: emptyList()) })
-
-        assetChart.forEachIndexed { i, view ->
-            view.marketValue = view.assets.sumByBigDecimal { it.calcMarketValue(securityChart[i]) }
-            view.netValue = view.assets.sumByBigDecimal { it.netValue }
-            view.dividendValue = view.assets.sumByBigDecimal { it.profit }
-        }
-        return assetChart
+                { d, prev -> TargetHistoryView(
+                        date = d,
+                        netValue = prev?.netValue ?: P0,
+                        marketValue = prev?.marketValue ?: P0,
+                        profitValue = prev?.profitValue ?: P0,
+                        quantity = prev?.quantity ?: 0) },
+                ::reduce,
+                ::round)
     }
 
 
@@ -626,31 +618,16 @@ private fun TargetType.enumValues(): List<String> {
 }
 
 private fun reduce(a: TargetHistoryView, b: TargetHistoryView): TargetHistoryView {
-    val assets = ArrayList<CumulativeAssetHistoryView>()
-    assets.addAll(a.assets)
-    assets.addAll(b.assets)
-    val reducedAssets = assets.groupBy { it.ticker }.mapValues { it.value.reduce { a, b -> reduce(a, b) } }.map { it.value }
-    val result = TargetHistoryView(date = b.date, assets = reducedAssets)
+    val result = TargetHistoryView(date = b.date)
     result.netValue = avg(a.netValue, b.netValue)
     result.marketValue = avg(a.marketValue, b.marketValue)
-    result.dividendValue = avg(a.dividendValue, b.dividendValue)
+    result.profitValue = avg(a.profitValue, b.profitValue)
     return result
 }
 
-private fun reduce(a: CumulativeAssetHistoryView, b: CumulativeAssetHistoryView): CumulativeAssetHistoryView {
-    return CumulativeAssetHistoryView(
-            date = b.date,
-            ticker = b.ticker,
-            quantity = maxStrong(a.quantity, b.quantity),
-            netValue = maxStrong(a.netValue, b.netValue),
-            profit = maxStrong(a.profit, b.profit))
-}
-
-private fun CumulativeAssetHistoryView.calcMarketValue(prices: TargetSecurityHistoryView): BigDecimal {
-    val security = prices.securities.find { it.ticker == this.ticker }
-    return if (security != null) {
-        BigDecimal(this.quantity) * security.price
-    } else {
-        this.netValue
-    }
+private fun round(target: TargetHistoryView): TargetHistoryView {
+    target.netValue = target.netValue.round(0)
+    target.profitValue = target.profitValue.round(0)
+    target.marketValue = target.marketValue.round(0)
+    return target
 }

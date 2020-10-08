@@ -1,10 +1,8 @@
 package com.github.iryabov.invest
 
 import com.github.iryabov.invest.service.impl.fillChart
-import com.github.iryabov.invest.service.impl.money
 import com.github.iryabov.invest.service.impl.normalizeProportions
 import com.github.iryabov.invest.service.impl.percent
-import org.assertj.core.api.Assert
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDate

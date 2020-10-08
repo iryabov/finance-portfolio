@@ -149,61 +149,70 @@ where t.portfolio_id = :portfolio_id
 
     @Query("""
 select
-    d.dt,
-    d.ticker,
-    max(d.quantity) as quantity,
-    -1 * max(volume) as net_value,
-    max(profit) as profit
-from (    
-    select  
-        d.dt,
-        d.ticker,
-        sum(d.quantity) over (partition by d.ticker order by d.dt, d.id) as quantity,
-        sum(d.volume_cur) over (partition by d.ticker order by d.dt, d.id) as volume,
-        sum(case when d.quantity = 0 then d.volume_cur else 0 end) over (partition by d.ticker order by d.dt, d.id) as profit
-    from (
-        select 
-            d.id,
-            d.ticker as ticker,
-            d.dt as dt,
-            d.type,
-            d.quantity as quantity,
-            (case when d.currency = :currency then d.volume
-             else coalesce((select r.price * d.volume from rate r where  r.dt = d.dt and  r.currency_purchase = d.currency and  r.currency_sale = :currency), 0) 
-             end) as volume_cur
-        from dial d
-        where d.active = true
-          and (:from is null or d.dt >= :from) and (:till is null or d.dt <= :till) 
-        union 
-        select 
-            d.id,
-            d.currency as ticker,
-            d.dt as dt,
-            (case 
-                when d.type = 'SALE' then 'PURCHASE'
-                when d.type = 'PURCHASE' then 'SALE'
-                else d.type
-            end) as type,
-            d.volume as quantity,
-            (case when d.currency = :currency then -1*d.volume
-             else -1*coalesce((select r.price * d.volume from rate r where  r.dt = d.dt and  r.currency_purchase = d.currency and  r.currency_sale = :currency), 0) 
-             end 
-            ) as volume_cur
-        from dial d
-        where d.active = true
-          and d.ticker != d.currency
-          and (:from is null or d.dt >= :from) and (:till is null or d.dt <= :till) 
-    ) d 
-    order by d.dt, d.id
+  d.dt as date,
+  sum(coalesce(d.quantity * price_cur, d.volume)) as market_value,
+  sum(-1*d.volume) as net_value,
+  sum(d.profit) as profit_value,
+  sum(d.quantity) as quantity
+from
+(select 
+  p as dt, 
+  d.ticker,
+  sum(d.quantity) as quantity,
+  sum(d.volume_cur)  as volume,
+  sum(case when d.quantity = 0 then d.volume_cur else 0 end) as profit,
+  (select (case when s.currency = :currency then h.price
+         else coalesce((select r.price * h.price from rate r where  r.dt = h.dt and  r.currency_purchase = s.currency and  r.currency_sale = :currency), 0) 
+         end) as price_cur
+    from asset_history h 
+    join asset s on s.ticker = h.ticker
+    where h.ticker = d.ticker 
+      and h.dt <= p
+    order by h.dt desc
+    limit 1) as price_cur
+from generate_series(:from, :till, interval '1 week') as p
+cross join (
+    select 
+        d.id,
+        d.ticker as ticker,
+        d.dt as dt,
+        d.type,
+        d.quantity as quantity,
+        (case when d.currency = :currency then d.volume
+         else coalesce((select r.price * d.volume from rate r where  r.dt = d.dt and  r.currency_purchase = d.currency and  r.currency_sale = :currency), 0) 
+         end) as volume_cur
+    from dial d
+    where d.active = true
+    union 
+    select 
+        d.id,
+        d.currency as ticker,
+        d.dt as dt,
+        (case 
+            when d.type = 'SALE' then 'PURCHASE'
+            when d.type = 'PURCHASE' then 'SALE'
+            else d.type
+        end) as type,
+        d.volume as quantity,
+        (case when d.currency = :currency then -1*d.volume
+         else -1*coalesce((select r.price * d.volume from rate r where  r.dt = d.dt and  r.currency_purchase = d.currency and  r.currency_sale = :currency), 0) 
+         end 
+        ) as volume_cur
+    from dial d
+    where d.active = true
+      and d.ticker != d.currency
 ) d
 join target t on t.ticker = d.ticker and t.type = 'ASSET'
 where t.portfolio_id = :portfolio_id
-group by d.dt, d.ticker
+  and d.dt <= p
+group by p, d.ticker) d
+group by d.dt
     """)
-    fun findAllCumulativeAssetHistoryViews(@Param("portfolio_id") portfolioId: Int,
-                                           @Param("currency") currency: Currency,
-                                           @Param("from") from: LocalDate?,
-                                           @Param("till") till: LocalDate?): List<CumulativeAssetHistoryView>
+    fun findAllTargetHistoryViews(@Param("portfolio_id") portfolioId: Int,
+                                  @Param("currency") currency: Currency,
+                                  @Param("from") from: LocalDate?,
+                                  @Param("till") till: LocalDate?,
+                                  @Param("step") step: String): List<TargetHistoryView>
 
 
 }
