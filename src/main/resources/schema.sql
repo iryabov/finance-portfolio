@@ -120,3 +120,25 @@ CREATE TABLE IF NOT EXISTS public.target
         REFERENCES public.portfolio (id)
         ON DELETE CASCADE
 );
+
+CREATE OR REPLACE FUNCTION exchange(text, text, date) RETURNS numeric
+AS $$
+    SELECT CASE WHEN $2 = $1 THEN 1
+           ELSE coalesce((SELECT r.price FROM rate r WHERE r.dt = $3 AND r.currency_purchase = $2 AND r.currency_sale = $1),
+                         (SELECT r.price FROM rate r WHERE r.dt <= $3 AND r.currency_purchase = $2 AND r.currency_sale = $1 ORDER BY r.dt DESC LIMIT 1),
+                         0)
+           END
+$$ LANGUAGE SQL;
+
+CREATE INDEX deal_account_id ON dial(account_id);
+CREATE INDEX deal_ticker ON dial(ticker);
+CREATE INDEX deal_dt ON dial(dt);
+CREATE INDEX asset_ticker ON asset(ticker);
+CREATE INDEX asset_history_ticker ON asset_history(ticker);
+CREATE INDEX asset_history_dt ON asset_history(dt);
+CREATE INDEX target_ticker ON target(ticker);
+CREATE INDEX target_type ON target(type);
+CREATE INDEX target_portfolio_id ON target(portfolio_id);
+CREATE INDEX rate_currency_purchase ON rate(currency_purchase);
+CREATE INDEX rate_currency_sale ON rate(currency_sale);
+CREATE INDEX rate_dt ON rate(dt);
