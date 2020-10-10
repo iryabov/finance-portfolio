@@ -39,10 +39,10 @@
             <select mapping="marketValue"/>
         </field>
         <field id="profitValue">
-            <select mapping="netValue"/>
+            <select mapping="profitValue"/>
         </field>
         <field id="netValue">
-            <select mapping="netValue - profitValue"/>
+            <select mapping="netValue"/>
         </field>
     </fields>
 
