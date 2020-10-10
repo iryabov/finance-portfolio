@@ -150,7 +150,7 @@ where t.portfolio_id = :portfolio_id
     @Query("""
 select
   d.dt as date,
-  sum(coalesce(d.quantity * price_cur, d.volume)) as market_value,
+  sum(coalesce(d.quantity * price_cur, -1*d.volume)) as market_value,
   sum(-1*d.volume) as net_value,
   sum(d.profit) as profit_value,
   sum(d.quantity) as quantity
@@ -161,9 +161,7 @@ from
   sum(d.quantity) as quantity,
   sum(d.volume_cur)  as volume,
   sum(case when d.quantity = 0 then d.volume_cur else 0 end) as profit,
-  (select (case when s.currency = :currency then h.price
-         else coalesce((select r.price * h.price from rate r where  r.dt = h.dt and  r.currency_purchase = s.currency and  r.currency_sale = :currency), 0) 
-         end) as price_cur
+  (select h.price * exchange(:currency, s.currency, h.dt)
     from asset_history h 
     join asset s on s.ticker = h.ticker
     where h.ticker = d.ticker 
@@ -178,9 +176,7 @@ cross join (
         d.dt as dt,
         d.type,
         d.quantity as quantity,
-        (case when d.currency = :currency then d.volume
-         else coalesce((select r.price * d.volume from rate r where  r.dt = d.dt and  r.currency_purchase = d.currency and  r.currency_sale = :currency), 0) 
-         end) as volume_cur
+        d.volume * exchange(:currency, d.currency, d.dt) as volume_cur
     from dial d
     where d.active = true
     union 
@@ -194,10 +190,7 @@ cross join (
             else d.type
         end) as type,
         d.volume as quantity,
-        (case when d.currency = :currency then -1*d.volume
-         else -1*coalesce((select r.price * d.volume from rate r where  r.dt = d.dt and  r.currency_purchase = d.currency and  r.currency_sale = :currency), 0) 
-         end 
-        ) as volume_cur
+        (-1 * d.volume * exchange(:currency, d.currency, d.dt)) as volume_cur
     from dial d
     where d.active = true
       and d.ticker != d.currency
