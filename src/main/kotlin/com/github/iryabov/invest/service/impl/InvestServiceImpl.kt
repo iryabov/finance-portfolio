@@ -413,9 +413,9 @@ private fun ValueView.calcAssets(assets: List<AssetView>) {
     totalValueProfit = totalMarketValue - totalNetValue
     totalDepositValueProfitPercent = calcProfitPercent(totalMarketValue, totalNetValue)
     totalFixedProfit = (totalNetValue + totalProceeds) - totalExpenses
-    totalDepositFixedProfitPercent = calcProfitPercent(totalDeposit + totalFixedProfit, totalDeposit)
+    totalDepositFixedProfitPercent = calcProfitPercent(totalNetValue + totalFixedProfit, totalNetValue)
     totalMarketProfit = (totalMarketValue + totalProceeds) - totalExpenses
-    totalDepositMarketProfitPercent = calcProfitPercent(totalDeposit + totalMarketProfit, totalDeposit)
+    totalDepositMarketProfitPercent = calcProfitPercent(totalNetValue + totalMarketProfit, totalNetValue)
 
     totalTargetProportion = assets.sumByBigDecimal { a -> a.targetProportion }
 }

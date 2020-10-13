@@ -21,19 +21,7 @@ class CurrencyRateLoader(
     fun load(from: LocalDate, till: LocalDate) {
         val dates = from.datesUntil(till).collect(Collectors.toList())
         for (date in dates) {
-            val exchange: ExchangeRate by lazy { currenciesClient.findCurrencyByDate(date) }
-            for (currencyPurchased in Currency.values()) {
-                val rates = rateRepo.findByDateAndBase(date, currencyPurchased)
-                for (currencySale in Currency.values().filter { it != currencyPurchased }) {
-                    if (rates.all { it.currencySale != currencySale }) {
-                        rateRepo.save(CurrencyPair(
-                                date = date,
-                                currencyPurchased = currencyPurchased,
-                                currencySale = currencySale,
-                                price = exchange.getPairExchangePrice(currencyPurchased, currencySale)))
-                    }
-                }
-            }
+            addExchangeRate(date)
         }
     }
 

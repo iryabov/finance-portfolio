@@ -130,15 +130,15 @@ AS $$
            END
 $$ LANGUAGE SQL;
 
-CREATE INDEX deal_account_id ON dial(account_id);
-CREATE INDEX deal_ticker ON dial(ticker);
-CREATE INDEX deal_dt ON dial(dt);
-CREATE INDEX asset_ticker ON asset(ticker);
-CREATE INDEX asset_history_ticker ON asset_history(ticker);
-CREATE INDEX asset_history_dt ON asset_history(dt);
-CREATE INDEX target_ticker ON target(ticker);
-CREATE INDEX target_type ON target(type);
-CREATE INDEX target_portfolio_id ON target(portfolio_id);
-CREATE INDEX rate_currency_purchase ON rate(currency_purchase);
-CREATE INDEX rate_currency_sale ON rate(currency_sale);
-CREATE INDEX rate_dt ON rate(dt);
+CREATE INDEX IF NOT EXISTS deal_account_id ON dial(account_id);
+CREATE INDEX IF NOT EXISTS deal_ticker ON dial(ticker);
+CREATE INDEX IF NOT EXISTS deal_dt ON dial(dt);
+CREATE INDEX IF NOT EXISTS asset_ticker ON asset(ticker);
+CREATE INDEX IF NOT EXISTS asset_history_ticker ON asset_history(ticker);
+CREATE INDEX IF NOT EXISTS asset_history_dt ON asset_history(dt);
+CREATE INDEX IF NOT EXISTS target_ticker ON target(ticker);
+CREATE INDEX IF NOT EXISTS target_type ON target(type);
+CREATE INDEX IF NOT EXISTS target_portfolio_id ON target(portfolio_id);
+CREATE INDEX IF NOT EXISTS rate_currency_purchase ON rate(currency_purchase);
+CREATE INDEX IF NOT EXISTS rate_currency_sale ON rate(currency_sale);
+CREATE INDEX IF NOT EXISTS rate_dt ON rate(dt);

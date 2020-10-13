@@ -13,6 +13,8 @@
                     <option id="DEPOSIT" name="Deposit"/>
                     <option id="WITHDRAWALS" name="Withdrawals"/>
                     <option id="DIVIDEND" name="Dividend"/>
+                    <option id="COUPON" name="Coupon"/>
+                    <option id="PERCENT" name="Percent"/>
                     <option id="TAX" name="Tax"/>
                 </options>
             </radio-group>
@@ -23,6 +25,10 @@
             <auto-complete id="asset.id" label="Ticker" param="asset_id"
                            query-id="security" value-field-id="id"
                            search-filter-id="ticker">
+                <dependencies>
+                    <visibility on="type">type.id != 'DEPOSIT'
+                        &amp;&amp; type.id != 'WITHDRAWALS'</visibility>
+                </dependencies>
             </auto-complete>
             
             <radio-group id="currency" label="Currency" required="true" inline="true">
@@ -35,13 +41,17 @@
             </radio-group>
             <set>
                 <input-money id="volume" label="Volume" required="true">
+                    <dependencies>
+                        <visibility on="type">type.id != 'PERCENT'</visibility>
+                    </dependencies>
                 </input-money>
                 <input-text id="quantity" label="Quantity" required="true" domain="integer" min="0">
                     <dependencies>
                         <visibility on="type">type.id != 'DEPOSIT'
                             &amp;&amp; type.id != 'WITHDRAWALS'
                             &amp;&amp; type.id != 'TAX'
-                            &amp;&amp; type.id != 'DIVIDEND'</visibility>
+                            &amp;&amp; type.id != 'DIVIDEND'
+                            &amp;&amp; type.id != 'COUPON'</visibility>
                     </dependencies>
                 </input-text>
                 <output-text id="price" label="Price" format="number 1.0">
@@ -50,16 +60,18 @@
                         <visibility on="type">type.id != 'DEPOSIT'
                             &amp;&amp; type.id != 'WITHDRAWALS'
                             &amp;&amp; type.id != 'TAX'
-                            &amp;&amp; type.id != 'DIVIDEND'</visibility>
+                            &amp;&amp; type.id != 'DIVIDEND'
+                            &amp;&amp; type.id != 'COUPON'
+                            &amp;&amp; type.id != 'PERCENT'</visibility>
                     </dependencies>
                 </output-text>
-                <select id="accountTo" param="account_to" label="Remittance to account" query-id="accounts" label-field-id="name">
+                <select id="accountTo" param="account_to" label="Remittance to account"
+                        query-id="accounts" label-field-id="name">
                     <dependencies>
                         <visibility on="type">type.id == 'DEPOSIT' ||
                             type.id == 'WITHDRAWALS' ||
                             type.id == 'DIVIDEND' ||
-                            type.id == 'COUPON' ||
-                            type.id == 'PERCENT'</visibility>
+                            type.id == 'COUPON'</visibility>
                     </dependencies>
                 </select>
             </set>

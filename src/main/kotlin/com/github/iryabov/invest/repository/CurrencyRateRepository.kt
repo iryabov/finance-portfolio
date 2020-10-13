@@ -13,10 +13,9 @@ interface CurrencyRateRepository : CrudRepository<CurrencyPair, Long> {
     @Query("""
             select r.*
             from rate r
-            where r.dt <= :dt
+            where r.dt = :dt
               and r.currency_purchase = :base
             order by r.dt desc
-            limit 1
             """)
     fun findByDateAndBase(@Param("dt") date: LocalDate,
                           @Param("base") base: Currency): List<CurrencyPair>
