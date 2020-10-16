@@ -9,6 +9,7 @@
                 <lines x-field-id="date" grid-vertical="false"
                        tooltip-separator=" ">
                     <line field-id="netValue" color="#8884d8"/>
+                    <line field-id="balance" color="#ffb300"/>
                     <line field-id="marketValue" color="#00FF00"/>
                     <line field-id="profitValue" color="#FF0000"/>
                 </lines>

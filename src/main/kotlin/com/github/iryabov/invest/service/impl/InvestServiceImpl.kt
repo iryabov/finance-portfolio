@@ -212,6 +212,7 @@ class InvestServiceImpl(
                 { it.date },
                 { d, prev -> TargetHistoryView(
                         date = d,
+                        balance = prev?.balance ?: P0,
                         netValue = prev?.netValue ?: P0,
                         marketValue = prev?.marketValue ?: P0,
                         profitValue = prev?.profitValue ?: P0,
@@ -411,11 +412,11 @@ private fun ValueView.calcAssets(assets: List<AssetView>) {
     totalMarketValue = assets.sumByBigDecimal { a -> a.marketValue }
 
     totalValueProfit = totalMarketValue - totalNetValue
-    totalDepositValueProfitPercent = calcProfitPercent(totalMarketValue, totalNetValue)
+    totalDepositValueProfitPercent = calcProfitPercent(totalMarketValue, totalNetValue).round()
     totalFixedProfit = (totalNetValue + totalProceeds) - totalExpenses
-    totalDepositFixedProfitPercent = calcProfitPercent(totalNetValue + totalFixedProfit, totalNetValue)
+    totalDepositFixedProfitPercent = calcProfitPercent(totalNetValue, totalExpenses - totalProceeds).round()
     totalMarketProfit = (totalMarketValue + totalProceeds) - totalExpenses
-    totalDepositMarketProfitPercent = calcProfitPercent(totalNetValue + totalMarketProfit, totalNetValue)
+    totalDepositMarketProfitPercent =  calcProfitPercent(totalMarketValue, totalExpenses - totalProceeds).round()
 
     totalTargetProportion = assets.sumByBigDecimal { a -> a.targetProportion }
 }
@@ -619,6 +620,7 @@ private fun TargetType.enumValues(): List<String> {
 
 private fun reduce(a: TargetHistoryView, b: TargetHistoryView): TargetHistoryView {
     val result = TargetHistoryView(date = b.date)
+    result.balance = avg(a.balance, b.balance)
     result.netValue = avg(a.netValue, b.netValue)
     result.marketValue = avg(a.marketValue, b.marketValue)
     result.profitValue = avg(a.profitValue, b.profitValue)
@@ -626,6 +628,7 @@ private fun reduce(a: TargetHistoryView, b: TargetHistoryView): TargetHistoryVie
 }
 
 private fun round(target: TargetHistoryView): TargetHistoryView {
+    target.balance = target.balance.round(0)
     target.netValue = target.netValue.round(0)
     target.profitValue = target.profitValue.round(0)
     target.marketValue = target.marketValue.round(0)

@@ -50,7 +50,7 @@
             <table id="accounts" query-id="accounts" route="/accounts" selection="none">
                 <columns>
                     <column text-field-id="name" label="Name"/>
-                    <column text-field-id="totalNetValue" label="Value">
+                    <column text-field-id="totalMarketValue" label="Value">
                         <text format="number 0,0.00"/>
                     </column>
                     <column text-field-id="totalDepositMarketProfitPercent" label="Profit">

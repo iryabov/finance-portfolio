@@ -44,6 +44,9 @@
         <field id="netValue">
             <select mapping="netValue"/>
         </field>
+        <field id="balance">
+            <select mapping="balance"/>
+        </field>
     </fields>
 
 </query>

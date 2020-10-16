@@ -151,15 +151,20 @@ where t.portfolio_id = :portfolio_id
 select
   d.dt as date,
   sum(coalesce(d.quantity * price_cur, -1*d.volume)) as market_value,
-  sum(-1*d.volume) as net_value,
+  sum(-1*d.volume) as balance,
   sum(d.profit) as profit_value,
-  sum(d.quantity) as quantity
+  sum(d.quantity) as quantity,
+  sum(d.purchase_volume / d.purchase_quantity * d.quantity) as net_value
 from
 (select 
   p as dt, 
   d.ticker,
   sum(d.quantity) as quantity,
-  sum(d.volume_cur)  as volume,
+  sum(case when d.quantity > 0 then d.quantity else 0 end) as purchase_quantity,
+  sum(case when d.quantity < 0 then -1*d.quantity else 0 end) as sold_quantity,
+  sum(case when d.quantity > 0 then -1*d.volume_cur else 0 end) as purchase_volume,
+  sum(case when d.quantity < 0 then d.volume_cur else 0 end) as sold_volume,
+  sum(d.volume_cur) as volume,
   sum(case when d.quantity = 0 then d.volume_cur else 0 end) as profit,
   (select h.price * exchange(:currency, s.currency, h.dt)
     from asset_history h 

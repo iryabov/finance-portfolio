@@ -6,6 +6,7 @@ import java.time.LocalDate
 
 data class TargetHistoryView(
         val date: LocalDate,
+        var balance: BigDecimal = P0,
         var netValue: BigDecimal = P0,
         var marketValue: BigDecimal = P0,
         var profitValue: BigDecimal = P0,
