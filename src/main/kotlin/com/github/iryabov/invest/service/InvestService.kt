@@ -56,6 +56,11 @@ interface InvestService {
                             period: Period = Period.FIVE_YEARS,
                             currency: Currency = Currency.RUB): List<TargetHistoryView>
 
+    fun getPortfolioBenchmark(portfolioId: Int,
+                            period: Period = Period.FIVE_YEARS,
+                            currency: Currency = Currency.RUB,
+                            benchmark: String): List<TargetBenchmarkView>
+
     fun createPortfolio(form: PortfolioForm): Int
 
     fun deletePortfolio(id: Int)

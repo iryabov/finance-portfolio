@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<query xmlns="http://n2oapp.net/framework/config/schema/query-4.0"
+       name="Portfolio performance">
+    <list result-mapping="#this" count-mapping="size()" filters="portfolioId,period.id,currency,benchmark.id">
+        <java method="getPortfolioBenchmark" class="com.github.iryabov.invest.service.InvestService">
+            <spring/>
+            <arguments>
+                <argument type="primitive" name="portfolioId"/>
+                <argument type="primitive" name="period"/>
+                <argument type="primitive" name="currency"/>
+                <argument type="primitive" name="benchmark"/>
+            </arguments>
+        </java>
+    </list>
+
+    <fields>
+        <field id="portfolioId">
+            <filters>
+                <eq filter-id="portfolioId" mapping="[0]" domain="integer"/>
+            </filters>
+        </field>
+        <field id="currency">
+            <filters>
+                <eq filter-id="currency" default-value="${portfolio.currency}"
+                    normalize="T(com.github.iryabov.invest.relation.Currency).valueOf(#this)"
+                    mapping="[2]"/>
+            </filters>
+        </field>
+        <field id="period">
+            <filters>
+                <eq filter-id="period.id" default-value="FIVE_YEARS"
+                    normalize="T(com.github.iryabov.invest.relation.Period).valueOf(#this)"
+                    mapping="[1]"/>
+            </filters>
+        </field>
+        <field id="benchmark.id">
+            <filters>
+                <eq filter-id="benchmark.id" mapping="[3]" domain="string" default-value="^GSPC"/>
+            </filters>
+        </field>
+        <field id="date">
+            <select mapping="date"/>
+        </field>
+        <field id="portfolioProfit">
+            <select mapping="portfolioProfit"/>
+        </field>
+        <field id="benchmarkProfit">
+            <select mapping="benchmarkProfit"/>
+        </field>
+    </fields>
+
+</query>

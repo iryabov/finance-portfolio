@@ -16,7 +16,8 @@ fun <T> fillChart(history: List<T>, fromDate: LocalDate, tillDate: LocalDate,
                   step: java.time.Period,
                   extractor: (T) -> LocalDate,
                   constructor: (LocalDate, T?) -> T,
-                  aggregator: (T, T) -> T = { a, b -> b }, normalizer: (T) -> T = { t -> t } ): List<T> {
+                  aggregator: (T, T) -> T = { a, b -> b },
+                  normalizer: (T) -> T = { t -> t }): List<T> {
     val result = ArrayList<T>()
     val intervals = split(fromDate, tillDate, step)
     val historyCopy = ArrayList(history)
@@ -29,6 +30,46 @@ fun <T> fillChart(history: List<T>, fromDate: LocalDate, tillDate: LocalDate,
         } else {
             result.add(normalizer.invoke(constructor(pair.first, if (result.isNotEmpty()) result.last() else null)))
         }
+    }
+    return result
+}
+
+/**
+ * The list is evenly filled with dates by period
+ */
+fun <A, B, T> fillAndMergeChart(historyA: List<A>, historyB: List<B>,
+                                fromDate: LocalDate, tillDate: LocalDate, step: java.time.Period,
+                                extractorA: (A) -> LocalDate,
+                                extractorB: (B) -> LocalDate,
+                                aggregatorA: (A, A) -> A = { a, b -> b },
+                                aggregatorB: (B, B) -> B = { a, b -> b },
+                                merger: (LocalDate, A, B) -> T,
+                                normalizer: (T) -> T = { t -> t }): List<T> {
+    val result = ArrayList<T>()
+    val intervals = split(fromDate, tillDate, step)
+    val historyACopy = ArrayList(historyA)
+    val historyBCopy = ArrayList(historyB)
+    for (pair in intervals) {
+        val listA = historyACopy.filter { pair.contains(extractorA(it)) }
+        val listB = historyBCopy.filter { pair.contains(extractorB(it)) }
+        var a: A
+        var b: B
+        if (listA.isNotEmpty()) {
+            a = listA.reduce { f, s -> aggregatorA(f, s) }
+            historyACopy.removeAll(listA)
+        } else {
+            a = historyACopy.first()
+            historyACopy.remove(a)
+        }
+        if (listB.isNotEmpty()) {
+            b = listB.reduce { f, s -> aggregatorB(f, s) }
+            historyBCopy.removeAll(listB)
+        } else {
+            b = historyBCopy.first()
+            historyBCopy.remove(b)
+        }
+        val t = merger(pair.first, a, b)
+        result.add(normalizer(t))
     }
     return result
 }

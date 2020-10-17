@@ -4,7 +4,7 @@
         <panel title="Classes">
             <form id="classes" query-id="targets" object-id="target" route="/classes">
                 <submit route="/save" operation-id="saveTargets">
-                    <form-param name="type" value="CLASS"/>
+                    <form-param id="type" value="CLASS"/>
                 </submit>
                 <fields>
                     <slider id="data.SHARE" label="Shares" max="100"/>
@@ -35,7 +35,7 @@
         <panel title="Countries">
             <form id="country" query-id="targets" route="/countries">
                 <submit route="/save" operation-id="saveTargets">
-                    <form-param name="type" value="COUNTRY"/>
+                    <form-param id="type" value="COUNTRY"/>
                 </submit>
                 <fields>
                     <slider id="data.USA" label="USA" max="100"/>
@@ -68,7 +68,7 @@
         <panel title="Sectors">
             <form id="sector" query-id="targets" route="/sectors">
                 <submit route="/save" operation-id="saveTargets">
-                    <form-param name="type" value="SECTOR"/>
+                    <form-param id="type" value="SECTOR"/>
                 </submit>
                 <fields>
                     <slider id="data.GOVERNMENT" label="Government" max="100"/>
@@ -107,7 +107,7 @@
         <panel title="Currencies">
             <form id="currency" query-id="targets" route="/currencies">
                 <submit route="/save" operation-id="saveTargets">
-                    <form-param name="type" value="CURRENCY"/>
+                    <form-param id="type" value="CURRENCY"/>
                 </submit>
                 <fields>
                     <slider id="data.USD" label="Dollar" max="100"/>

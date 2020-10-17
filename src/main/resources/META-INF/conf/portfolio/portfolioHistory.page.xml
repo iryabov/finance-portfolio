@@ -2,22 +2,6 @@
 <page xmlns="http://n2oapp.net/framework/config/schema/page-2.0" name="History">
     <regions>
         <region>
-            <chart id="history" route="/history" depends-on="period"
-                   query-id="portfolioHistory"
-                   name="History"
-                   width="1000" >
-                <lines x-field-id="date" grid-vertical="false"
-                       tooltip-separator=" ">
-                    <line field-id="netValue" color="#8884d8"/>
-                    <line field-id="balance" color="#ffb300"/>
-                    <line field-id="marketValue" color="#00FF00"/>
-                    <line field-id="profitValue" color="#FF0000"/>
-                </lines>
-                <pre-filters>
-                    <eq field-id="portfolioId" param="portfolio_id"/>
-                    <eq field-id="period" value="{period.id}" ref-widget-id="period" ref-model="resolve"/>
-                </pre-filters>
-            </chart>
             <form id="period" route="/period">
                 <fields>
                     <set>
@@ -31,8 +15,42 @@
                             </options>
                         </radio-group>
                     </set>
+                    <select id="benchmark" label="Benchmark" query-id="security" label-field-id="id" param="bench"/>
                 </fields>
             </form>
+            <chart id="history" route="/history" depends-on="period"
+                   query-id="portfolioHistory"
+                   name="History"
+                   width="1000" height="200">
+                <lines x-field-id="date" grid-vertical="false"
+                       tooltip-separator=" ">
+                    <line field-id="netValue" color="#8884d8"/>
+                    <line field-id="balance" color="#ffb300"/>
+                    <line field-id="marketValue" color="#00FF00"/>
+                    <line field-id="profitValue" color="#FF0000"/>
+                </lines>
+                <pre-filters>
+                    <eq field-id="portfolioId" param="portfolio_id"/>
+                    <eq field-id="period" value="{period.id}" ref-widget-id="period" ref-model="resolve"/>
+                </pre-filters>
+            </chart>
+        </region>
+        <region>
+            <chart id="benchmark" route="/benchmark" depends-on="period"
+                   query-id="portfolioBenchmark"
+                   name="Performance"
+                   width="1000" height="200">
+                <lines x-field-id="date" grid-vertical="false"
+                       tooltip-separator=" ">
+                    <line field-id="portfolioProfit" color="#00FF00"/>
+                    <line field-id="benchmarkProfit" color="#FF0000"/>
+                </lines>
+                <pre-filters>
+                    <eq field-id="portfolioId" param="portfolio_id"/>
+                    <eq field-id="period" value="{period.id}" ref-widget-id="period" ref-model="resolve"/>
+                    <eq field-id="benchmark.id" value="{benchmark.id}"/>
+                </pre-filters>
+            </chart>
         </region>
     </regions>
 </page>
