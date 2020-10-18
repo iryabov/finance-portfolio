@@ -43,28 +43,28 @@ fun <A, B, T> fillAndMergeChart(historyA: List<A>, historyB: List<B>,
                                 extractorB: (B) -> LocalDate,
                                 aggregatorA: (A, A) -> A = { a, b -> b },
                                 aggregatorB: (B, B) -> B = { a, b -> b },
-                                merger: (LocalDate, A, B) -> T,
+                                merger: (LocalDate, A?, B?) -> T,
                                 normalizer: (T) -> T = { t -> t }): List<T> {
     val result = ArrayList<T>()
     val intervals = split(fromDate, tillDate, step)
     val historyACopy = ArrayList(historyA)
     val historyBCopy = ArrayList(historyB)
+    var a: A? = null
+    var b: B? = null
     for (pair in intervals) {
         val listA = historyACopy.filter { pair.contains(extractorA(it)) }
         val listB = historyBCopy.filter { pair.contains(extractorB(it)) }
-        var a: A
-        var b: B
         if (listA.isNotEmpty()) {
             a = listA.reduce { f, s -> aggregatorA(f, s) }
             historyACopy.removeAll(listA)
-        } else {
+        } else if (historyACopy.isNotEmpty()) {
             a = historyACopy.first()
             historyACopy.remove(a)
         }
         if (listB.isNotEmpty()) {
             b = listB.reduce { f, s -> aggregatorB(f, s) }
             historyBCopy.removeAll(listB)
-        } else {
+        } else if (historyBCopy.isNotEmpty()) {
             b = historyBCopy.first()
             historyBCopy.remove(b)
         }

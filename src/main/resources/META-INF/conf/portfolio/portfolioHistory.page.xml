@@ -15,7 +15,6 @@
                             </options>
                         </radio-group>
                     </set>
-                    <select id="benchmark" label="Benchmark" query-id="security" label-field-id="id" param="bench"/>
                 </fields>
             </form>
             <chart id="history" route="/history" depends-on="period"
@@ -36,7 +35,14 @@
             </chart>
         </region>
         <region>
-            <chart id="benchmark" route="/benchmark" depends-on="period"
+            <form id="benchmark" route="/benchmark">
+                <fields>
+                    <select id="benchmark" label="Benchmark" query-id="security" label-field-id="id" param="bench"/>
+                </fields>
+            </form>
+        </region>
+        <region>
+            <chart id="performance" route="/performance" depends-on="benchmark"
                    query-id="portfolioBenchmark"
                    name="Performance"
                    width="1000" height="200">
@@ -48,7 +54,7 @@
                 <pre-filters>
                     <eq field-id="portfolioId" param="portfolio_id"/>
                     <eq field-id="period" value="{period.id}" ref-widget-id="period" ref-model="resolve"/>
-                    <eq field-id="benchmark.id" value="{benchmark.id}"/>
+                    <eq field-id="benchmark.id" value="{benchmark.id}" ref-widget-id="benchmark" ref-model="resolve"/>
                 </pre-filters>
             </chart>
         </region>
