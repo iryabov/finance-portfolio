@@ -52,12 +52,12 @@ class SecuritiesClientMoex: SecuritiesClient {
     override fun findLastPrice(name: String): Security {
         val (market, board, ticker) = findMarketAndBoard(name)
         val response = callTicker(market, board, ticker)
-        val securities = readRows(response)
+        val securities = readRows(response, if (board == "RTSI") "marketdata" else "securities")
         if (securities == null || securities.length == 0)
             throw IllegalStateException("Security $ticker not found")
         val sec0 = securities.item(0) as Element
         assert(sec0.getAttribute("SECID") == ticker)
-        if (board == "SNDX") {
+        if (board == "SNDX" || board == "RTSI") {
             val marketdata = readRows(response, "marketdata")
             if (marketdata == null || marketdata.length == 0)
                 throw IllegalStateException("Marketdata $ticker not found")

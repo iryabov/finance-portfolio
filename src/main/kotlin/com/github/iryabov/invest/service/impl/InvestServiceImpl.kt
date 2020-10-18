@@ -230,7 +230,9 @@ class InvestServiceImpl(
         val from = period.from.invoke()
         val till = LocalDate.now()
         val benchmarkHistory = securityHistoryRepo.findAllHistoryByTicker(benchmark, from, till, currency)
+        val benchmarkStart = benchmarkHistory.firstOrNull()?.price ?: P0
         val portfolioHistory = targetRepo.findAllTargetHistoryViews(portfolioId, currency, from, till, period.interval)
+        val portfolioStart = portfolioHistory.firstOrNull()?.marketProfitPercent ?: P0
         return fillAndMergeChart(portfolioHistory, benchmarkHistory,
                 from, till, period.step,
                 { it.date }, { it.date },
@@ -238,8 +240,8 @@ class InvestServiceImpl(
                 { date, p, b ->
                     TargetBenchmarkView(
                             date = date,
-                            portfolioProfit = p?.marketProfitPercent ?: P0,
-                            benchmarkProfit = calcProfitPercent(b?.price ?: benchmarkHistory.first().price, benchmarkHistory.first().price))
+                            portfolioProfit = p?.marketProfitPercent ?: portfolioStart - portfolioStart,
+                            benchmarkProfit = calcProfitPercent(b?.price ?: benchmarkStart, benchmarkStart))
                 })
 
     }
