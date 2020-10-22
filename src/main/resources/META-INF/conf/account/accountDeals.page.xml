@@ -22,6 +22,7 @@
                                 <case value="SALE">danger</case>
                                 <case value="WITHDRAWALS">danger</case>
                                 <case value="DIVIDEND">info</case>
+                                <case value="COUPON">info</case>
                                 <case value="TAX">warning</case>
                             </switch>
                         </badge>

@@ -22,14 +22,28 @@
 <!--            <input-select id="asset" label="Asset" query-id="assets" label-field-id="fullName">-->
 <!--                -->
 <!--            </input-select> -->
-            <auto-complete id="asset.id" label="Ticker" param="asset_id"
-                           query-id="security" value-field-id="id"
-                           search-filter-id="ticker">
+<!--            <auto-complete id="asset.id" label="Ticker" param="asset_id"-->
+<!--                           query-id="security" value-field-id="id"-->
+<!--                           search-filter-id="ticker">-->
+<!--                <dependencies>-->
+<!--                    <visibility on="type">type.id != 'DEPOSIT'-->
+<!--                        &amp;&amp; type.id != 'WITHDRAWALS'</visibility>-->
+<!--                </dependencies>-->
+<!--            </auto-complete>-->
+            <input-select id="security" label="Search" query-id="security"
+                          label-field-id="displayName" search-filter-id="name">
                 <dependencies>
                     <visibility on="type">type.id != 'DEPOSIT'
                         &amp;&amp; type.id != 'WITHDRAWALS'</visibility>
                 </dependencies>
-            </auto-complete>
+            </input-select>
+            <input-text id="asset.id" label="Ticker" param="asset_id">
+                <dependencies>
+                    <set-value on="security">security.ticker</set-value>
+                    <visibility on="type">type.id != 'DEPOSIT'
+                        &amp;&amp; type.id != 'WITHDRAWALS'</visibility>
+                </dependencies>
+            </input-text>
             
             <radio-group id="currency" label="Currency" required="true" inline="true">
                 <default-value id="RUB"/>

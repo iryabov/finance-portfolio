@@ -144,6 +144,10 @@ class InvestServiceImpl(
         return assetRepo.findAll(Sort.by("ticker")).map { it.toView() }
     }
 
+    override fun getSecurities(name: String): List<SecurityView> {
+        return assetRepo.findAllByNameOrTicker(name, Sort.by("ticker")).map { it.toView() }
+    }
+
     override fun addSecurity(form: Asset) {
         form.newEntity = true
         assetRepo.save(form)

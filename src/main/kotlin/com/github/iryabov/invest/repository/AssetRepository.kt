@@ -5,6 +5,7 @@ import com.github.iryabov.invest.relation.AssetClass
 import com.github.iryabov.invest.relation.Country
 import com.github.iryabov.invest.relation.Currency
 import com.github.iryabov.invest.relation.Sector
+import org.springframework.data.domain.Sort
 import org.springframework.data.jdbc.repository.query.Query
 import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.data.repository.query.Param
@@ -30,4 +31,11 @@ where not exists (select t.id from target t where t.portfolio_id = :portfolio_id
                           @Param("country") country: Country? = null,
                           @Param("currency") currency: Currency? = null,
                           @Param("account_id") accountId: Int? = null): List<Asset>
+
+    @Query("""
+select *
+from asset s  
+where s.ticker like '%'||:name||'%' or s.name like '%'||:name||'%'
+    """)
+    fun findAllByNameOrTicker(@Param("name") name: String, sort: Sort): List<Asset>
 }

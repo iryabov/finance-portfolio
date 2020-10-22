@@ -32,6 +32,8 @@ interface InvestService {
 
     fun getSecurities(): List<SecurityView>
 
+    fun getSecurities(name: String): List<SecurityView>
+
     fun addSecurity(form: Asset)
 
     fun editSecurity(form: Asset)

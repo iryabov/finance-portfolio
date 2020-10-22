@@ -6,6 +6,14 @@
             <spring/>
         </java>
     </list>
+    <list result-mapping="#this" count-mapping="size()" filters="name">
+        <java method="getSecurities" class="com.github.iryabov.invest.service.InvestService">
+            <arguments>
+                <argument type="primitive" name="name"/>
+            </arguments>
+            <spring/>
+        </java>
+    </list>
     <unique filters="ticker">
         <java method="getSecurity" class="com.github.iryabov.invest.service.InvestService">
             <spring/>
@@ -27,6 +35,9 @@
         </field>
         <field id="name">
             <select mapping="name"/>
+            <filters>
+                <like filter-id="name" mapping="[0]"/>
+            </filters>
         </field>
         <field id="displayName">
             <select mapping="name" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).fullName(#this, #data['ticker'])"/>
