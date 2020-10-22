@@ -171,14 +171,8 @@ select
     d.currency as currency,
     d.settlement_quantity as settlement_quantity,
     d.settlement_ticker as settlement_ticker,
-    (case when d.currency = :currency then abs(d.volume)
-     else abs(coalesce((select r.price * d.volume from rate r where  r.dt = d.dt and  r.currency_purchase = d.currency and  r.currency_sale = :currency), 0)) 
-     end 
-    ) as volume,
-    (select sum(case when df.currency = :currency then df.volume 
-                else coalesce((select r.price * df.volume from rate r where  r.dt = df.dt and  r.currency_purchase = df.currency and  r.currency_sale = :currency), 0)
-                end / df.quantity * w.quantity
-            ) 
+    abs(d.volume * exchange(:currency, d.currency, d.dt)) as volume,
+    (select sum(coalesce(df.volume * exchange(:currency, df.currency, df.dt), 0) / df.quantity * w.quantity) 
      from writeoff w
      join dial df on df.id = w.dial_from and df.ticker = w.ticker
      where w.dial_to = d.id and w.ticker = d.ticker
@@ -193,15 +187,7 @@ select
         where w.dial_from = d.id
           and d.quantity > 0
     ) as sold_quantity,
-    (case when d.type = 'DIVIDEND' then
-        (select sum(od.quantity)
-        from dial od
-        where od.account_id = :account_id
-          and od.ticker = d.ticker 
-          and od.active = true
-          and od.dt < d.dt)
-     else null end     
-    ) as dividend_quantity
+    sum(d.quantity) over (partition by d.ticker order by d.dt asc) as dividend_quantity
 from (
     select  
         d.id,
