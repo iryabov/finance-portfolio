@@ -115,7 +115,7 @@
                     <slider id="data.RUB" label="Ruble" max="100"/>
                     <output-text id="other" label="Other">
                         <dependencies>
-                            <set-value on="data" >
+                            <set-value on="data">
                                 var sum = 0;
                                 for (var el in data) {
                                 if (data.hasOwnProperty(el)) {

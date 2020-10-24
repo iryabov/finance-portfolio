@@ -38,6 +38,7 @@
             </in>
             <out>
                 <field id="data" mapping="#this"/>
+                <field id="other" mapping="T(com.github.iryabov.invest.ui.UiUtilsKt).sumData(#this)"/>
             </out>
         </operation>
     </operations>

@@ -37,3 +37,7 @@ fun mapTargets(view: List<ChartView>): DataSet {
     }
     return data
 }
+
+fun sumData(data: Map<String, Int>): Int {
+    return data.values.sumBy { it }
+}

@@ -341,14 +341,16 @@ class InvestServiceImpl(
                 locks.add(it.key)
             }
         }
+        val result = HashMap(data)
         normalizeProportions(data.mapValues { it.value.toBigDecimal() }, *locks.toTypedArray()).forEach {
             val other = targets[it.key]
             if (other != null) {
                 other.proportion = it.value
                 targetRepo.save(other)
+                result[it.key] = it.value.toInt()
             }
         }
-        return data
+        return result
     }
 
     override fun deactivateTarget(portfolioId: Int, ticker: String) {
