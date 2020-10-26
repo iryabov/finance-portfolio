@@ -187,7 +187,7 @@ select
         where w.dial_from = d.id
           and d.quantity > 0
     ) as sold_quantity,
-    sum(d.quantity) over (partition by d.ticker order by d.dt asc) as dividend_quantity
+    sum(case when d.active = true then d.quantity else 0 end) over (partition by d.ticker order by d.dt asc) as dividend_quantity
 from (
     select  
         d.id,

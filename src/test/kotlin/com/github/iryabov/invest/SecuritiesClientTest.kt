@@ -58,7 +58,7 @@ class SecuritiesClientTest(
                 LocalDate.of(2020, 1, 1),
                 LocalDate.of(2020, 2, 1))
         Assertions.assertThat(apple[0].ticker).isEqualTo("AAPL")
-        Assertions.assertThat(apple[0].settlementPrice).isEqualTo(money(300.35))
+        Assertions.assertThat(apple[0].settlementPrice).isEqualTo(money(75.08))
     }
 
     @Test
@@ -77,7 +77,7 @@ class SecuritiesClientTest(
 
         val apple = securitiesClientUnibit.findLastPrice("AAPL")
         Assertions.assertThat(apple.ticker).isEqualTo("AAPL")
-        Assertions.assertThat(apple.settlementPrice).isEqualTo(money(131.40))
+        Assertions.assertThat(apple.settlementPrice).isEqualTo(money(115.04))
     }
 
     @Test

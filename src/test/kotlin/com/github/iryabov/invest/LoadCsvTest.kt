@@ -13,7 +13,7 @@ import org.springframework.test.context.jdbc.Sql
 import org.springframework.transaction.annotation.Transactional
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE,
-        properties = ["spring.datasource.url=jdbc:postgresql://localhost:5432/invest"])
+        properties = ["spring.datasource.url=jdbc:postgresql://localhost:5432/invest_test"])
 @Sql("/schema.sql")
 class LoadCsvTest(
         @Autowired
