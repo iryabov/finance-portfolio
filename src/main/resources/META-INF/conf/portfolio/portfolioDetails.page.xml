@@ -17,6 +17,11 @@
                 <open-page page-id="portfolioHistory" route="/history"/>
             </button>
         </group>
+        <group>
+            <button id="viewPlan" label="Plan" widget-id="portfolio" icon="fa fa-calculator" type="icon">
+                <open-page page-id="portfolioPlan" route="/plan"/>
+            </button>
+        </group>
     </toolbar>
     <toolbar place="topRight">
         <group>

@@ -146,6 +146,8 @@ where t.portfolio_id = :portfolio_id
 
     fun findAllByPortfolioIdAndType(portfolioId: Int, type: TargetType): List<Target>
 
+    fun findAllByPortfolioId(portfolioId: Int): List<Target>
+
 
     @Query("""
 select

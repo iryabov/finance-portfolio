@@ -11,6 +11,7 @@ val N1 = BigDecimal(-1)
 val P100 = BigDecimal(100)
 val P0: BigDecimal = BigDecimal.ZERO
 val P1: BigDecimal = BigDecimal.ONE
+const val OTHER = "OTHER"
 
 fun percent(value: Int) = BigDecimal(value)
 fun percent(value: Double) = BigDecimal(value)

@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<query xmlns="http://n2oapp.net/framework/config/schema/query-4.0">
+    <list result-mapping="#this" filters="portfolioId,currency" count-mapping="#this.size()">
+        <java method="getBalancedAssets" class="com.github.iryabov.invest.service.InvestService">
+            <spring/>
+            <arguments>
+                <argument type="primitive" name="portfolioId"/>
+                <argument type="primitive" name="currency"/>
+            </arguments>
+        </java>
+    </list>
+
+    <fields>
+        <field id="portfolioId">
+            <filters>
+                <eq filter-id="portfolioId" mapping="[0]" required="true"/>
+            </filters>
+        </field>
+        <field id="currency">
+            <filters>
+                <eq filter-id="currency" default-value="${portfolio.currency}"
+                    normalize="T(com.github.iryabov.invest.relation.Currency).valueOf(#this)"
+                    mapping="[1]"/>
+            </filters>
+        </field>
+        <field id="id">
+            <select mapping="ticker"/>
+        </field>
+        <field id="name">
+            <select mapping="name" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).fullName(#this, #data['ticker'])"/>
+        </field>
+        <field id="netValue">
+            <select mapping="netValue"/>
+        </field>
+        <field id="marketValue">
+            <select mapping="marketValue"/>
+        </field>
+<!--        <field id="netProportion">-->
+<!--            <select mapping="netProportion" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).percentFormat(#this)"/>-->
+<!--        </field>-->
+<!--        <field id="marketProportion">-->
+<!--            <select mapping="marketProportion" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).percentFormat(#this)"/>-->
+<!--        </field>-->
+
+        <field id="targetClassDeviationPercent">
+            <select mapping="targetClassDeviationPercent"
+                    normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).percentFormat(#this)"/>
+        </field>
+        <field id="targetSectorDeviationPercent">
+            <select mapping="targetSectorDeviationPercent"
+                    normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).percentFormat(#this)"/>
+        </field>
+        <field id="targetCountryDeviationPercent">
+            <select mapping="targetCountryDeviationPercent"
+                    normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).percentFormat(#this)"/>
+        </field>
+        <field id="targetCurrencyDeviationPercent">
+            <select mapping="targetCurrencyDeviationPercent"
+                    normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).percentFormat(#this)"/>
+        </field>
+
+        <field id="totalTargetDeviationPercent">
+            <select mapping="totalTargetDeviationPercent"
+                    normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).percentFormat(#this)"/>
+        </field>
+        <field id="targetDeviationColor">
+            <select mapping="totalTargetDeviationPercent"
+                    normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).color(#this)"/>/>
+        </field>
+    </fields>
+</query>
