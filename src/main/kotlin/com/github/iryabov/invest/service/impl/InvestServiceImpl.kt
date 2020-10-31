@@ -17,6 +17,7 @@ import java.math.RoundingMode
 import java.time.LocalDate
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 @Service
 @Transactional(timeout = 30000)
@@ -724,11 +725,22 @@ private fun calcDeviationPercent(assets: List<AssetView>,
                                  targetsProportion: Map<String, Target>?,
                                  targetSum: BigDecimal,
                                  totalMarketValue: BigDecimal): Map<String, BigDecimal> {
-    return assets.groupBy { it.typeOf(type) }
-            .mapValues { a ->
-                val targetProportion = targetsProportion?.get(a.key)?.proportion ?: P100 - targetSum
-                val total = a.value.sumByBigDecimal { it.marketValue }
-                val totalProportion = calcPercent(total, totalMarketValue)
-                targetProportion - totalProportion
-            }
+    val other = P100 - targetSum
+    return assets.groupBy {
+        val key = it.typeOf(type)
+        val target = targetsProportion?.get(key)?.proportion ?: P0
+        if (target.greater(P0))
+            key
+        else
+            OTHER
+    }.mapValues { a ->
+        val targetProportion = if (a.key != OTHER)
+            targetsProportion?.get(a.key)?.proportion ?: P0
+        else
+            other
+
+        val total = a.value.sumByBigDecimal { it.marketValue }
+        val totalProportion = calcPercent(total, totalMarketValue)
+        targetProportion - totalProportion
+    }
 }
