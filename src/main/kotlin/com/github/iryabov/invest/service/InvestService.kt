@@ -5,6 +5,7 @@ import com.github.iryabov.invest.model.*
 import com.github.iryabov.invest.relation.Currency
 import com.github.iryabov.invest.relation.Period
 import com.github.iryabov.invest.relation.TargetType
+import java.math.BigDecimal
 
 interface InvestService {
     fun createAccount(form: AccountForm): Int
@@ -92,5 +93,11 @@ interface InvestService {
 
     fun getTargetProportions(portfolioId: Int, type: TargetType): List<ChartView>
 
-    fun getBalancedAssets(portfolioId: Int, currency: Currency = Currency.RUB): List<BalancedAssetView>
+    fun getBalancedAssets(portfolioId: Int, currency: Currency = Currency.RUB): BalancedView
+
+    fun resetAssetTargets(portfolioId: Int)
+
+    fun plusAssetTarget(portfolioId: Int, ticker: String, amount: BigDecimal)
+
+    fun minusAssetTarget(portfolioId: Int, ticker: String, amount: BigDecimal)
 }

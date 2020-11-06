@@ -393,7 +393,7 @@ class InvestServiceImpl(
         }
     }
 
-    override fun getBalancedAssets(portfolioId: Int, currency: Currency): List<BalancedAssetView> {
+    override fun getBalancedAssets(portfolioId: Int, currency: Currency): BalancedView {
         val assets = targetRepo.findAllAssetsViews(portfolioId, currency)
         assets.forEach { it.calc() }
         val totalMarketValue = assets.sumByBigDecimal { it.marketValue }
@@ -414,6 +414,11 @@ class InvestServiceImpl(
         val targetsCurrencyDeviationPercent: Map<String, BigDecimal> = calcDeviationPercent(assets, TargetType.CURRENCY,
                 targets[TargetType.CURRENCY], sumCurrency, totalMarketValue)
 
+        val maxClassDeviationPercent = targetsClassDeviationPercent.values.filter { it > P0 }.sumByBigDecimal { it }
+        val maxSectorDeviationPercent = targetsSectorDeviationPercent.values.filter { it > P0 }.sumByBigDecimal { it }
+        val maxCountryDeviationPercent = targetsCountryDeviationPercent.values.filter { it > P0 }.sumByBigDecimal { it }
+        val maxCurrencyDeviationPercent = targetsCurrencyDeviationPercent.values.filter { it > P0 }.sumByBigDecimal { it }
+
         val result = assets.map { it.toBalancedView() }
         result.forEach { a ->
             a.targetClassDeviationPercent = targetsClassDeviationPercent[a.assetClass?.name ?: OTHER]
@@ -431,7 +436,23 @@ class InvestServiceImpl(
                     + a.targetCurrencyDeviationPercent)
         }
 
-        return result.sortedByDescending { it.totalTargetDeviationPercent }
+        return BalancedView(
+                totalMarketValue = totalMarketValue,
+                balance = P0,
+                deviation = (maxClassDeviationPercent + maxSectorDeviationPercent + maxCountryDeviationPercent + maxCurrencyDeviationPercent).divide(BigDecimal(4)),
+                assets = result.sortedByDescending { it.totalTargetDeviationPercent })
+    }
+
+    override fun resetAssetTargets(portfolioId: Int) {
+        targetRepo.deleteAllByPortfolioIdAndType(portfolioId, TargetType.ASSET)
+    }
+
+    override fun plusAssetTarget(portfolioId: Int, ticker: String, amount: BigDecimal) {
+        TODO("Not yet implemented")
+    }
+
+    override fun minusAssetTarget(portfolioId: Int, ticker: String, amount: BigDecimal) {
+        TODO("Not yet implemented")
     }
 
     private fun writeOffByFifoAndRecalculation(deal: Deal, calc: Boolean = true) {
@@ -711,7 +732,8 @@ private fun round(target: TargetHistoryView): TargetHistoryView {
     return target
 }
 
-private fun AssetView.toBalancedView(): BalancedAssetView = BalancedAssetView(ticker = this.assetTicker,
+private fun AssetView.toBalancedView(): BalancedAssetView = BalancedAssetView(
+        ticker = this.assetTicker,
         name = this.assetName,
         marketValue = this.marketValue,
         netValue = this.netValue,

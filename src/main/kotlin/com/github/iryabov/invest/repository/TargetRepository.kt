@@ -214,5 +214,6 @@ group by d.dt
                                   @Param("till") till: LocalDate?,
                                   @Param("step") step: String): List<TargetHistoryView>
 
+    fun deleteAllByPortfolioIdAndType(portfolioId: Int, type: TargetType)
 
 }

@@ -2,6 +2,21 @@
 <page xmlns="http://n2oapp.net/framework/config/schema/page-2.0" name="Plan">
     <regions>
         <region>
+            <form id="total" query-id="portfolioPlanTotal" route="/total">
+                <fields>
+                    <set field-label-location="top">
+                        <row>
+                            <output-text id="totalMarketValue" label="Value" format="number 0,0.00"/>
+                            <output-text id="balance" label="Balance" format="number 0,0.00"/>
+                            <output-text id="deviation" label="Deviation"/>
+                            <input-money id="amount" label="Refill"/>
+                        </row>
+                    </set>
+                </fields>
+                <pre-filters>
+                    <eq field-id="portfolioId" param="portfolio_id"/>
+                </pre-filters>
+            </form>
             <table query-id="portfolioPlan" route="/assets">
                 <columns>
                     <column text-field-id="name" label="Name"/>
@@ -20,8 +35,24 @@
                     <column text-field-id="targetCurrencyDeviationPercent" label="Currency">
                         <text/>
                     </column>
-                    <column text-field-id="totalTargetDeviationPercent" label="Total">
-                        <badge text="{targetProportion}" color="{targetDeviationColor}"/>
+                    <column text-field-id="balance" label="Balance">
+                        <text format="number 0,0.00"/>
+                    </column>
+                    <column text-field-id="id" label="" width="100px">
+                        <toolbar>
+                            <button label="Plus" icon="fa fa-plus" type="icon" color="success">
+                                <invoke operation-id="plusAssetTarget" submit-form="false" message-on-success="false">
+                                    <form-param id="ticker" value="{id}"/>
+                                    <form-param id="amount" value="{amount}" ref-widget-id="total" ref-model="resolve"/>
+                                </invoke>
+                            </button>
+                            <button label="Minus" icon="fa fa-minus" type="icon" color="danger">
+                                <invoke operation-id="minusAssetTarget" message-on-success="false">
+                                    <form-param id="ticker" value="{id}"/>
+                                    <form-param id="amount" value="{amount}" ref-widget-id="total" ref-model="resolve"/>
+                                </invoke>
+                            </button>
+                        </toolbar>
                     </column>
                 </columns>
                 <pre-filters>

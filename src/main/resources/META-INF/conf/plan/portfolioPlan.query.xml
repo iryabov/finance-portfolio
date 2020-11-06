@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<query xmlns="http://n2oapp.net/framework/config/schema/query-4.0">
-    <list result-mapping="#this" filters="portfolioId,currency" count-mapping="#this.size()">
+<query xmlns="http://n2oapp.net/framework/config/schema/query-4.0" object-id="portfolioPlan">
+    <list result-mapping="assets" filters="portfolioId,currency" count-mapping="assets.size()">
         <java method="getBalancedAssets" class="com.github.iryabov.invest.service.InvestService">
             <spring/>
             <arguments>
@@ -27,12 +27,15 @@
             <select mapping="ticker"/>
         </field>
         <field id="name">
-            <select mapping="name" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).fullName(#this, #data['ticker'])"/>
+            <select mapping="name" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).fullName(#this, #data['id'])"/>
         </field>
         <field id="netValue">
             <select mapping="netValue"/>
         </field>
         <field id="marketValue">
+            <select mapping="marketValue"/>
+        </field>
+        <field id="balance">
             <select mapping="marketValue"/>
         </field>
 <!--        <field id="netProportion">-->
@@ -57,6 +60,10 @@
         <field id="targetCurrencyDeviationPercent">
             <select mapping="targetCurrencyDeviationPercent"
                     normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).percentFormat(#this)"/>
+        </field>
+        <field id="targetCurrencyDeviationColor">
+            <select mapping="targetCurrencyDeviationPercent"
+                    normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).color(#this)"/>/>
         </field>
 
         <field id="totalTargetDeviationPercent">

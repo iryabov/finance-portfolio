@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<object xmlns="http://n2oapp.net/framework/config/schema/object-4.0">
+    <operations>
+        <operation id="plusAssetTarget">
+            <invocation>
+                <java method="plusAssetTarget" class="com.github.iryabov.invest.service.InvestService">
+                    <spring/>
+                    <arguments>
+                        <argument type="primitive" name="portfolioId"/>
+                        <argument type="primitive" name="ticker"/>
+                        <argument type="primitive" name="amount"/>
+                    </arguments>
+                </java>
+            </invocation>
+            <in>
+                <field id="portfolioId" param="portfolio_id" mapping="[0]" domain="integer"/>
+                <field id="ticker" mapping="[1]" domain="string"/>
+                <field id="amount" mapping="[2]" domain="numeric"/>
+            </in>
+        </operation>
+        <operation id="minusAssetTarget">
+            <invocation>
+                <java method="minusAssetTarget" class="com.github.iryabov.invest.service.InvestService">
+                    <spring/>
+                    <arguments>
+                        <argument type="primitive" name="portfolioId"/>
+                        <argument type="primitive" name="ticker"/>
+                        <argument type="primitive" name="amount"/>
+                    </arguments>
+                </java>
+            </invocation>
+            <in>
+                <field id="portfolioId" param="portfolio_id" mapping="[0]"/>
+                <field id="ticker" mapping="[1]"/>
+                <field id="amount" mapping="[2]"/>
+            </in>
+        </operation>
+    </operations>
+
+</object>
