@@ -444,15 +444,19 @@ class InvestServiceImpl(
     }
 
     override fun resetAssetTargets(portfolioId: Int) {
-        targetRepo.deleteAllByPortfolioIdAndType(portfolioId, TargetType.ASSET)
+        targetRepo.updateProportionByPortfolioIdAndType(portfolioId, TargetType.ASSET)
     }
 
     override fun plusAssetTarget(portfolioId: Int, ticker: String, amount: BigDecimal) {
-        TODO("Not yet implemented")
+        val result = getOrNewTarget(portfolioId, ticker)
+        result.proportion = (result.proportion ?: P0).plus(amount)
+        targetRepo.save(result)
     }
 
     override fun minusAssetTarget(portfolioId: Int, ticker: String, amount: BigDecimal) {
-        TODO("Not yet implemented")
+        val result = getOrNewTarget(portfolioId, ticker)
+        result.proportion = (result.proportion ?: P0).minus(amount)
+        targetRepo.save(result)
     }
 
     private fun writeOffByFifoAndRecalculation(deal: Deal, calc: Boolean = true) {
@@ -480,6 +484,14 @@ class InvestServiceImpl(
         }
         if (needToSell > 0)
             throw NotEnoughFundsException("Need to sell $needToSell ${deal.ticker}, but they haven't on ${deal.date}")
+    }
+
+    private fun getOrNewTarget(portfolioId: Int, ticker: String): Target {
+        val target = targetRepo.findByPortfolioIdAndTickerAndType(portfolioId, ticker, TargetType.ASSET)
+        return if (target.isEmpty)
+            Target(portfolioId = portfolioId, ticker = ticker, proportion = P0, type = TargetType.ASSET)
+        else
+            target.get()
     }
 
 }

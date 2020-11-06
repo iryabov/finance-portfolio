@@ -4,6 +4,7 @@ import com.github.iryabov.invest.entity.Target
 import com.github.iryabov.invest.model.*
 import com.github.iryabov.invest.relation.Currency
 import com.github.iryabov.invest.relation.TargetType
+import org.springframework.data.jdbc.repository.query.Modifying
 import org.springframework.data.jdbc.repository.query.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.query.Param
@@ -214,6 +215,9 @@ group by d.dt
                                   @Param("till") till: LocalDate?,
                                   @Param("step") step: String): List<TargetHistoryView>
 
-    fun deleteAllByPortfolioIdAndType(portfolioId: Int, type: TargetType)
+    @Query("update target set proportion = null where portfolio_id = :portfolio_id and type = :type")
+    @Modifying
+    fun updateProportionByPortfolioIdAndType(@Param("portfolio_id") portfolioId: Int,
+                                      @Param("type") type: TargetType)
 
 }

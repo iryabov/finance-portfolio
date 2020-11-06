@@ -35,6 +35,20 @@
                 <field id="amount" mapping="[2]"/>
             </in>
         </operation>
+
+        <operation id="resetAssetTarget">
+            <invocation>
+                <java method="resetAssetTargets" class="com.github.iryabov.invest.service.InvestService">
+                    <spring/>
+                    <arguments>
+                        <argument type="primitive" name="portfolioId"/>
+                    </arguments>
+                </java>
+            </invocation>
+            <in>
+                <field id="portfolioId" param="portfolio_id" mapping="[0]"/>
+            </in>
+        </operation>
     </operations>
 
 </object>
