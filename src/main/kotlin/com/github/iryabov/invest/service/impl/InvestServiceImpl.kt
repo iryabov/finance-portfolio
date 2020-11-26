@@ -396,23 +396,26 @@ class InvestServiceImpl(
     override fun getBalancedAssets(portfolioId: Int, currency: Currency): BalancedView {
         val assets = targetRepo.findAllAssetsViews(portfolioId, currency)
         assets.forEach { it.calc() }
-        val totalMarketValue = assets.sumByBigDecimal { it.marketValue }
         val targets: Map<TargetType, Map<String, Target>> = targetRepo.findAllByPortfolioId(portfolioId)
                 .groupBy { it.type }.mapValues { it.value.groupBy { v -> v.ticker }.mapValues { t -> t.value.first() } }
+        val assetTargets = targets[TargetType.ASSET] ?: emptyMap()
+        val totalTargetProportion = assetTargets.values.sumByBigDecimal { it.proportion ?: P0 }
+        val totalMarketValue = assets.sumByBigDecimal { it.marketValue }
+        val totalBalancedValue = totalMarketValue + (totalMarketValue * totalTargetProportion / P100)
 
         val sumClass = (targets[TargetType.CLASS]?.values?.sumByBigDecimal { it.proportion ?: P0 }) ?: P0
         val sumSector = (targets[TargetType.SECTOR]?.values?.sumByBigDecimal { it.proportion ?: P0 }) ?: P0
         val sumCountry = (targets[TargetType.COUNTRY]?.values?.sumByBigDecimal { it.proportion ?: P0 }) ?: P0
         val sumCurrency = (targets[TargetType.CURRENCY]?.values?.sumByBigDecimal { it.proportion ?: P0 }) ?: P0
 
-        val targetsClassDeviationPercent: Map<String, BigDecimal> = calcDeviationPercent(assets, TargetType.CLASS,
-                targets[TargetType.CLASS], sumClass, totalMarketValue)
-        val targetsSectorDeviationPercent: Map<String, BigDecimal> = calcDeviationPercent(assets, TargetType.SECTOR,
-                targets[TargetType.SECTOR], sumSector, totalMarketValue)
-        val targetsCountryDeviationPercent: Map<String, BigDecimal> = calcDeviationPercent(assets, TargetType.COUNTRY,
-                targets[TargetType.COUNTRY], sumCountry, totalMarketValue)
-        val targetsCurrencyDeviationPercent: Map<String, BigDecimal> = calcDeviationPercent(assets, TargetType.CURRENCY,
-                targets[TargetType.CURRENCY], sumCurrency, totalMarketValue)
+        val targetsClassDeviationPercent: Map<String, BigDecimal> = calcDeviationPercent(assets, assetTargets, TargetType.CLASS,
+                targets[TargetType.CLASS], sumClass, totalBalancedValue)
+        val targetsSectorDeviationPercent: Map<String, BigDecimal> = calcDeviationPercent(assets, assetTargets, TargetType.SECTOR,
+                targets[TargetType.SECTOR], sumSector, totalBalancedValue)
+        val targetsCountryDeviationPercent: Map<String, BigDecimal> = calcDeviationPercent(assets, assetTargets, TargetType.COUNTRY,
+                targets[TargetType.COUNTRY], sumCountry, totalBalancedValue)
+        val targetsCurrencyDeviationPercent: Map<String, BigDecimal> = calcDeviationPercent(assets, assetTargets, TargetType.CURRENCY,
+                targets[TargetType.CURRENCY], sumCurrency, totalBalancedValue)
 
         val maxClassDeviationPercent = targetsClassDeviationPercent.values.filter { it > P0 }.sumByBigDecimal { it }
         val maxSectorDeviationPercent = targetsSectorDeviationPercent.values.filter { it > P0 }.sumByBigDecimal { it }
@@ -434,11 +437,14 @@ class InvestServiceImpl(
                     + a.targetSectorDeviationPercent
                     + a.targetCountryDeviationPercent
                     + a.targetCurrencyDeviationPercent)
+
+            a.proportion = assetTargets[a.ticker]?.proportion ?: P0
+            a.balance = (totalMarketValue * a.proportion / P100)
         }
 
         return BalancedView(
                 totalMarketValue = totalMarketValue,
-                balance = P0,
+                balance = totalBalancedValue - totalMarketValue,
                 deviation = (maxClassDeviationPercent + maxSectorDeviationPercent + maxCountryDeviationPercent + maxCurrencyDeviationPercent).divide(BigDecimal(4)),
                 assets = result.sortedByDescending { it.totalTargetDeviationPercent })
     }
@@ -755,6 +761,7 @@ private fun AssetView.toBalancedView(): BalancedAssetView = BalancedAssetView(
         assetCurrency = this.assetCurrency)
 
 private fun calcDeviationPercent(assets: List<AssetView>,
+                                 targets: Map<String, Target>,
                                  type: TargetType,
                                  targetsProportion: Map<String, Target>?,
                                  targetSum: BigDecimal,
@@ -773,7 +780,13 @@ private fun calcDeviationPercent(assets: List<AssetView>,
         else
             other
 
-        val total = a.value.sumByBigDecimal { it.marketValue }
+        val total = a.value.sumByBigDecimal {
+            val target = targets[it.assetTicker]
+            if (target?.proportion != null)
+                it.marketValue + (totalMarketValue * target.proportion!! / P100)
+            else
+                it.marketValue
+        }
         val totalProportion = calcPercent(total, totalMarketValue)
         targetProportion - totalProportion
     }

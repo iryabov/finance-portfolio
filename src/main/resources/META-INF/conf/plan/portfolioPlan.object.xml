@@ -30,9 +30,9 @@
                 </java>
             </invocation>
             <in>
-                <field id="portfolioId" param="portfolio_id" mapping="[0]"/>
-                <field id="ticker" mapping="[1]"/>
-                <field id="amount" mapping="[2]"/>
+                <field id="portfolioId" param="portfolio_id" mapping="[0]" domain="integer"/>
+                <field id="ticker" mapping="[1]" domain="string"/>
+                <field id="amount" mapping="[2]" domain="numeric"/>
             </in>
         </operation>
 

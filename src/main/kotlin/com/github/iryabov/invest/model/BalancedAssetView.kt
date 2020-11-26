@@ -57,4 +57,14 @@ data class BalancedAssetView(
      * Суммарный процент отклонения от целевой доли по рыночной стоимости относительно других активов
      */
     var totalTargetDeviationPercent: BigDecimal = P0
+
+    /**
+     * Сумма запланированная для балансировки актива
+     */
+    var balance: BigDecimal = P0
+
+    /**
+     * Процент балансировки актива
+     */
+    var proportion: BigDecimal = P0
 }

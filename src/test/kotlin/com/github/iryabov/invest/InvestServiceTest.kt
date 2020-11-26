@@ -470,6 +470,24 @@ class InvestServiceTest(
     }
 
     @Test
+    fun balanceCalc() {
+        val test = investService.createPortfolio(PortfolioForm(name = "test"))
+        investService.addAsset(test, "AAA")
+        investService.addAsset(test, "BBB")
+        investService.addAsset(test, "CCC")
+        investService.addSecurity(Asset(ticker = "AAA", name = "AAA",
+                assetClass = AssetClass.SHARE, sector = Sector.FINANCE, currency = RUB, country = Country.RUSSIA))
+        investService.addSecurity(Asset(ticker = "BBB", name = "BBB",
+                assetClass = AssetClass.SHARE, sector = Sector.TECHNOLOGY, currency = USD, country = Country.USA))
+        investService.addSecurity(Asset(ticker = "CCC", name = "CCC",
+                assetClass = AssetClass.BOND, sector = Sector.GOVERNMENT, currency = EUR, country = Country.EUROPE))
+
+
+        investService
+
+    }
+
+    @Test
     @Disabled
     fun exchangeECB() {
         val exchange = currenciesClientECB.findCurrencyByDate(LocalDate.of(2020, Month.JANUARY, 1))

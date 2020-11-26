@@ -21,7 +21,7 @@
                     <eq field-id="portfolioId" param="portfolio_id"/>
                 </pre-filters>
             </form>
-            <table query-id="portfolioPlan" route="/assets">
+            <table query-id="portfolioPlan" route="/assets" selection="none">
                 <columns>
                     <column text-field-id="name" label="Name"/>
                     <column text-field-id="marketValue" label="Value">
@@ -39,8 +39,8 @@
                     <column text-field-id="targetCurrencyDeviationPercent" label="Currency">
                         <text/>
                     </column>
-                    <column text-field-id="balance" label="Balance">
-                        <text format="number 0,0.00"/>
+                    <column text-field-id="proportion" label="Balance">
+                        <badge text="{balance}" text-format="number 0,0.00"/>
                     </column>
                     <column text-field-id="id" label="" width="100px">
                         <toolbar>

@@ -36,7 +36,10 @@
             <select mapping="marketValue"/>
         </field>
         <field id="balance">
-            <select mapping="marketValue"/>
+            <select mapping="balance"/>
+        </field>
+        <field id="proportion">
+            <select mapping="proportion" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).percentFormat(#this)"/>
         </field>
 <!--        <field id="netProportion">-->
 <!--            <select mapping="netProportion" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).percentFormat(#this)"/>-->
