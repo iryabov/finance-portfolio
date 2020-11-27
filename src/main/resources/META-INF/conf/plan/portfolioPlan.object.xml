@@ -15,7 +15,7 @@
             <in>
                 <field id="portfolioId" param="portfolio_id" mapping="[0]" domain="integer"/>
                 <field id="ticker" mapping="[1]" domain="string"/>
-                <field id="amount" mapping="[2]" domain="numeric"/>
+                <field id="amount" mapping="[2]" domain="numeric" default-value="1"/>
             </in>
         </operation>
         <operation id="minusAssetTarget">
@@ -32,7 +32,7 @@
             <in>
                 <field id="portfolioId" param="portfolio_id" mapping="[0]" domain="integer"/>
                 <field id="ticker" mapping="[1]" domain="string"/>
-                <field id="amount" mapping="[2]" domain="numeric"/>
+                <field id="amount" mapping="[2]" domain="numeric" default-value="1"/>
             </in>
         </operation>
 
