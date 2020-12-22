@@ -260,6 +260,16 @@ class InvestServiceImpl(
         portfolioRepo.deleteById(id)
     }
 
+    override fun getPortfolioForm(id: Int): PortfolioForm {
+        val entity = portfolioRepo.findById(id).orElseThrow()
+        return entity.toForm()
+    }
+
+    override fun updatePortfolio(id: Int, form: PortfolioForm) {
+        portfolioRepo.findById(id).orElseThrow()
+        portfolioRepo.save(form.toEntity(id))
+    }
+
     override fun addAsset(portfolioId: Int, ticker: String): Int {
         val target = targetRepo.save(Target(ticker = ticker, portfolioId = portfolioId))
         return target.id!!
@@ -677,9 +687,20 @@ private fun needWriteOff(created: Deal) =
         (created.quantity != 0 || created.volume.notZero())
                 && setOf(DealType.PURCHASE, DealType.SALE, DealType.WITHDRAWALS, DealType.TAX).contains(created.type)
 
-private fun PortfolioForm.toEntity() = Portfolio(
+private fun PortfolioForm.toEntity(id: Int? = null) = Portfolio(
+        id = id,
         name = name,
-        note = note
+        note = note,
+        beginDate = beginDate,
+        endDate = endDate
+)
+
+private fun Portfolio.toForm() = PortfolioForm(
+        id = id,
+        name = name,
+        note = note,
+        beginDate = beginDate,
+        endDate = endDate
 )
 
 private fun Account.toView(assets: List<AssetView>): AccountView {

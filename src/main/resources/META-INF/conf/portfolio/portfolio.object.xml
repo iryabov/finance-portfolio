@@ -22,10 +22,31 @@
             <in>
                 <field id="name" mapping="name"/>
                 <field id="note" mapping="note"/>
+                <field id="period.begin" mapping="beginDate"/>
+                <field id="period.end" mapping="endDate"/>
             </in>
             <out>
                 <field id="id" domain="integer" mapping="#this"/>
             </out>
+        </operation>
+        <operation id="updatePortfolio"
+                   submit-label="Save">
+            <invocation>
+                <java method="updatePortfolio" class="com.github.iryabov.invest.service.InvestService">
+                    <spring/>
+                    <arguments>
+                        <argument type="primitive" name="id"/>
+                        <argument type="entity" name="form" class="com.github.iryabov.invest.model.PortfolioForm"/>
+                    </arguments>
+                </java>
+            </invocation>
+            <in>
+                <field id="id" mapping="[0]" param="portfolio_id"/>
+                <field id="name" mapping="[1].name"/>
+                <field id="note" mapping="[1].note"/>
+                <field id="period.begin" mapping="[1].beginDate" domain="localdate"/>
+                <field id="period.end" mapping="[1].endDate" domain="localdate"/>
+            </in>
         </operation>
         <operation id="deletePortfolio">
             <invocation>

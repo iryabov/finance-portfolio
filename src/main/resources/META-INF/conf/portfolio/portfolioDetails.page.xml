@@ -8,6 +8,13 @@
             </button>
         </group>
         <group>
+            <button id="target" label="Targets" icon="fa fa-bullseye" widget-id="portfolio">
+                <open-page page-id="portfolioTarget" route="/targets">
+
+                </open-page>
+            </button>
+        </group>
+        <group>
             <button id="viewStatistic" label="Analytics" widget-id="portfolio" icon="fa fa-pie-chart" type="icon">
                 <open-page page-id="portfolioAnalytics" route="/analytics"/>
             </button>
@@ -25,9 +32,9 @@
     </toolbar>
     <toolbar place="topRight">
         <group>
-            <button id="target" label="Targets" icon="fa fa-bullseye" widget-id="portfolio">
-                <open-page page-id="portfolioTarget" route="/targets">
-
+            <button id="edit" label="Edit" icon="fa fa-pencil" widget-id="portfolio">
+                <open-page page-id="portfolioForm" route="/edit"
+                           page-name="Edit" submit-operation-id="updatePortfolio">
                 </open-page>
             </button>
         </group>

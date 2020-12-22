@@ -16,6 +16,8 @@ logging:
   level:
     org.springframework.jdbc.core.JdbcTemplate: info
 n2o:
+  i18n:
+    default-locale: ru
   header.id: invest
   api:
     control:

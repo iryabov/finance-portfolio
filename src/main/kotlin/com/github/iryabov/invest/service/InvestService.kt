@@ -67,6 +67,10 @@ interface InvestService {
 
     fun deletePortfolio(id: Int)
 
+    fun getPortfolioForm(id: Int): PortfolioForm
+
+    fun updatePortfolio(id: Int, form: PortfolioForm)
+
     fun addAsset(portfolioId: Int, ticker: String): Int
 
     fun addAssets(portfolioId: Int, criteria: SecurityCriteria)
