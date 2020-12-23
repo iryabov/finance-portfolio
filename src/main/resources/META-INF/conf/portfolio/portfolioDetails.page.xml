@@ -8,7 +8,7 @@
             </button>
         </group>
         <group>
-            <button id="target" label="Targets" icon="fa fa-bullseye" widget-id="portfolio">
+            <button id="target" label="Targets" icon="fa fa-bullseye" widget-id="portfolio" type="icon">
                 <open-page page-id="portfolioTarget" route="/targets">
 
                 </open-page>
