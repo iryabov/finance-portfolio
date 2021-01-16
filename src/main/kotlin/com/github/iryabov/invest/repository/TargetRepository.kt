@@ -153,11 +153,18 @@ where t.portfolio_id = :portfolio_id
     @Query("""
 select
   d.dt as date,
+  sum(d.deposit) as deposit,
+  sum(d.withdrawals) as withdrawals,
   sum(coalesce(d.quantity * price_cur, -1*d.volume)) as market_value,
   sum(-1*d.volume) as balance,
   sum(d.profit) as profit_value,
   sum(d.quantity) as quantity,
-  sum(d.purchase_volume / d.purchase_quantity * d.quantity) as net_value
+  sum(d.purchase_volume / d.purchase_quantity * d.quantity) as net_value,
+  sum(d.sold_volume - d.purchase_volume / d.purchase_quantity * d.sold_quantity) as trading,
+  sum(d.dividends) as dividends,
+  sum(d.coupons) as coupons,
+  sum(d.percents) as percents,
+  sum(d.taxes) as taxes
 from
 (select 
   p as dt, 
@@ -168,6 +175,12 @@ from
   sum(case when d.quantity > 0 then -1*d.volume_cur else 0 end) as purchase_volume,
   sum(case when d.quantity < 0 then d.volume_cur else 0 end) as sold_volume,
   sum(d.volume_cur) as volume,
+  sum(case when d.type = 'DEPOSIT' then d.volume_cur else 0 end) as deposit,
+  sum(case when d.type = 'WITHDRAWALS' then d.volume_cur else 0 end) as withdrawals,
+  sum(case when d.type = 'DIVIDEND' and d.quantity = 0 then d.volume_cur else 0 end) as dividends,
+  sum(case when d.type = 'COUPON' and d.quantity = 0 then d.volume_cur else 0 end) as coupons,
+  sum(case when d.type = 'PERCENT' then d.volume_cur else 0 end) as percents,
+  sum(case when d.type = 'TAX' then d.volume_cur else 0 end) as taxes,
   sum(case when d.quantity = 0 then d.volume_cur else 0 end) as profit,
   (select h.price * exchange(:currency, s.currency, h.dt)
     from asset_history h 

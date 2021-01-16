@@ -6,6 +6,7 @@ import com.github.iryabov.invest.relation.Currency
 import com.github.iryabov.invest.relation.Period
 import com.github.iryabov.invest.relation.TargetType
 import java.math.BigDecimal
+import java.time.LocalDate
 
 interface InvestService {
     fun createAccount(form: AccountForm): Int
@@ -53,6 +54,10 @@ interface InvestService {
 
     //todo (portfolioId: Int, currency: Currency = Currency.RUB)
     fun getPortfolio(currency: Currency = Currency.RUB, portfolioId: Int): PortfolioView
+
+    fun getPortfolioSummary(portfolioId: Int,
+                            year: Int, month: Int? = null,
+                            currency: Currency = Currency.RUB): PortfolioSummaryView
 
     fun getPortfolioHistory(portfolioId: Int,
                             period: Period = Period.FIVE_YEARS,

@@ -1,46 +1,52 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<top-left-right-page xmlns="http://n2oapp.net/framework/config/schema/page-3.0"
+<left-right-page xmlns="http://n2oapp.net/framework/config/schema/page-3.0"
                  name="Analytics">
-    <top>
-        <form>
+    <left width="80%">
+        <form id="period" route="/period">
             <fields>
                 <row>
                     <col>
-                        <select id="period" label="Period" no-label-block="true" no-label="true">
-                            <default-value id="2020" name="2020"/>
+                        <radio-group id="period" label="Period" inline="true" no-label-block="true" no-label="true">
+                            <default-value id="2021" name="2021"/>
                             <options>
-                                <option id="2018" name="2018"/>
-                                <option id="2019" name="2019"/>
-                                <option id="2020" name="2020"/>
                                 <option id="2021" name="2021"/>
-                                <option id="2022" name="2022"/>
+                                <option id="2020" name="2020"/>
+                                <option id="2019" name="2019"/>
+                                <option id="2018" name="2018"/>
                             </options>
-                        </select>
+                        </radio-group>
                     </col>
                 </row>
             </fields>
         </form>
-        <form>
+        <form id="summary" route="/summary" fetch-on-init="true" depends-on="period" query-id="portfolioSummary">
             <fields>
 
                 <set field-label-location="left" field-label-width="120px" field-label-align="right">
-                    <output-text id="marketValue" label="Deposit" default-value="111"/>
-                    <output-text id="marketValue" label="Net value"/>
-                    <output-text id="marketValue" label="Market value"/>
+                    <output-text id="depositChange" label="Deposit" format="number 0,00"/>
+<!--                    <output-text id="netValue" label="Net value" format="number 0,00"/>-->
+                    <output-text id="marketValueChange" label="Market value" format="number 0,00"/>
                 </set>
                 <line field-label-location="left" field-label-width="120px" field-label-align="right" collapsible="false">
-                    <output-text id="marketValue" label="Dividends"/>
-                    <output-text id="marketValue" label="Coupons"/>
-                    <output-text id="marketValue" label="Sales profit"/>
+                    <output-text id="dividendsChange" label="Dividends" format="number 0,00"/>
+                    <output-text id="couponsChange" label="Coupons" format="number 0,00"/>
+                    <output-text id="percentsChange" label="Percents" format="number 0,00"/>
+                    <output-text id="tradingChange" label="Sales profit" format="number 0,00"/>
+                    <output-text id="marketProfitChange" label="Market profit" format="number 0,00"/>
                 </line>
                 <line field-label-location="left" field-label-width="120px" field-label-align="right" collapsible="false">
-                    <output-text id="marketValue" label="Total profit"/>
-                    <output-text id="marketValue" label="Withdrawals"/>
+                    <output-text id="grossProfitChange" label="Gross profit" format="number 0,00"/>
+                    <output-text id="totalProfitChange" label="Total profit" format="number 0,00"/>
+                    <output-text id="withdrawalsChange" label="Withdrawals" format="number 0,00"/>
                 </line>
             </fields>
+            <pre-filters>
+                <eq field-id="portfolioId" param="portfolio_id"/>
+                <eq field-id="year" value="{period.id}" ref-widget-id="period" ref-model="resolve"/>
+            </pre-filters>
         </form>
-    </top>
-    <left>
+    </left>
+    <right>
         <panel collapsible="false">
             <chart id="class" query-id="analytics" name="Classes">
                 <pie inner-radius="50"
@@ -69,8 +75,6 @@
                 </pre-filters>
             </chart>
         </panel>
-    </left>
-    <right width="50%">
         <panel collapsible="false">
             <chart id="sector" query-id="analytics" name="Sectors">
                 <pie inner-radius="50"
@@ -100,4 +104,4 @@
             </chart>
         </panel>
     </right>
-</top-left-right-page>
+</left-right-page>

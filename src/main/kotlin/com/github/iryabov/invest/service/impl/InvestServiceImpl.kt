@@ -207,6 +207,19 @@ class InvestServiceImpl(
         return portfolioEntity.toView(targetRepo.findAllAssetsViews(portfolioId, currency))
     }
 
+    override fun getPortfolioSummary(portfolioId: Int,
+                                     year: Int, month: Int?,
+                                     currency: Currency): PortfolioSummaryView {
+        val from = LocalDate.of(year, month ?: 1, 1)
+        val tMonth = if (month == null || month == 12) 1 else month + 1
+        val tYear = if (month == null || month == 12) year + 1 else year
+        val till = LocalDate.of(tYear, tMonth, 1)
+        val assets = targetRepo.findAllTargetHistoryViews(portfolioId, currency, from, till, if (month == null) "1 year" else "1 month")
+        val first = assets.first()
+        val last = assets.last()
+        return diff(first, last)
+    }
+
     override fun getPortfolioHistory(portfolioId: Int,
                                      period: Period,
                                      currency: Currency): List<TargetHistoryView> {
@@ -811,4 +824,35 @@ private fun calcDeviationPercent(assets: List<AssetView>,
         val totalProportion = calcPercent(total, totalMarketValue)
         targetProportion - totalProportion
     }
+}
+
+private fun diff(first: TargetHistoryView, last: TargetHistoryView): PortfolioSummaryView {
+    return PortfolioSummaryView(
+            deposit = P0,
+            depositChange = P0,
+            withdrawals = P0,
+            withdrawalsChange = P0,
+            marketValue = last.marketValue,
+            marketValueChange = last.marketValue - first.marketValue,
+            netValue = last.netValue,
+            netValueChange = last.netValue - first.netValue,
+            dividends = last.dividends,
+            dividendsChange = last.dividends - first.dividends,
+            coupons = last.coupons,
+            couponsChange = last.coupons - first.coupons,
+            percents = last.percents,
+            percentsChange = last.percents - first.percents,
+            trading = last.trading,
+            tradingChange = last.trading - first.trading,
+            marketProfit = last.marketValue - last.netValue,
+            marketProfitChange = (last.marketValue - last.netValue) - (first.marketValue - first.netValue),
+            grossProfit = last.dividends + last.coupons + last.percents + last.trading,
+            grossProfitChange = (last.dividends + last.coupons + last.percents + last.trading) - (first.dividends + first.coupons + first.percents + first.trading),
+            netProfit = P0,
+            netProfitChange = P0,
+            tax = last.taxes,
+            taxChange = last.taxes - first.taxes,
+            fee = P0,
+            feeChange = P0
+    )
 }

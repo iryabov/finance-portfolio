@@ -1,0 +1,105 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<query xmlns="http://n2oapp.net/framework/config/schema/query-4.0">
+    <unique filters="portfolioId,currency,year">
+        <java method="getPortfolioSummary" class="com.github.iryabov.invest.service.InvestService">
+            <spring/>
+            <arguments>
+                <argument type="primitive" name="portfolioId"/>
+                <argument type="primitive" name="year"/>
+                <argument type="primitive" name="month"/>
+                <argument type="primitive" name="currency"/>
+            </arguments>
+        </java>
+    </unique>
+
+    <fields>
+        <field id="portfolioId">
+            <filters>
+                <eq filter-id="portfolioId" mapping="[0]"/>
+            </filters>
+        </field>
+        <field id="year" domain="integer">
+            <filters>
+                <eq filter-id="year" mapping="[1]"/>
+            </filters>
+        </field>
+        <field id="month">
+            <filters>
+                <eq filter-id="month" mapping="[1]" default-value="null" normalize="null"/>
+            </filters>
+        </field>
+        <field id="currency">
+            <filters>
+                <eq filter-id="currency" default-value="${portfolio.currency}"
+                    normalize="T(com.github.iryabov.invest.relation.Currency).valueOf(#this)"
+                    mapping="[3]"/>
+            </filters>
+        </field>
+        <field id="marketValue">
+            <select/>
+        </field>
+        <field id="marketValueChange">
+            <select/>
+        </field>
+        <field id="netValue">
+            <select/>
+        </field>
+        <field id="netValueChange">
+            <select/>
+        </field>
+        <field id="deposit">
+            <select/>
+        </field>
+        <field id="depositChange">
+            <select/>
+        </field>
+        <field id="withdrawals">
+            <select/>
+        </field>
+        <field id="withdrawalsChange">
+            <select/>
+        </field>
+        <field id="dividends">
+            <select/>
+        </field>
+        <field id="dividendsChange">
+            <select/>
+        </field>
+        <field id="coupons">
+            <select/>
+        </field>
+        <field id="couponsChange">
+            <select/>
+        </field>
+        <field id="percents">
+            <select/>
+        </field>
+        <field id="percentsChange">
+            <select/>
+        </field>
+        <field id="trading">
+            <select/>
+        </field>
+        <field id="tradingChange">
+            <select/>
+        </field>
+        <field id="marketProfit">
+            <select/>
+        </field>
+        <field id="marketProfitChange">
+            <select/>
+        </field>
+        <field id="grossProfit">
+            <select/>
+        </field>
+        <field id="grossProfitChange">
+            <select/>
+        </field>
+        <field id="totalProfit">
+            <select/>
+        </field>
+        <field id="totalProfitChange">
+            <select/>
+        </field>
+    </fields>
+</query>
