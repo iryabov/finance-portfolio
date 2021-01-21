@@ -33,14 +33,14 @@
             <input-select id="security" label="Search" query-id="security"
                           label-field-id="displayName" search-filter-id="name">
                 <dependencies>
-                    <visibility on="type">type.id != 'DEPOSIT'
+                    <visibility on="type.id">type.id != 'DEPOSIT'
                         &amp;&amp; type.id != 'WITHDRAWALS'</visibility>
                 </dependencies>
             </input-select>
             <input-text id="asset.id" label="Ticker" param="asset_id">
                 <dependencies>
                     <set-value on="security">security.ticker</set-value>
-                    <visibility on="type">type.id != 'DEPOSIT'
+                    <visibility on="type.id">type.id != 'DEPOSIT'
                         &amp;&amp; type.id != 'WITHDRAWALS'</visibility>
                 </dependencies>
             </input-text>
@@ -55,13 +55,13 @@
             </radio-group>
             <set>
                 <input-money id="volume" label="Volume" required="true">
-                    <dependencies>
-                        <visibility on="type">type.id != 'PERCENT'</visibility>
-                    </dependencies>
-                </input-money>
+                <dependencies>
+                    <visibility on="type">type.id != 'PERCENT'</visibility>
+                </dependencies>
+            </input-money>
                 <input-text id="quantity" label="Quantity" required="true" domain="integer" min="0">
                     <dependencies>
-                        <visibility on="type">type.id != 'DEPOSIT'
+                        <visibility on="type.id">type.id != 'DEPOSIT'
                             &amp;&amp; type.id != 'WITHDRAWALS'
                             &amp;&amp; type.id != 'TAX'
                             &amp;&amp; type.id != 'DIVIDEND'
@@ -70,8 +70,8 @@
                 </input-text>
                 <output-text id="price" label="Price" format="number 1.0">
                     <dependencies>
-                        <set-value apply-on-init="false" on="volume,quantity">volume / quantity</set-value>
-                        <visibility on="type">type.id != 'DEPOSIT'
+                        <set-value apply-on-init="false" on="volume,quantity">quantity > 0 ? volume / quantity: 0</set-value>
+                        <visibility on="type.id">type.id != 'DEPOSIT'
                             &amp;&amp; type.id != 'WITHDRAWALS'
                             &amp;&amp; type.id != 'TAX'
                             &amp;&amp; type.id != 'DIVIDEND'
@@ -82,7 +82,7 @@
                 <select id="accountTo" param="account_to" label="Remittance to account"
                         query-id="accounts" label-field-id="name">
                     <dependencies>
-                        <visibility on="type">type.id == 'DEPOSIT' ||
+                        <visibility on="type.id">type.id == 'DEPOSIT' ||
                             type.id == 'WITHDRAWALS' ||
                             type.id == 'DIVIDEND' ||
                             type.id == 'COUPON'</visibility>
