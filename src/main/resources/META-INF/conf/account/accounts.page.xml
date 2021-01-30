@@ -61,6 +61,7 @@
                     <click>
                         <open-page page-id="accountDetails" route="/:account_id/details">
                             <path-param name="account_id" value="{id}"/>
+                            <query-param name="account_name" value="{name}"/><!--todo need to remove-->
                         </open-page>
                     </click>
                 </rows>
