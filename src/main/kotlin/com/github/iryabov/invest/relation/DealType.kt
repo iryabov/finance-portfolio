@@ -6,7 +6,7 @@ enum class DealType(val income: Boolean = true, val quantity: Boolean = false, v
     DIVIDEND(income = true, quantity = false, currency = false),
     COUPON(income = true, quantity = false, currency = false),
     PERCENT(income = false, quantity = true, currency = false),
-    TAX(income = false, quantity = false, currency = false),
+    TAX(income = true, quantity = false, currency = true),
     DEPOSIT(income = false, quantity = false, currency = true),
     WITHDRAWALS(income = true, quantity = false, currency = true);
 
