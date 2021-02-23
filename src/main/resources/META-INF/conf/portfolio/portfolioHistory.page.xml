@@ -20,14 +20,13 @@
             <chart id="history" route="/history" depends-on="period"
                    query-id="portfolioHistory"
                    name="History"
-                   width="1000" height="200">
-                <lines x-field-id="date" grid-vertical="false"
-                       tooltip-separator=" ">
-                    <line field-id="netValue" color="#8884d8"/>
-                    <line field-id="balance" color="#ffb300"/>
-                    <line field-id="marketValue" color="#00FF00"/>
-                    <line field-id="profitValue" color="#FF0000"/>
-                </lines>
+                   width="1400" height="300">
+                <areas x-field-id="date" grid-vertical="false">
+                    <area field-id="netValue" color="#8884d8"/>
+                    <area field-id="balance" color="#ffb300"/>
+                    <area field-id="marketValue" color="#00FF00"/>
+<!--                    <area field-id="profitValue" color="#FF0000"/>-->
+                </areas>
                 <pre-filters>
                     <eq field-id="portfolioId" param="portfolio_id"/>
                     <eq field-id="period" value="{period.id}" ref-widget-id="period" ref-model="resolve"/>
@@ -45,12 +44,12 @@
             <chart id="performance" route="/performance" depends-on="benchmark"
                    query-id="portfolioBenchmark"
                    name="Performance"
-                   width="1000" height="200">
-                <lines x-field-id="date" grid-vertical="false"
-                       tooltip-separator=" ">
-                    <line field-id="portfolioProfit" color="#00FF00"/>
-                    <line field-id="benchmarkProfit" color="#FF0000"/>
-                </lines>
+                   width="1400" height="200">
+                <areas x-field-id="date" grid-vertical="false"
+                       y-min="-50" y-max="100">
+                    <area field-id="portfolioProfit" color="#00FF00"/>
+                    <area field-id="benchmarkProfit" color="#FF0000"/>
+                </areas>
                 <pre-filters>
                     <eq field-id="portfolioId" param="portfolio_id"/>
                     <eq field-id="period" value="{period.id}" ref-widget-id="period" ref-model="resolve"/>

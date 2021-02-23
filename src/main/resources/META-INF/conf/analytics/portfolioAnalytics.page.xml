@@ -47,13 +47,12 @@
         </form>
     </left>
     <right>
-        <panel collapsible="false">
-            <chart id="class" query-id="analytics" name="Classes">
+        <panel collapsible="false" title="Classes">
+            <chart id="class" query-id="analytics">
                 <pie inner-radius="50"
                      outer-radius="80"
                      name-field-id="name"
                      value-field-id="value"
-                     color="#82ca9d"
                      has-label="true"/>
                 <pre-filters>
                     <eq field-id="portfolioId" param="portfolio_id"/>
@@ -61,13 +60,12 @@
                 </pre-filters>
             </chart>
         </panel>
-        <panel collapsible="false">
-            <chart id="country" query-id="analytics" name="Countries">
+        <panel collapsible="false" title="Countries">
+            <chart id="country" query-id="analytics">
                 <pie inner-radius="50"
                      outer-radius="80"
                      name-field-id="name"
                      value-field-id="value"
-                     color="#db4646"
                      has-label="true"/>
                 <pre-filters>
                     <eq field-id="portfolioId" param="portfolio_id"/>
@@ -75,13 +73,12 @@
                 </pre-filters>
             </chart>
         </panel>
-        <panel collapsible="false">
-            <chart id="sector" query-id="analytics" name="Sectors">
+        <panel collapsible="false" title="Sectors">
+            <chart id="sector" query-id="analytics">
                 <pie inner-radius="50"
                      outer-radius="80"
                      name-field-id="name"
                      value-field-id="value"
-                     color="#17a2b8"
                      has-label="true"/>
                 <pre-filters>
                     <eq field-id="portfolioId" param="portfolio_id"/>
@@ -89,13 +86,12 @@
                 </pre-filters>
             </chart>
         </panel>
-        <panel collapsible="false">
-            <chart id="currency" query-id="analytics" name="Currencies">
+        <panel collapsible="false" title="Currencies" >
+            <chart id="currency" query-id="analytics">
                 <pie inner-radius="50"
                      outer-radius="80"
                      name-field-id="name"
                      value-field-id="value"
-                     color="#ffc107"
                      has-label="true"/>
                 <pre-filters>
                     <eq field-id="portfolioId" param="portfolio_id"/>

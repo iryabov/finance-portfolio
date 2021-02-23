@@ -3,7 +3,7 @@
       name="Securities">
     <toolbar place="topLeft">
         <group>
-            <button label="Load" widget-id="securities" model="filter">
+            <button label="Load" widget-id="securities" model="resolve">
                 <invoke operation-id="loadAll"/>
             </button>
         </group>
