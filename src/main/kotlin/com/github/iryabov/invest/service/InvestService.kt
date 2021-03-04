@@ -1,6 +1,7 @@
 package com.github.iryabov.invest.service
 
 import com.github.iryabov.invest.entity.Asset
+import com.github.iryabov.invest.entity.Remittance
 import com.github.iryabov.invest.model.*
 import com.github.iryabov.invest.relation.Currency
 import com.github.iryabov.invest.relation.Period
@@ -30,6 +31,8 @@ interface InvestService {
     fun getAssetHistory(accountId: Int? = null, ticker: String, period: Period, currency: Currency = Currency.RUB): List<AssetHistoryView>
 
     fun getDeals(accountId: Int, currency: Currency = Currency.RUB, ticker: String? = null): List<DealView>
+
+    fun getRemittanceDials(): List<RemittanceView>
 
     fun getSecurities(): List<SecurityView>
 

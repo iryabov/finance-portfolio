@@ -7,9 +7,16 @@
                 <open-page page-id="accountNew" submit-operation-id="addAccount" route="/add"/>
             </button>
         </group>
-        <button icon="fa fa-exchange" label="Remittance" widget-id="accounts" model="filter" type="icon">
-            <open-page page-id="remittanceForm" submit-operation-id="remittanceDeal" route="/remittance"/>
-        </button>
+        <group>
+            <button icon="fa fa-exchange" label="Remittance" widget-id="accounts" model="filter" type="icon">
+                <open-page page-id="remittanceForm" submit-operation-id="remittanceDeal" route="/remittance"/>
+            </button>
+        </group>
+        <group>
+            <button icon="fa fa-history" label="Remittance history" widget-id="accounts" model="filter" type="icon">
+                <open-page page-id="remittances" route="/remittances"/>
+            </button>
+        </group>
     </toolbar>
     <regions>
         <region>

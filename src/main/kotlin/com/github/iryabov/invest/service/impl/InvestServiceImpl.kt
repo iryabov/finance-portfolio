@@ -141,6 +141,10 @@ class InvestServiceImpl(
         return dials
     }
 
+    override fun getRemittanceDials(): List<RemittanceView> {
+        return remittanceRepository.findAllOrderByOpenedDesc()
+    }
+
     override fun getSecurities(): List<SecurityView> {
         return assetRepo.findAll(Sort.by("ticker")).map { it.toView() }
     }
