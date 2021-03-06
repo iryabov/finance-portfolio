@@ -652,7 +652,7 @@ private fun Deal.invert(): Deal {
 private fun DealView.calcDividend(old: MutableList<DealView>) {
     if (!this.active)
         return
-    if (type == DealType.DIVIDEND && (dividendQuantity ?: 0) > 0) {
+    if (setOf(DealType.DIVIDEND, DealType.COUPON).contains(type) && (dividendQuantity ?: 0) > 0) {
         val dividendPerAsset = (volume ?: P0).divide((dividendQuantity ?: 0).toBigDecimal(), 2, RoundingMode.HALF_UP)
         var remainQuantity = dividendQuantity!!
         old.filter { it.assetTicker == this.assetTicker }.forEach {
