@@ -242,6 +242,7 @@ order by d.dt desc, d.id desc
         from dial d
         where d.active = true
           and d.account_id = :account_id
+          and d.type not in ('DEPOSIT')
           and (d.dt > :date_from or (d.dt = :date_from and d.id > :id))
         order by d.dt, d.id
     """)
