@@ -22,7 +22,16 @@ select
     (case when d.type = 'WITHDRAWALS' then a.name else null end) as account_from, 
     (case when at.id is not null then at.name when d.type = 'DEPOSIT' then a.name else null end) as account_to,
     d.currency as currency,
-    abs(d.quantity) as quantity
+    abs(d.quantity) as quantity,
+    coalesce((select dr.type
+     from dial dr 
+     where dr.type in ('COUPON', 'DIVIDEND') 
+       and dr.dt = d.dt 
+       and dr.account_id = d.account_id
+       and dr.currency = d.currency 
+       and trunc(dr.volume) = d.volume
+       limit 1
+    ), d.type) as type
 from dial d
 join account a on d.account_id = a.id 
 left join remittance r on r.dial_from = d.id

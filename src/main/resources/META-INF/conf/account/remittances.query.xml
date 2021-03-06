@@ -29,6 +29,9 @@
         <field id="text">
             <select mapping="accountFrom" normalize="(#data['accountFrom'] ?: '') + ' -> ' + (#data['accountTo'] ?: '')"/>
         </field>
+        <field id="type">
+            <select mapping="type"/>
+        </field>
     </fields>
 
 </query>
