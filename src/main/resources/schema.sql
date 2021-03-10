@@ -123,6 +123,18 @@ CREATE TABLE IF NOT EXISTS public.target
         ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS portfolio_account (
+	portfolio_id         integer  NOT NULL ,
+	account_id           integer  NOT NULL ,
+	CONSTRAINT idx_portfolio_account PRIMARY KEY ( portfolio_id, account_id ),
+	CONSTRAINT fk_portfolio_account_portfolio FOREIGN KEY ( portfolio_id )
+	    REFERENCES public.portfolio(id)
+	    ON DELETE CASCADE,
+    CONSTRAINT fk_portfolio_account_account FOREIGN KEY ( account_id )
+        REFERENCES public.account(id)
+        ON DELETE CASCADE
+ );
+
 CREATE OR REPLACE FUNCTION exchange(text, text, date) RETURNS numeric
 AS $$
     SELECT CASE WHEN $2 = $1 THEN 1
