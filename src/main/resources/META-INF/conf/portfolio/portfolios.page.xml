@@ -5,7 +5,7 @@
         <group>
             <button icon="fa fa-plus" label="Add portfolio" color="primary" widget-id="portfolios" model="filter">
                 <open-page page-id="portfolioForm" submit-operation-id="addPortfolio"
-                           route="/add"
+                           route="/add" upload="defaults"
                            redirect-url-after-submit="../:id/details"/>
             </button>
         </group>
