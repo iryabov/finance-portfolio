@@ -31,6 +31,7 @@ class InvestServiceImpl(
         val remittanceRepository: RemittanceRepository,
         val currencyRateLoader: CurrencyRateLoader,
         val portfolioRepo: PortfolioRepository,
+        val portfolioAccountRepo: PortfolioAccountRepository,
         val targetRepo: TargetRepository
 ) : InvestService {
     override fun createAccount(form: AccountForm): Int {
@@ -270,6 +271,7 @@ class InvestServiceImpl(
 
     override fun createPortfolio(form: PortfolioForm): Int {
         val portfolio = portfolioRepo.save(form.toEntity())
+        portfolioAccountRepo.saveAll(form.accounts.map { PortfolioAccount(PortfolioAccountID(portfolio.id!!, it.id)) }.toMutableList())
         return portfolio.id!!
     }
 
@@ -279,12 +281,18 @@ class InvestServiceImpl(
 
     override fun getPortfolioForm(id: Int): PortfolioForm {
         val entity = portfolioRepo.findById(id).orElseThrow()
-        return entity.toForm()
+        return entity.toForm(portfolioAccountRepo.findAllByPortfolioId(id))
     }
 
     override fun updatePortfolio(id: Int, form: PortfolioForm) {
         portfolioRepo.findById(id).orElseThrow()
         portfolioRepo.save(form.toEntity(id))
+        val existsAccounts = portfolioAccountRepo.findAllByPortfolioId(id)
+        val newAccountIds = form.accounts.map { it.id }
+        portfolioAccountRepo.deleteAll(existsAccounts.filter { !newAccountIds.contains(it.id.accountId) }.toMutableList())
+        val existsAccountIds = existsAccounts.map { it.id.accountId }
+        val newAccounts = form.accounts.filter { !existsAccountIds.contains(it.id) }.map { PortfolioAccount(PortfolioAccountID(id, it.id)) }
+        portfolioAccountRepo.saveAll(newAccounts.toMutableList())
     }
 
     override fun addAsset(portfolioId: Int, ticker: String): Int {
@@ -712,12 +720,13 @@ private fun PortfolioForm.toEntity(id: Int? = null) = Portfolio(
         endDate = endDate
 )
 
-private fun Portfolio.toForm() = PortfolioForm(
+private fun Portfolio.toForm(accounts: List<PortfolioAccount>) = PortfolioForm(
         id = id,
         name = name,
         note = note,
         beginDate = beginDate,
-        endDate = endDate
+        endDate = endDate,
+        accounts = accounts.map { RefForm(it.id.accountId, it.accountName!!) }
 )
 
 private fun Account.toView(assets: List<AssetView>): AccountView {

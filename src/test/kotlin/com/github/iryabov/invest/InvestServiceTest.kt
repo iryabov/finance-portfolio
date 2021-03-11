@@ -357,9 +357,18 @@ class InvestServiceTest(
 
     @Test
     fun portfolio() {
-        val test = investService.createPortfolio(PortfolioForm(name = "test"))
+        val account1 = investService.createAccount(AccountForm("Account1"))
+        val account2 = investService.createAccount(AccountForm("Account2"))
+        val account3 = investService.createAccount(AccountForm("Account3"))
+
+        val test = investService.createPortfolio(PortfolioForm(
+                name = "test",
+                accounts = listOf(RefForm(account1), RefForm(account2))))
         val portfolios = investService.getPortfolios()
         assertThat(portfolios.find { it.id == test }).isNotNull
+        val portfolio = investService.getPortfolioForm(test)
+        assertThat(portfolio.accounts.size).isEqualTo(2)
+
         investService.addAsset(test, "AAA")
         assertThat(investService.getPortfolio(portfolioId = test).assets.size).isEqualTo(1)
         investService.updateTarget(portfolioId = test, ticker = "AAA", form = TargetForm(
@@ -374,6 +383,16 @@ class InvestServiceTest(
         assertThat(investService.getPortfolio(portfolioId = test).assets[0].active).isTrue()
         investService.deleteTarget(test, "AAA")
         assertThat(investService.getPortfolio(portfolioId = test).assets.size).isEqualTo(0)
+
+        investService.updatePortfolio(test, PortfolioForm(
+                name = "test",
+                accounts = listOf(RefForm(account1), RefForm(account3))))
+        val editedPortfolio = investService.getPortfolioForm(test)
+        assertThat(editedPortfolio.accounts.size).isEqualTo(2)
+        assertThat(editedPortfolio.accounts.any { it.id == account1 }).isTrue()
+        assertThat(editedPortfolio.accounts.any { it.id == account3 }).isTrue()
+        assertThat(editedPortfolio.accounts.any { it.id == account2 }).isFalse()
+
         investService.deletePortfolio(test)
         assertThat(investService.getPortfolios().size).isEqualTo(0)
     }

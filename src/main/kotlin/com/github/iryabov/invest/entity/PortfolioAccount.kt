@@ -6,8 +6,8 @@ import org.springframework.data.relational.core.mapping.Embedded
 data class PortfolioAccount(
         @Id
         @Embedded(onEmpty = Embedded.OnEmpty.USE_NULL)
-        val id: PortfolioAccountID
-
+        val id: PortfolioAccountID,
+        val accountName: String? = null
 )
 
 data class PortfolioAccountID(

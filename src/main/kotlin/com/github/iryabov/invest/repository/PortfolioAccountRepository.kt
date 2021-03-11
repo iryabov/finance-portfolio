@@ -14,7 +14,7 @@ class PortfolioAccountRepository : CrudRepository<PortfolioAccount, PortfolioAcc
     private lateinit var jdbc: JdbcTemplate
 
     override fun <S : PortfolioAccount?> save(entity: S): S {
-        jdbc.update("insert portfolio_account (portfolio_id, account_id) values (?, ?)",
+        jdbc.update("insert into portfolio_account (portfolio_id, account_id) values (?, ?)",
                 entity!!.id.portfolioId, entity.id.accountId)
         return entity
     }
@@ -25,8 +25,17 @@ class PortfolioAccountRepository : CrudRepository<PortfolioAccount, PortfolioAcc
     }
 
     fun findAllByPortfolioId(portfolioId: Int): List<PortfolioAccount> {
-        return jdbc.query("select account_id from portfolio_account where portfolio_id = ?") { rs, _ ->
-            PortfolioAccount(PortfolioAccountID(portfolioId, rs.getInt("account_id")))
+        return jdbc.query("""
+            select 
+                 pa.account_id as account_id,
+                 a.name as account_name
+            from portfolio_account pa
+            join account a on a.id = pa.account_id
+            where pa.portfolio_id = ?
+        """.trimMargin(), arrayOf(portfolioId)) { rs, _ ->
+            PortfolioAccount(
+                    PortfolioAccountID(portfolioId, rs.getInt("account_id")),
+                    rs.getString("account_name"))
         }
     }
 
