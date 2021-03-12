@@ -45,8 +45,7 @@
                    query-id="portfolioBenchmark"
                    name="Performance"
                    width="1400" height="200">
-                <areas x-field-id="date" grid-vertical="false"
-                       y-min="-50" y-max="100">
+                <areas x-field-id="date" grid-vertical="false">
                     <area field-id="portfolioProfit" color="#00FF00"/>
                     <area field-id="benchmarkProfit" color="#FF0000"/>
                 </areas>
