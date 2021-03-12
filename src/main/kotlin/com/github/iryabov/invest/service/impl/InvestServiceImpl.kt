@@ -841,10 +841,10 @@ private fun calcDeviationPercent(assets: List<AssetView>,
 
 private fun diff(first: TargetHistoryView, last: TargetHistoryView): PortfolioSummaryView {
     return PortfolioSummaryView(
-            deposit = P0,
-            depositChange = P0,
-            withdrawals = P0,
-            withdrawalsChange = P0,
+            deposit = last.deposit,
+            withdrawals = last.withdrawals,
+            depositChange = last.deposit - first.deposit,
+            withdrawalsChange = last.withdrawals - first.withdrawals,
             marketValue = last.marketValue,
             marketValueChange = last.marketValue - first.marketValue,
             netValue = last.netValue,

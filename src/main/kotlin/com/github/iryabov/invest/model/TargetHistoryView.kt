@@ -16,7 +16,9 @@ data class TargetHistoryView(
         var coupons: BigDecimal = P0,
         var percents: BigDecimal = P0,
         var trading: BigDecimal = P0,
-        var taxes: BigDecimal = P0
+        var taxes: BigDecimal = P0,
+        var deposit: BigDecimal = P0,
+        var withdrawals: BigDecimal = P0
 ) {
     val marketProfitPercent: BigDecimal
         get(): BigDecimal = calcProfitPercent(marketValue, balance)

@@ -153,7 +153,7 @@ where t.portfolio_id = :portfolio_id
     @Query("""
 select
   d.dt as date,
-  sum(d.deposit) as deposit,
+  sum(-1*d.deposit) as deposit,
   sum(d.withdrawals) as withdrawals,
   sum(coalesce(d.quantity * price_cur, -1*d.volume)) as market_value,
   sum(-1*d.volume) as balance,
