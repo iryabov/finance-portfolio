@@ -42,10 +42,10 @@
             <select mapping="date"/>
         </field>
         <field id="portfolioProfit">
-            <select mapping="portfolioProfit"/>
+            <select mapping="portfolioProfit" normalize="longValue()"/>
         </field>
         <field id="benchmarkProfit">
-            <select mapping="benchmarkProfit"/>
+            <select mapping="benchmarkProfit" normalize="longValue()"/>
         </field>
     </fields>
 

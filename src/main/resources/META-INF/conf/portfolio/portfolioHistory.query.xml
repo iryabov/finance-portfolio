@@ -36,13 +36,13 @@
             <select mapping="date"/>
         </field>
         <field id="marketValue">
-            <select mapping="marketValue"/>
+            <select mapping="marketValue" normalize="longValue()"/>
         </field>
         <field id="profitValue">
-            <select mapping="profitValue"/>
+            <select mapping="profitValue" normalize="longValue()"/>
         </field>
         <field id="netValue">
-            <select mapping="netValue"/>
+            <select mapping="netValue" normalize="longValue()"/>
         </field>
         <field id="balance">
             <select mapping="balance"/>

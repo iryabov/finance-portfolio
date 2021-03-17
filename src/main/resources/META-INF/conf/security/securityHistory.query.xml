@@ -39,7 +39,7 @@
             <select mapping="date"/>
         </field>
         <field id="price">
-            <select mapping="price" normalize="T(java.lang.Double).parseDouble(#this)"/>
+            <select mapping="price" normalize="longValue()"/>
         </field>
     </fields>
 </query>

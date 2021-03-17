@@ -21,12 +21,12 @@
                    query-id="portfolioHistory"
                    name="History"
                    width="1400" height="300">
-                <areas x-field-id="date" grid-vertical="false">
-                    <area field-id="netValue" color="#8884d8"/>
-                    <area field-id="balance" color="#ffb300"/>
-                    <area field-id="marketValue" color="#00FF00"/>
+                <lines x-field-id="date" grid-vertical="false">
+                    <line field-id="netValue" color="#8884d8"/>
+                    <line field-id="balance" color="#ffb300"/>
+                    <line field-id="marketValue" color="#00FF00"/>
 <!--                    <area field-id="profitValue" color="#FF0000"/>-->
-                </areas>
+                </lines>
                 <pre-filters>
                     <eq field-id="portfolioId" param="portfolio_id"/>
                     <eq field-id="period" value="{period.id}" ref-widget-id="period" ref-model="resolve"/>
@@ -45,10 +45,10 @@
                    query-id="portfolioBenchmark"
                    name="Performance"
                    width="1400" height="200">
-                <areas x-field-id="date" grid-vertical="false">
-                    <area field-id="portfolioProfit" color="#00FF00"/>
-                    <area field-id="benchmarkProfit" color="#FF0000"/>
-                </areas>
+                <lines x-field-id="date" grid-vertical="false">
+                    <line field-id="portfolioProfit" color="#00FF00"/>
+                    <line field-id="benchmarkProfit" color="#FF0000"/>
+                </lines>
                 <pre-filters>
                     <eq field-id="portfolioId" param="portfolio_id"/>
                     <eq field-id="period" value="{period.id}" ref-widget-id="period" ref-model="resolve"/>
