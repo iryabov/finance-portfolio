@@ -196,6 +196,7 @@ from generate_series(:from, :till, interval '1 week') as p
 cross join (
     select 
         d.id,
+        d.account_id as account_id,
         d.ticker as ticker,
         d.dt as dt,
         d.type,
@@ -206,6 +207,7 @@ cross join (
     union 
     select 
         d.id,
+        d.account_id as account_id,
         d.currency as ticker,
         d.dt as dt,
         (case 
@@ -221,6 +223,7 @@ cross join (
 ) d
 join target t on t.ticker = d.ticker and t.type = 'ASSET'
 where t.portfolio_id = :portfolio_id
+  and exists (select * from portfolio_account pa where pa.portfolio_id = :portfolio_id and pa.account_id = d.account_id)
   and d.dt <= p
 group by p, d.ticker) d
 group by d.dt
