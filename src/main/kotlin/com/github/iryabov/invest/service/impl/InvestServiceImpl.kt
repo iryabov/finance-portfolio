@@ -263,7 +263,7 @@ class InvestServiceImpl(
                 { date, p, b ->
                     TargetBenchmarkView(
                             date = date,
-                            portfolioProfit = p?.marketProfitPercent ?: portfolioStart - portfolioStart,
+                            portfolioProfit = (p?.marketProfitPercent ?: portfolioStart) - portfolioStart,
                             benchmarkProfit = calcProfitPercent(b?.price ?: benchmarkStart, benchmarkStart))
                 })
 
