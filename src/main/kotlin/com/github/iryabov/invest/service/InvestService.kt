@@ -81,6 +81,8 @@ interface InvestService {
 
     fun addAsset(portfolioId: Int, ticker: String): Int
 
+    fun addAssets(portfolioId: Int, tickers: List<String>)
+
     fun addAssets(portfolioId: Int, criteria: SecurityCriteria)
 
     //todo (portfolioId: Int, type: TargetType, currency: Currency = Currency.RUB)

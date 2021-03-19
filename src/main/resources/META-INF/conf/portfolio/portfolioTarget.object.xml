@@ -22,17 +22,13 @@
                     <spring/>
                     <arguments>
                         <argument type="primitive" name="portfolioId"/>
-                        <argument type="class" name="criteria" class="com.github.iryabov.invest.model.SecurityCriteria"/>
+                        <argument type="primitive" name="tickers"/>
                     </arguments>
                 </java>
             </invocation>
             <in>
                 <field id="portfolioId" param="portfolio_id" mapping="[0]"/>
-                <field id="assetClass.id" mapping="[1].assetClass" normalize="T(com.github.iryabov.invest.relation.AssetClass).valueOf(#this)"/>
-                <field id="currency.id" mapping="[1].currency" normalize="T(com.github.iryabov.invest.relation.Currency).valueOf(#this)"/>
-                <field id="country.id" mapping="[1].country" normalize="T(com.github.iryabov.invest.relation.Country).valueOf(#this)"/>
-                <field id="sector.id" mapping="[1].sector" normalize="T(com.github.iryabov.invest.relation.Sector).valueOf(#this)"/>
-                <field id="account.id" mapping="[1].accountId"/>
+                <field id="$list*.id" mapping="[1]"/>
             </in>
         </operation>
         <operation id="updateTarget" success-text="Updated target for {ticker}">

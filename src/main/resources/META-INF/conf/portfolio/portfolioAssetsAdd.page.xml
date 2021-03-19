@@ -3,7 +3,7 @@
       name="Add assets">
     <regions>
         <region>
-            <table id="securities" query-id="targetCandidates" selection="radio">
+            <table id="securities" query-id="targetCandidates" selection="checkbox">
                 <filters search-on-change="true">
                     <row>
                         <select id="assetClass" label="Class">
@@ -67,17 +67,12 @@
     </regions>
     <toolbar place="bottomCenter">
         <group>
-            <button id="add" label="Add" widget-id="securities" model="resolve" color="primary">
+            <button id="add" label="Add" widget-id="securities" model="multi" color="primary">
                 <dependencies>
                     <enabling ref-widget-id="securities" ref-model="resolve">!_.isEmpty(this)</enabling>
                 </dependencies>
-                <invoke operation-id="addAsset"/>
+                <invoke operation-id="addAssets"/>
             </button>
         </group>
-    </toolbar>
-    <toolbar place="bottomRight">
-        <button id="addAll" label="Add all" widget-id="securities" model="filter">
-            <invoke operation-id="addAssets"/>
-        </button>
     </toolbar>
 </page>

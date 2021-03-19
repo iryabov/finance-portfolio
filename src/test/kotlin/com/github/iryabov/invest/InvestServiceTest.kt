@@ -375,7 +375,7 @@ class InvestServiceTest(
                 targetProportion = 50,
                 takeProfit = money(100)))
         assertThat(investService.getTarget(portfolioId = test, ticker = "AAA")).matches {
-            it.targetProportion!!.eq(BigDecimal(50)) && it.takeProfit!!.eq(money(100))
+            it.targetProportion.eq(BigDecimal(50)) && it.takeProfit!!.eq(money(100))
         }
         investService.deactivateTarget(test, "AAA")
         assertThat(investService.getPortfolio(portfolioId = test).assets[0].active).isFalse()

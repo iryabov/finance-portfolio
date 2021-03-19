@@ -300,6 +300,10 @@ class InvestServiceImpl(
         return target.id!!
     }
 
+    override fun addAssets(portfolioId: Int, tickers: List<String>) {
+        tickers.forEach { addAsset(portfolioId, it) }
+    }
+
     override fun addAssets(portfolioId: Int, criteria: SecurityCriteria) {
         assetRepo.findAllCandidates(
                 portfolioId = portfolioId,
