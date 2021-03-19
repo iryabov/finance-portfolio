@@ -75,6 +75,7 @@ left join (
     from
         (select 
             d.id,
+            d.account_id as account_id,
             d.ticker as ticker,
             d.dt as dt,
             (case when active = true then d.quantity else 0 end) as quantity,
@@ -100,6 +101,7 @@ left join (
         union 
         select 
             d.id,
+            d.account_id as account_id,
             d.currency as ticker,
             d.dt as dt,
             d.volume as quantity,
@@ -128,6 +130,7 @@ left join (
           and d.ticker != d.currency
         ) d  
     where (:ticker is null or d.ticker = :ticker)
+      and exists (select account_id from portfolio_account pa where pa.portfolio_id = :portfolio_id and pa.account_id = d.account_id)
     group by d.ticker   
 ) a on a.asset_ticker = t.ticker
 where t.portfolio_id = :portfolio_id

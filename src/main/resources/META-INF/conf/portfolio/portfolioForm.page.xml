@@ -6,7 +6,7 @@
             <input-text id="name" label="Name"/>
             <date-interval id="period" label="Active period"/>
             <text-area id="note" label="Description"/>
-            <input-select id="accounts" label="Accounts"
+            <input-select id="accounts" label="Accounts" required="true"
                           query-id="accounts"
                           search="false"
                           label-field-id="name"

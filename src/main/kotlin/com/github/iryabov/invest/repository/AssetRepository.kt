@@ -23,8 +23,7 @@ where not exists (select t.id from target t where t.portfolio_id = :portfolio_id
   and (:country is null or s.country = :country)
   and (:currency is null or s.currency = :currency)
   and (:account_id is null or exists (select d.id from dial d where d.active = true and d.ticker = s.ticker and d.account_id = :account_id))
-  and (not exists (select pa.account_id from portfolio_account pa where pa.portfolio_id = :portfolio_id) 
-    or exists (select s.ticker from portfolio_account pa join dial d on d.account_id = pa.account_id where pa.portfolio_id = :portfolio_id and d.ticker = s.ticker))
+  and exists (select s.ticker from portfolio_account pa join dial d on d.account_id = pa.account_id where pa.portfolio_id = :portfolio_id and d.ticker = s.ticker)
 """
     )
     fun findAllCandidates(@Param("portfolio_id") portfolioId: Int,
