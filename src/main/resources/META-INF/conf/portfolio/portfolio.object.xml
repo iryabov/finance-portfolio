@@ -24,6 +24,7 @@
                 <field id="note" mapping="note"/>
                 <field id="period.begin" mapping="beginDate"/>
                 <field id="period.end" mapping="endDate"/>
+                <field id="accounts" mapping="accounts" normalize="T(com.github.iryabov.invest.ui.UiUtilsKt).mapListToRef(#this)"/>
             </in>
             <out>
                 <field id="id" domain="integer" mapping="#this"/>
@@ -46,6 +47,7 @@
                 <field id="note" mapping="[1].note"/>
                 <field id="period.begin" mapping="[1].beginDate" domain="localdate"/>
                 <field id="period.end" mapping="[1].endDate" domain="localdate"/>
+                <field id="accounts" mapping="[1].accounts" normalize="T(com.github.iryabov.invest.ui.UiUtilsKt).mapListToRef(#this)"/>
             </in>
         </operation>
         <operation id="deletePortfolio">

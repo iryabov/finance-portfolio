@@ -61,13 +61,13 @@
             <select mapping="sale"/>
         </field>
         <field id="securityPrice">
-            <select mapping="securityPrice"/>
+            <select mapping="securityPrice" normalize="#this?.longValue()"/>
         </field>
         <field id="purchasePrice">
-            <select mapping="purchasePrice"/>
+            <select mapping="purchasePrice" normalize="#this?.longValue()"/>
         </field>
         <field id="salePrice">
-            <select mapping="salePrice"/>
+            <select mapping="salePrice" normalize="#this?.longValue()"/>
         </field>
     </fields>
 

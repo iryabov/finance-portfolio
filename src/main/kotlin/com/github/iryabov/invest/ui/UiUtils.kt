@@ -2,6 +2,7 @@ package com.github.iryabov.invest.ui
 
 import com.github.iryabov.invest.model.AssetView
 import com.github.iryabov.invest.model.ChartView
+import com.github.iryabov.invest.model.RefForm
 import com.github.iryabov.invest.service.impl.*
 import net.n2oapp.criteria.dataset.DataSet
 
@@ -41,3 +42,11 @@ fun mapTargets(view: List<ChartView>): DataSet {
 fun sumData(data: Map<String, Int>): Int {
     return data.values.sumBy { it }
 }
+
+fun mapToRef(data: DataSet) = RefForm(id = data.getInteger("id"), name = data.getString("name"))
+
+fun mapListToRef(list: List<DataSet>) = list.map { mapToRef(it) }
+
+fun mapToData(ref: RefForm) = DataSet(mapOf("id" to ref.id, "name" to ref.name))
+
+fun mapListToData(list: List<RefForm>) = list.map { mapToData(it) }

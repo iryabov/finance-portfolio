@@ -29,6 +29,9 @@
         <field id="period.end">
             <select mapping="endDate"/>
         </field>
+        <field id="accounts" domain="object[]">
+            <select mapping="accounts" normalize="T(com.github.iryabov.invest.ui.UiUtilsKt).mapListToData(#this)"/>
+        </field>
     </fields>
 
 </query>
