@@ -134,6 +134,16 @@ class SecuritiesClientMoex: SecuritiesClient {
         return response
     }
 
+    private fun callSecurity(ticker: String): String? {
+        val url = "/securities/$ticker.xml"
+        logger.info("moex $url")
+        val response = client.get().uri(url)
+                .accept(MediaType.APPLICATION_XML)
+                .acceptCharset(Charsets.UTF_8)
+                .retrieve().bodyToMono(String::class.java).block()
+        return response
+    }
+
     private fun readRows(response: String?, type: String = "securities"): NodeList? {
         val xml = readXml(response!!)
         val document = xml.getElementsByTagName("document").item(0) as Element
@@ -143,8 +153,8 @@ class SecuritiesClientMoex: SecuritiesClient {
     }
 
     private fun findMarketAndBoard(name: String): Triple<String, String, String> {
-        val tickerResponse = callSecurities(name)
-        val tickerRows = readRows(tickerResponse)
+        val tickerResponse = callSecurity(name)
+        val tickerRows = readRows(tickerResponse, "boards")
         var tickerRow: Element? = null
         for (i in 0 until tickerRows!!.length) {
             val row = tickerRows.item(i) as Element
@@ -156,17 +166,15 @@ class SecuritiesClientMoex: SecuritiesClient {
         if (tickerRow == null)
             throw IllegalStateException("Ticker $name not found")
         val market = when {
-            tickerRow.getAttribute("type").contains("share") -> "shares"
-            tickerRow.getAttribute("type").contains("etf") -> "shares"
-            tickerRow.getAttribute("type").contains("ppif") -> "shares"
-            tickerRow.getAttribute("type").contains("depositary") -> "shares"
-            tickerRow.getAttribute("type").contains("bond") -> "bonds"
-            tickerRow.getAttribute("type").contains("index") -> "index"
-            else -> tickerRow.getAttribute("type")
+            tickerRow.getAttribute("market").contains("share") -> "shares"
+            tickerRow.getAttribute("market").contains("etf") -> "shares"
+            tickerRow.getAttribute("market").contains("ppif") -> "shares"
+            tickerRow.getAttribute("market").contains("depositary") -> "shares"
+            tickerRow.getAttribute("market").contains("bond") -> "bonds"
+            tickerRow.getAttribute("market").contains("index") -> "index"
+            else -> tickerRow.getAttribute("market")
         }
-        var board = tickerRow.getAttribute("marketprice_boardid")
-        if (board.isEmpty())
-            board = tickerRow.getAttribute("primary_boardid")
+        var board = tickerRow.getAttribute("boardid")
         val ticker = tickerRow.getAttribute("secid")
         return Triple(market, board, ticker)
     }
