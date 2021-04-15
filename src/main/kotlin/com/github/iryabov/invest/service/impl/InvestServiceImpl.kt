@@ -220,8 +220,8 @@ class InvestServiceImpl(
         val tYear = if (month == null || month == 12) year + 1 else year
         val till = LocalDate.of(tYear, tMonth, 1)
         val assets = targetRepo.findAllTargetHistoryViews(portfolioId, currency, from, till, if (month == null) "1 year" else "1 month")
-        val first = assets.first()
-        val last = assets.last()
+        val first = if (assets.isNotEmpty()) assets.first() else TargetHistoryView(date = from)
+        val last = if (assets.isNotEmpty()) assets.last() else TargetHistoryView(date = till)
         return diff(first, last)
     }
 

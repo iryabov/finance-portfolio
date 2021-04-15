@@ -13,6 +13,7 @@
                                 <option id="YEAR" name="Year"/>
                                 <option id="FIVE_YEARS" name="5 years"/>
                             </options>
+                            <default-value id="YEAR" name="Year"/>
                         </radio-group>
                     </set>
                 </fields>
