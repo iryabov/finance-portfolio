@@ -421,9 +421,10 @@ class InvestServiceImpl(
     override fun getAnalytics(type: TargetType, portfolioId: Int, currency: Currency): List<ChartView> {
         val assets = targetRepo.findAllAssetsViews(portfolioId, currency)
         assets.forEach { it.calc() }
+        val totalMarketValue = assets.sumByBigDecimal { it.marketValue }
         return assets.groupBy { it.typeOf(type) }
                 .mapValues { it.value.sumByBigDecimal { v -> v.marketValue } }
-                .map { ChartView(name = it.key, value = it.value) }
+                .map { ChartView(name = it.key, value = calcPercent(it.value, totalMarketValue)) }
     }
 
     override fun getTargetProportions(portfolioId: Int, type: TargetType): List<ChartView> {
