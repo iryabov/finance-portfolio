@@ -8,7 +8,9 @@
                     <text format="date DD.MM.YYYY"/>
                 </column>
                 <column text-field-id="text" label="Remittance"/>
-                <column text-field-id="quantity" label="Quantity"/>
+                <column text-field-id="quantity" label="Quantity">
+                    <text format="number 0,0"/>
+                </column>
                 <column text-field-id="currency" label="Currency"/>
                 <column text-field-id="type" label="Type">
                     <badge>
