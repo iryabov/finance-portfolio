@@ -4,7 +4,9 @@ import com.github.iryabov.invest.relation.Currency
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.LocalDate
+import java.time.Period
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import kotlin.math.abs
 
 val N1 = BigDecimal(-1)
@@ -148,3 +150,5 @@ fun String.isCurrency(): Boolean {
 fun currencyOf(ticker: String): Currency? {
     return Currency.values().find { c -> c.name == ticker }
 }
+
+fun LocalDate.betweenNow(): Long = ChronoUnit.DAYS.between(this, LocalDate.now())

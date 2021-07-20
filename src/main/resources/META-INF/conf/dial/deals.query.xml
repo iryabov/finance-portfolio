@@ -87,6 +87,9 @@
         <field id="dividendProfit" domain="numeric">
             <select mapping="dividendProfit"/>
         </field>
+        <field id="dividendProfitPerYear" domain="numeric">
+            <select mapping="dividendProfitPerYear" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitPercentFormat(#this)"/>
+        </field>
         <field id="soldOut" domain="boolean">
             <select mapping="soldQuantity" normalize="#this > 0 &amp;&amp; #this >= #data['quantity']"/>
         </field>

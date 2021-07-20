@@ -131,6 +131,9 @@
 <!--                        <text format="number 0.00"/>-->
                         <badge text="{volume}" text-format="number 0,0.00" color="{profitColor}"/>
                     </column>
+                    <column text-field-id="dividendProfitPerYear" label="D/Y" width="50px">
+
+                    </column>
                     <column text-field-id="" width="20px">
                         <toolbar>
                             <button id="delete" icon="fa fa-trash" confirm="true">
