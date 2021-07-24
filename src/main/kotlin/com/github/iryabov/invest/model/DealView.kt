@@ -32,8 +32,8 @@ data class DealView(
     var profit: BigDecimal? = if (soldVolume.notZero()) (soldVolume ?: P0) + (volume ?: P0) else null
 
     val dividendProfitPerYear: BigDecimal?
-      get() = if (volume.notZero()) (dividendProfit * BigDecimal(100))
-              .divide(volume!!, 2, RoundingMode.HALF_UP)
-              .divide(BigDecimal(dt.betweenNow()), 2, RoundingMode.HALF_UP)*BigDecimal(365)
-      else null
+        get() = if (volume.notZero()) (dividendProfit * BigDecimal(100))
+                .divide(volume!!, 2, RoundingMode.HALF_UP)
+                .divide(BigDecimal(dt.betweenNow()), 2, RoundingMode.HALF_UP) * BigDecimal(365)
+        else null
 }

@@ -151,4 +151,7 @@ fun currencyOf(ticker: String): Currency? {
     return Currency.values().find { c -> c.name == ticker }
 }
 
-fun LocalDate.betweenNow(): Long = ChronoUnit.DAYS.between(this, LocalDate.now())
+fun LocalDate.betweenNow(): Long {
+    val days = ChronoUnit.DAYS.between(this, LocalDate.now())
+    return if (days < 365) 365 else days
+}
