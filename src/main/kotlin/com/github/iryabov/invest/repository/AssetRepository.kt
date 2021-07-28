@@ -35,7 +35,7 @@ where not exists (select t.id from target t where t.portfolio_id = :portfolio_id
     @Query("""
 select *
 from asset s  
-where s.ticker like '%'||:name||'%' or s.name like '%'||:name||'%'
+where s.ticker like '%'||upper(:name)||'%' or upper(s.name) like '%'||upper(:name)||'%'
     """)
     fun findAllByNameOrTicker(@Param("name") name: String, sort: Sort): List<Asset>
 }
