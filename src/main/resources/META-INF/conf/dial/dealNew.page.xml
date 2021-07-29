@@ -68,7 +68,7 @@
                             &amp;&amp; type.id != 'COUPON'</visibility>
                     </dependencies>
                 </input-text>
-                <output-text id="price" label="Price" format="number 1.0">
+                <output-text id="price" label="Price" format="number 1.000">
                     <dependencies>
                         <set-value apply-on-init="false" on="volume,quantity">quantity > 0 ? volume / quantity: 0</set-value>
                         <visibility on="type.id">type.id != 'DEPOSIT'
