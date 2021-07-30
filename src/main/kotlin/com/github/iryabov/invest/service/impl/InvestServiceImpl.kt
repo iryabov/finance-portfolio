@@ -8,6 +8,9 @@ import com.github.iryabov.invest.relation.*
 import com.github.iryabov.invest.relation.Currency
 import com.github.iryabov.invest.repository.*
 import com.github.iryabov.invest.service.InvestService
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -135,11 +138,11 @@ class InvestServiceImpl(
                 ::reduce)
     }
 
-    override fun getDeals(accountId: Int, currency: Currency, ticker: String?): List<DealView> {
-        val dials = dealRepo.findAllByAsset(accountId, currency, ticker)
+    override fun getDeals(accountId: Int, currency: Currency, ticker: String?, pageable: Pageable): Page<DealView> {
+        val dials = dealRepo.findAllByAsset(accountId, currency, ticker, Pageable.unpaged())
         val old: MutableList<DealView> = ArrayList()
         dials.asReversed().forEach { it.calcDividend(old) }
-        return dials
+        return PageImpl(dials.slice(pageable), pageable, dials.size.toLong())
     }
 
     override fun getRemittanceDials(): List<RemittanceView> {
@@ -873,4 +876,9 @@ private fun diff(first: TargetHistoryView, last: TargetHistoryView): PortfolioSu
             fee = P0,
             feeChange = P0
     )
+
+}
+
+fun <E> List<E>.slice(pageable: Pageable): List<E> {
+    return if (pageable.isPaged) this.subList(pageable.offset.toInt(), pageable.offset.toInt() + pageable.pageSize) else this
 }

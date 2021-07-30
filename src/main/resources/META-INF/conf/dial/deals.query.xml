@@ -1,23 +1,25 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <query xmlns="http://n2oapp.net/framework/config/schema/query-4.0"
        object-id="deal">
-    <list result-mapping="#this" filters="accountId,ticker,currency" count-mapping="size()">
+    <list result-mapping="getContent()" filters="accountId,ticker,currency" count-mapping="getTotalElements()">
         <java method="getDeals" class="com.github.iryabov.invest.service.InvestService">
             <spring/>
             <arguments>
                 <argument type="primitive" name="accountId"/>
                 <argument type="primitive" name="currency"/>
                 <argument type="primitive" name="ticker"/>
+                <argument type="criteria" name="pageable" class="org.springframework.data.domain.Pageable"/>
             </arguments>
         </java>
     </list>
-    <list result-mapping="#this" filters="accountId,currency" count-mapping="size()">
+    <list result-mapping="getContent()" filters="accountId,currency" count-mapping="getTotalElements()">
         <java method="getDeals" class="com.github.iryabov.invest.service.InvestService">
             <spring/>
             <arguments>
                 <argument type="primitive" name="accountId"/>
                 <argument type="primitive" name="currency"/>
                 <argument type="primitive" name="ticker"/>
+                <argument type="criteria" name="pageable" class="org.springframework.data.domain.Pageable"/>
             </arguments>
         </java>
     </list>

@@ -5,16 +5,19 @@ import com.github.iryabov.invest.model.AssetHistoryView
 import com.github.iryabov.invest.model.AssetView
 import com.github.iryabov.invest.model.DealView
 import com.github.iryabov.invest.relation.Currency
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jdbc.repository.query.Modifying
 import org.springframework.data.jdbc.repository.query.Query
 import org.springframework.data.repository.CrudRepository
+import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
 
 
 @Repository
-interface DealRepository : CrudRepository<Deal, Long> {
+interface DealRepository : PagingAndSortingRepository<Deal, Long> {
     @Modifying
     @Query("UPDATE dial SET active = NOT active WHERE id = :id")
     fun deactivate(@Param("id") id: Long): Boolean
@@ -235,7 +238,8 @@ order by d.dt desc, d.id desc
     """)
     fun findAllByAsset(@Param("account_id") accountId: Int,
                        @Param("currency") currency: Currency,
-                       @Param("ticker") ticker: String?): List<DealView>
+                       @Param("ticker") ticker: String?,
+                       pageable : Pageable): List<DealView>
 
     @Query("""
         select *

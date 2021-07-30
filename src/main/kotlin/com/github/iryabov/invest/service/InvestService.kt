@@ -6,6 +6,8 @@ import com.github.iryabov.invest.model.*
 import com.github.iryabov.invest.relation.Currency
 import com.github.iryabov.invest.relation.Period
 import com.github.iryabov.invest.relation.TargetType
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import java.math.BigDecimal
 import java.time.LocalDate
 
@@ -30,7 +32,8 @@ interface InvestService {
 
     fun getAssetHistory(accountId: Int? = null, ticker: String, period: Period, currency: Currency = Currency.RUB): List<AssetHistoryView>
 
-    fun getDeals(accountId: Int, currency: Currency = Currency.RUB, ticker: String? = null): List<DealView>
+    fun getDeals(accountId: Int, currency: Currency = Currency.RUB, ticker: String? = null,
+                 pageable: Pageable = Pageable.unpaged()): Page<DealView>
 
     fun getRemittanceDials(): List<RemittanceView>
 
