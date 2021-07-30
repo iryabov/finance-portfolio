@@ -204,7 +204,7 @@ from (
         d.volume as settlement_quantity,
         d.volume as volume
      from dial d
-     where d.account_id = :account_id
+     where (:account_id is null or d.account_id = :account_id)
        and (:ticker is null or d.ticker = :ticker)   
      union   
      select  
@@ -231,12 +231,17 @@ from (
          end
         ) as volume
      from dial d 
-     where d.account_id = :account_id and d.currency = :ticker and d.ticker <> :ticker
+     where (:account_id is null or d.account_id = :account_id) 
+       and d.currency = :ticker 
+       and d.ticker <> :ticker
 ) d
 left join asset a on a.ticker = d.ticker
+where 
+  (:portfolio_id is null or exists (select t.id from target t where t.portfolio_id = :portfolio_id and t.type = 'ASSET' and t.ticker = d.ticker))
 order by d.dt desc, d.id desc    
     """)
-    fun findAllByAsset(@Param("account_id") accountId: Int,
+    fun findAllByAsset(@Param("account_id") accountId: Int?,
+                       @Param("portfolio_id") portfolioId: Int?,
                        @Param("currency") currency: Currency,
                        @Param("ticker") ticker: String?,
                        pageable : Pageable): List<DealView>
@@ -255,55 +260,4 @@ order by d.dt desc, d.id desc
                                         @Param("date_from") dateFrom: LocalDate,
                                         @Param("id") dialId: Long): List<Deal>
 
-
-    @Query("""
-select 
-    d.id,
-    d.active as active,
-    d.dt as dt,
-    d.ticker as asset_ticker,
-    a.name as asset_name,
-    d.type as type,
-    d.quantity as quantity,
-    d.currency as currency,
-    (case when d.currency = :currency then abs(d.volume)
-     else abs(coalesce((select r.price * d.volume from rate r where  r.dt = d.dt and  r.currency_purchase = d.currency and  r.currency_sale = :currency), 0)) 
-     end 
-    ) as volume,
-    (select sum(case when df.currency = :currency then df.volume 
-                else coalesce((select r.price * df.volume from rate r where  r.dt = df.dt and  r.currency_purchase = df.currency and  r.currency_sale = :currency), 0)
-                end / df.quantity * w.quantity
-            ) 
-     from writeoff w
-     join dial df on df.id = w.dial_from and df.ticker = w.ticker
-     where w.dial_to = d.id and w.ticker = d.ticker
-    ) as sold_volume,
-    (case when d.quantity <> 0 then abs(d.volume / d.quantity)
-     else 0 
-     end
-    ) as price,
-    (
-        select sum(w.quantity) as sold_quantity
-        from writeoff w
-        where w.dial_from = d.id
-          and d.quantity > 0
-    ) as sold_quantity,
-    (case when d.type = 'DIVIDEND' then
-        (select sum(od.quantity)
-        from dial od
-        where od.account_id = :account_id
-          and od.ticker = d.ticker 
-          and od.active = true
-          and od.dt < d.dt)
-     else null end     
-    ) as dividend_quantity
-from dial d
-left join asset a on a.ticker = d.ticker
-where d.account_id = :account_id
-  and (:ticker is null or d.ticker = :ticker)   
-order by d.dt desc, d.id desc   
-    """)
-    fun findAllByCurrency(@Param("account_id") accountId: Int,
-                          @Param("currency") settlementCurrency: Currency,
-                          @Param("ticker") currency: Currency?): List<DealView>
 }

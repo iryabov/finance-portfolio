@@ -35,6 +35,9 @@ interface InvestService {
     fun getDeals(accountId: Int, currency: Currency = Currency.RUB, ticker: String? = null,
                  pageable: Pageable = Pageable.unpaged()): Page<DealView>
 
+    fun getDealsByPortfolio(portfolioId: Int, currency: Currency = Currency.RUB, ticker: String? = null,
+                 pageable: Pageable = Pageable.unpaged()): Page<DealView>
+
     fun getRemittanceDials(): List<RemittanceView>
 
     fun getSecurities(): List<SecurityView>

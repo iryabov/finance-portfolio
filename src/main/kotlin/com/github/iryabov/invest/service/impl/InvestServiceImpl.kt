@@ -139,7 +139,14 @@ class InvestServiceImpl(
     }
 
     override fun getDeals(accountId: Int, currency: Currency, ticker: String?, pageable: Pageable): Page<DealView> {
-        val dials = dealRepo.findAllByAsset(accountId, currency, ticker, Pageable.unpaged())
+        val dials = dealRepo.findAllByAsset(accountId, null, currency, ticker, Pageable.unpaged())
+        val old: MutableList<DealView> = ArrayList()
+        dials.asReversed().forEach { it.calcDividend(old) }
+        return PageImpl(dials.slice(pageable), pageable, dials.size.toLong())
+    }
+
+    override fun getDealsByPortfolio(portfolioId: Int, currency: Currency, ticker: String?, pageable: Pageable): Page<DealView> {
+        val dials = dealRepo.findAllByAsset(null, portfolioId, currency, ticker, Pageable.unpaged())
         val old: MutableList<DealView> = ArrayList()
         dials.asReversed().forEach { it.calcDividend(old) }
         return PageImpl(dials.slice(pageable), pageable, dials.size.toLong())
