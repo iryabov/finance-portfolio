@@ -69,7 +69,7 @@
                     <line field-id="securityPrice" color="#8884d8" type="linear"/>
                     <line field-id="purchasePrice" color="#00FF00" type="linear"/>
                     <line field-id="salePrice" color="#FF0000" type="linear"/>
-                </lines>l
+                </lines>
 <!--                <bars x-field-id="date" y-field-id="quantity" grid-horizontal="false" grid-vertical="false"-->
 <!--                       tooltip-separator=" ">-->
 <!--                    <bar field-id="purchase" color="#8884d8" />-->

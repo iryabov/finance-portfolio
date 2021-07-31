@@ -106,17 +106,27 @@ class InvestServiceImpl(
 
     override fun getAccount(accountId: Int, currency: Currency): AccountView {
         val accountEntity = accountRepo.findById(accountId).orElseThrow()
-        return accountEntity.toView(dealRepo.findAssets(accountId, currency))
+        return accountEntity.toView(dealRepo.findAssets(accountId, null, currency))
     }
 
     override fun getAccounts(currency: Currency): TotalView {
-        val result = TotalView(accountRepo.findAllByActive().map { it.toView(dealRepo.findAssets(it.id!!, currency)) })
+        val result = TotalView(accountRepo.findAllByActive().map { it.toView(dealRepo.findAssets(it.id!!, null, currency)) })
         result.calcTotal(result.accounts)
         return result
     }
 
     override fun getAsset(accountId: Int, currency: Currency, ticker: String): AssetView {
-        val assets = dealRepo.findAssets(accountId, currency, ticker)
+        val assets = dealRepo.findAssets(accountId, null, currency, ticker)
+        if (assets.isEmpty())
+            return AssetView(assetTicker = ticker, quantity = 0, netValue = P0)
+        val asset = assets.first()
+        asset.calc()
+        asset.calcProportion(P0, P0)
+        return asset
+    }
+
+    override fun getAssetByPortfolio(portfolioId: Int, currency: Currency, ticker: String): AssetView {
+        val assets = dealRepo.findAssets(null, portfolioId, currency, ticker)
         if (assets.isEmpty())
             return AssetView(assetTicker = ticker, quantity = 0, netValue = P0)
         val asset = assets.first()

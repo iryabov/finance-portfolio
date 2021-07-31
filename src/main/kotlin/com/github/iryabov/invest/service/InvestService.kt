@@ -30,6 +30,8 @@ interface InvestService {
 
     fun getAsset(accountId: Int, currency: Currency = Currency.RUB, ticker: String): AssetView
 
+    fun getAssetByPortfolio(portfolioId: Int, currency: Currency = Currency.RUB, ticker: String): AssetView
+
     fun getAssetHistory(accountId: Int? = null, ticker: String, period: Period, currency: Currency = Currency.RUB): List<AssetHistoryView>
 
     fun getDeals(accountId: Int, currency: Currency = Currency.RUB, ticker: String? = null,

@@ -120,7 +120,8 @@ from (
              else 0 end
             ) as sold_quantity
         from dial d
-        where d.account_id = :account_id
+        where (:account_id is null or d.account_id = :account_id)
+          and (:portfolio_id is null or exists (select pa.portfolio_id from portfolio_account pa where pa.portfolio_id = :portfolio_id and pa.account_id = d.account_id))
           and d.active = true
         union 
         select 
@@ -149,16 +150,19 @@ from (
              else 0 end
             ) as sold_quantity
         from dial d
-        where d.account_id = :account_id
+        where (:account_id is null or d.account_id = :account_id)
+          and (:portfolio_id is null or exists (select pa.portfolio_id from portfolio_account pa where pa.portfolio_id = :portfolio_id and pa.account_id = d.account_id)) 
           and d.active = true
           and d.ticker != d.currency
         ) d  
     where (:ticker is null or d.ticker = :ticker)
+      and (:portfolio_id is null or exists (select t.id from target t where t.portfolio_id = :portfolio_id and t.ticker = d.ticker and t.type = 'ASSET'))
     group by d.ticker
 ) a
 left join asset s on s.ticker = a.asset_ticker
     """)
-    fun findAssets(@Param("account_id") accountId: Int,
+    fun findAssets(@Param("account_id") accountId: Int?,
+                   @Param("portfolio_id") portfolioId: Int?,
                    @Param("currency") currency: Currency,
                    @Param("ticker") ticker: String? = null): List<AssetView>
 
@@ -205,6 +209,7 @@ from (
         d.volume as volume
      from dial d
      where (:account_id is null or d.account_id = :account_id)
+       and (:portfolio_id is null or exists (select pa.portfolio_id from portfolio_account pa where pa.portfolio_id = :portfolio_id and pa.account_id = d.account_id))
        and (:ticker is null or d.ticker = :ticker)   
      union   
      select  
@@ -232,6 +237,7 @@ from (
         ) as volume
      from dial d 
      where (:account_id is null or d.account_id = :account_id) 
+       and (:portfolio_id is null or exists (select pa.portfolio_id from portfolio_account pa where pa.portfolio_id = :portfolio_id and pa.account_id = d.account_id))
        and d.currency = :ticker 
        and d.ticker <> :ticker
 ) d
