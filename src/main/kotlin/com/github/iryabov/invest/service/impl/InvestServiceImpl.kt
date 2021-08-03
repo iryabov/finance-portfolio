@@ -138,7 +138,20 @@ class InvestServiceImpl(
     override fun getAssetHistory(accountId: Int?, ticker: String, period: Period, currency: Currency): List<AssetHistoryView> {
         val from = period.from.invoke()
         val till = LocalDate.now()
-        val assetHistory = dealRepo.findAllByPeriod(accountId, ticker, currency, from, till)
+        val assetHistory = dealRepo.findAllByPeriod(accountId, null, ticker, currency, from, till)
+        val securityHistory = securityHistoryRepo.findAllHistoryByTicker(ticker, from, till, currency)
+        val resultHistory = ArrayList(assetHistory)
+        resultHistory.addAll(securityHistory.map { AssetHistoryView(date = it.date, securityPrice = it.price) })
+        return fillChart(resultHistory, from, till, period.step,
+                { h -> h.date },
+                { d, prev -> AssetHistoryView(date = d, securityPrice = prev?.securityPrice ?: P0) },
+                ::reduce)
+    }
+
+    override fun getAssetHistoryByPortfolio(portfolioId: Int?, ticker: String, period: Period, currency: Currency): List<AssetHistoryView> {
+        val from = period.from.invoke()
+        val till = LocalDate.now()
+        val assetHistory = dealRepo.findAllByPeriod(null, portfolioId, ticker, currency, from, till)
         val securityHistory = securityHistoryRepo.findAllHistoryByTicker(ticker, from, till, currency)
         val resultHistory = ArrayList(assetHistory)
         resultHistory.addAll(securityHistory.map { AssetHistoryView(date = it.date, securityPrice = it.price) })

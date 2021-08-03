@@ -32,6 +32,7 @@ interface DealRepository : PagingAndSortingRepository<Deal, Long> {
         d.quantity as quantity
     from dial d
     where (:account_id is null or d.account_id = :account_id)
+      and (:portfolio_id is null or exists (select t.id from target t where t.portfolio_id = :portfolio_id and t.ticker = d.ticker and t.type = 'ASSET'))
       and d.active = true
       and d.ticker = :ticker 
       and d.type in ('PURCHASE', 'SALE') 
@@ -40,6 +41,7 @@ interface DealRepository : PagingAndSortingRepository<Deal, Long> {
     order by d.dt, d.id  
     """)
     fun findAllByPeriod(@Param("account_id") accountId: Int? = null,
+                        @Param("portfolio_id") portfolioId: Int? = null,
                         @Param("ticker") ticker: String,
                         @Param("currency") currency: Currency,
                         @Param("from") from: LocalDate,

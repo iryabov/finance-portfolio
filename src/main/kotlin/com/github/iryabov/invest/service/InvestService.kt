@@ -34,6 +34,9 @@ interface InvestService {
 
     fun getAssetHistory(accountId: Int? = null, ticker: String, period: Period, currency: Currency = Currency.RUB): List<AssetHistoryView>
 
+    fun getAssetHistoryByPortfolio(portfolioId: Int? = null, ticker: String, period: Period, currency: Currency = Currency.RUB): List<AssetHistoryView>
+
+
     fun getDeals(accountId: Int, currency: Currency = Currency.RUB, ticker: String? = null,
                  pageable: Pageable = Pageable.unpaged()): Page<DealView>
 
