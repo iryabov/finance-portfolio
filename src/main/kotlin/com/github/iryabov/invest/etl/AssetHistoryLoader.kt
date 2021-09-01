@@ -9,6 +9,7 @@ import com.github.iryabov.invest.client.SecuritiesClient
 import com.github.iryabov.invest.client.Security
 import com.github.iryabov.invest.client.impl.SecuritiesClientCache
 import com.github.iryabov.invest.client.impl.SecuritiesClientMoex
+import com.github.iryabov.invest.client.impl.SecuritiesClientNone
 import com.github.iryabov.invest.client.impl.SecuritiesClientUnibit
 import com.github.iryabov.invest.relation.AssetClass
 import com.github.iryabov.invest.relation.FinanceApi
@@ -26,6 +27,7 @@ class AssetHistoryLoader(
         val securitiesClientMoex: SecuritiesClientMoex,
         val securitiesClientUnibit: SecuritiesClientUnibit,
         val securitiesClientCache: SecuritiesClientCache,
+        val securitiesClientNone: SecuritiesClientNone,
         val assetRepo: AssetRepository,
         val assetHistoryRepo: SecurityHistoryRepository,
         val securityHistoryRepo: SecurityHistoryRepository,
@@ -39,6 +41,7 @@ class AssetHistoryLoader(
             FinanceApi.MOEX -> securitiesClientMoex
             FinanceApi.UNIBIT -> securitiesClientUnibit
             FinanceApi.CACHE -> securitiesClientCache
+            FinanceApi.NONE -> securitiesClientNone
         }
         val security = client.findLastPrice(ticker)
         exchange(security, assetFound.currency ?: Currency.RUB)

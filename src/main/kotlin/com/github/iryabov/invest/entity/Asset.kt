@@ -25,7 +25,7 @@ data class Asset (
         @Column
         var currency: Currency? = null,
         @Column
-        var api: FinanceApi = FinanceApi.MOEX,
+        var api: FinanceApi = FinanceApi.NONE,
         @Column("price_now")
         var priceNow: BigDecimal? = null,
         @Column("price_week")

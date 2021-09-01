@@ -43,7 +43,7 @@
                 <field id="sector.id" mapping="sector"/>
                 <field id="country.id" mapping="country"/>
                 <field id="currency.id" mapping="currency"/>
-                <field id="api.id" mapping="api"/>
+                <field id="api.id" mapping="api" default-value="NONE"/>
             </in>
         </operation>
         <operation id="editSecurity">
@@ -63,7 +63,7 @@
                 <field id="sector.id" mapping="sector"/>
                 <field id="country.id" mapping="country"/>
                 <field id="currency.id" mapping="currency"/>
-                <field id="api.id" mapping="api"/>
+                <field id="api.id" mapping="api" default-value="NONE"/>
             </in>
         </operation>
         <operation id="deleteSecurity">
