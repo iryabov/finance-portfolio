@@ -3,6 +3,7 @@ package com.github.iryabov.invest.client.impl
 import com.github.iryabov.invest.client.Security
 import com.github.iryabov.invest.client.SecuritiesClient
 import com.github.iryabov.invest.relation.Currency
+import com.github.iryabov.invest.service.impl.P0
 import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Repository
@@ -71,8 +72,14 @@ class SecuritiesClientMoex: SecuritiesClient {
                     settlementCurrency = currencyOf(sec0.getAttribute("CURRENCYID")),
                     faceCurrency = currencyOf(sec0.getAttribute("FACEUNIT")))
         } else {
+            var date: LocalDate
+            try {
+                date = LocalDate.parse(sec0.getAttribute("PREVDATE"), DateTimeFormatter.ISO_DATE)
+            } catch (ignore: Exception) {
+                date = LocalDate.now()
+            }
             return Security(
-                    date = LocalDate.parse(sec0.getAttribute("PREVDATE"), DateTimeFormatter.ISO_DATE),
+                    date = date,
                     ticker = sec0.getAttribute("SECID"),
                     shortName = sec0.getAttribute("SHORTNAME"),
                     settlementPrice = getPrice(sec0.getAttribute("PREVADMITTEDQUOTE"), market),
@@ -82,6 +89,7 @@ class SecuritiesClientMoex: SecuritiesClient {
     }
 
     private fun getPrice(price: String, market: String): BigDecimal {
+        if (price.isEmpty()) return P0
         val k = if (market == "bonds") 10 else 1
         return BigDecimal(k) * BigDecimal(price)
     }
