@@ -910,7 +910,10 @@ private fun diff(first: TargetHistoryView, last: TargetHistoryView): PortfolioSu
 }
 
 fun <E> List<E>.slice(pageable: Pageable): List<E> {
-    val endIndex = pageable.offset.toInt() + pageable.pageSize
-    val max = if (this.size < endIndex) this.size else endIndex
-    return if (pageable.isPaged) this.subList(pageable.offset.toInt(), max) else this
+    return if (pageable.isPaged) {
+        val endIndex = pageable.offset.toInt() + pageable.pageSize
+        val max = if (this.size < endIndex) this.size else endIndex
+        this.subList(pageable.offset.toInt(), max)
+    } else
+        this;
 }

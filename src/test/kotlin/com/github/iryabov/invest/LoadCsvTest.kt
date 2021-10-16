@@ -4,6 +4,7 @@ import com.github.iryabov.invest.etl.DealsCsvLoader
 import com.github.iryabov.invest.repository.AccountRepository
 import com.github.iryabov.invest.repository.DealRepository
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -44,7 +45,7 @@ class LoadCsvTest(
 
     @Test
     @Transactional
-    //@Disabled
+    @Disabled
     @Rollback(false)
     fun csvLoad() {
         csvLoader.load(FileSystemResource("excel/test5.csv"))
