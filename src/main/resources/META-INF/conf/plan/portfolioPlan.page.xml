@@ -40,14 +40,14 @@
                     <column text-field-id="proportion" label="Balance">
                         <badge text="{balance}" text-format="number 0,0.00"/>
                     </column>
-                    <column text-field-id="id" label="" width="100px">
+                    <column text-field-id="id" label="" width="120px">
                         <toolbar>
-                            <button label="Plus" icon="fa fa-plus" type="icon" color="success">
+                            <button label="Plus" icon="fa fa-plus" type="icon" color="outline-success">
                                 <invoke operation-id="plusAssetTarget" submit-form="false" message-on-success="false" route="/plus">
                                     <form-param id="ticker" value="{id}"/>
                                 </invoke>
                             </button>
-                            <button label="Minus" icon="fa fa-minus" type="icon" color="danger">
+                            <button label="Minus" icon="fa fa-minus" type="icon" color="outline-danger">
                                 <invoke operation-id="minusAssetTarget" message-on-success="false" route="/minus">
                                     <form-param id="ticker" value="{id}"/>
                                 </invoke>

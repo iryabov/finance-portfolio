@@ -7,10 +7,12 @@ import org.springframework.data.domain.Pageable
 
 @Suppress("UNCHECKED_CAST")
 class SpringDataCriteriaConstructor: N2oCriteriaConstructor(true) {
-    override fun <T : Any?> construct(criteria: N2oPreparedCriteria, criteriaClass: Class<T>): T {
-        return if (criteriaClass.isAssignableFrom(Pageable::class.java)) {
-            PageRequest.of(criteria.page - 1, criteria.size) as T
+    override fun construct(criteria: N2oPreparedCriteria?, instance: Any?): Any? {
+        return if (instance is Pageable) {
+            PageRequest.of(criteria!!.page - 1, criteria.size)
         } else
-            super.construct(criteria, criteriaClass)
+            super.construct(criteria, instance)
     }
+
+
 }

@@ -6,10 +6,10 @@ import com.github.iryabov.invest.model.RefForm
 import com.github.iryabov.invest.service.impl.*
 import net.n2oapp.criteria.dataset.DataSet
 
-fun serializeAssets(assets: List<AssetView>): List<DataSet> {
+fun serializeAssets(assets: List<AssetView>, id: String): List<DataSet> {
     return assets.map { asset ->
         val map = DataSet()
-        map["id"] = asset.assetTicker
+        map["id"] = "${id}_${asset.assetTicker}"
         map["asset.ticker"] = asset.assetTicker
         map["name"] = fullName(asset.assetName, asset.assetTicker)
         map["quantity"] = asset.quantity
