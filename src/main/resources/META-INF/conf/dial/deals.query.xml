@@ -23,6 +23,17 @@
             </arguments>
         </java>
     </list>
+    <list result-mapping="getContent()" filters="portfolioId,currency" count-mapping="getTotalElements()">
+        <java method="getDealsByPortfolio" class="com.github.iryabov.invest.service.InvestService">
+            <spring/>
+            <arguments>
+                <argument type="primitive" name="portfolioId"/>
+                <argument type="primitive" name="currency"/>
+                <argument type="primitive" name="ticker"/>
+                <argument type="criteria" name="pageable" class="org.springframework.data.domain.Pageable"/>
+            </arguments>
+        </java>
+    </list>
 
     <fields>
         <field id="id">
@@ -31,6 +42,11 @@
         <field id="account.id">
             <filters>
                 <eq filter-id="accountId" mapping="[0]"/>
+            </filters>
+        </field>
+        <field id="portfolio.id">
+            <filters>
+                <eq filter-id="portfolioId" mapping="[0]"/>
             </filters>
         </field>
         <field id="active" domain="boolean">
