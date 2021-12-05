@@ -5,6 +5,8 @@ import com.github.iryabov.invest.model.ChartView
 import com.github.iryabov.invest.model.RefForm
 import com.github.iryabov.invest.service.impl.*
 import net.n2oapp.criteria.dataset.DataSet
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 
 fun serializeAssets(assets: List<AssetView>, id: String): List<DataSet> {
     return assets.map { asset ->
@@ -50,3 +52,5 @@ fun mapListToRef(list: List<DataSet>) = list.map { mapToRef(it) }
 fun mapToData(ref: RefForm) = DataSet(mapOf("id" to ref.id, "name" to ref.name))
 
 fun mapListToData(list: List<RefForm>) = list.map { mapToData(it) }
+
+class PageableIml: PageRequest(0,1, Sort.unsorted())

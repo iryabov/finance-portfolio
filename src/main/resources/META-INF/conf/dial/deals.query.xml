@@ -8,7 +8,7 @@
                 <argument type="primitive" name="accountId"/>
                 <argument type="primitive" name="currency"/>
                 <argument type="primitive" name="ticker"/>
-                <argument type="criteria" name="pageable" class="org.springframework.data.domain.Pageable"/>
+                <argument type="criteria" name="pageable" class="com.github.iryabov.invest.ui.PageableIml"/>
             </arguments>
         </java>
     </list>
