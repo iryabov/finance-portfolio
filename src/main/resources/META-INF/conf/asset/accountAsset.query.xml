@@ -20,11 +20,26 @@
             </arguments>
         </java>
     </unique>
+    <unique result-mapping="#this" filters="portfolioId,ticker,currency">
+        <java method="getAssetByPortfolio" class="com.github.iryabov.invest.service.InvestService">
+            <spring/>
+            <arguments>
+                <argument type="primitive" name="portfolioId"/>
+                <argument type="primitive" name="currency"/>
+                <argument type="primitive" name="ticker"/>
+            </arguments>
+        </java>
+    </unique>
 
     <fields>
         <field id="accountId">
             <filters>
                 <eq filter-id="accountId" mapping="[0]"/>
+            </filters>
+        </field>
+        <field id="portfolioId">
+            <filters>
+                <eq filter-id="portfolioId" mapping="[0]"/>
             </filters>
         </field>
         <field id="currency">

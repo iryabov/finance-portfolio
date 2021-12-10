@@ -11,6 +11,9 @@
             </arguments>
         </java>
     </list>
+    <unique>
+        <test operation="findOne"/><!-- todo work around NPE-->
+    </unique>
 
     <fields>
         <field id="portfolioId">
@@ -35,6 +38,9 @@
         </field>
         <field id="id">
             <select mapping="ticker"/>
+            <filters>
+                <eq filter-id="id"/> <!-- todo work around NPE-->
+            </filters>
         </field>
         <field id="asset.ticker">
             <select mapping="ticker"/>

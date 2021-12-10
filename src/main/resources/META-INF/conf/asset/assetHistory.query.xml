@@ -12,6 +12,18 @@
             </arguments>
         </java>
     </list>
+    <list result-mapping="#this" count-mapping="size()" filters="portfolioId,ticker,period.id,currency">
+        <java method="getAssetHistoryByPortfolio" class="com.github.iryabov.invest.service.InvestService">
+            <spring/>
+            <arguments>
+                <argument type="primitive" name="accountId"/>
+                <argument type="primitive" name="ticker"/>
+                <argument type="primitive" name="period"/>
+                <argument type="primitive" name="currency"/>
+            </arguments>
+        </java>
+    </list>
+
     <list result-mapping="#this" count-mapping="size()" filters="ticker,period.id,currency">
         <java method="getAssetHistory" class="com.github.iryabov.invest.service.InvestService">
             <spring/>
@@ -29,6 +41,11 @@
             <filters>
                 <eq filter-id="accountId" mapping="[0]" domain="integer"
                     default-value="-1" normalize="#this == -1 ? null: #this"/><!--todo remove it!-->
+            </filters>
+        </field>
+        <field id="portfolioId">
+            <filters>
+                <eq filter-id="portfolioId" mapping="[0]" domain="integer"/>
             </filters>
         </field>
         <field id="currency">

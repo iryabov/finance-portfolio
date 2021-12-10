@@ -57,6 +57,7 @@
                 </fields>
                 <pre-filters>
                     <eq field-id="accountId" param="account_id"/>
+                    <eq field-id="portfolioId" param="portfolio_id"/>
                     <eq field-id="id" param="asset_id"/>
                 </pre-filters>
             </form>
@@ -70,13 +71,9 @@
                     <line field-id="purchasePrice" color="#00FF00" type="linear"/>
                     <line field-id="salePrice" color="#FF0000" type="linear"/>
                 </lines>
-<!--                <bars x-field-id="date" y-field-id="quantity" grid-horizontal="false" grid-vertical="false"-->
-<!--                       tooltip-separator=" ">-->
-<!--                    <bar field-id="purchase" color="#8884d8" />-->
-<!--                    <bar field-id="sale" color="#FF0000"/>-->
-<!--                </bars>-->
                 <pre-filters>
                     <eq field-id="accountId" param="account_id"/>
+                    <eq field-id="portfolioId" param="portfolio_id"/>
                     <eq field-id="ticker" param="asset_id"/>
                     <eq field-id="period" value="{period.id}" ref-widget-id="period" ref-model="resolve"/>
                 </pre-filters>
@@ -149,6 +146,7 @@
                 </rows>
                 <pre-filters>
                     <eq field-id="account.id" param="account_id"/>
+                    <eq field-id="portfolio.id" param="portfolio_id"/>
                     <eq field-id="asset.ticker" param="asset_id"/>
                 </pre-filters>
             </table>

@@ -148,7 +148,7 @@ class InvestServiceImpl(
                 ::reduce)
     }
 
-    override fun getAssetHistoryByPortfolio(portfolioId: Int?, ticker: String, period: Period, currency: Currency): List<AssetHistoryView> {
+    override fun getAssetHistoryByPortfolio(portfolioId: Int, ticker: String, period: Period, currency: Currency): List<AssetHistoryView> {
         val from = period.from.invoke()
         val till = LocalDate.now()
         val assetHistory = dealRepo.findAllByPeriod(null, portfolioId, ticker, currency, from, till)

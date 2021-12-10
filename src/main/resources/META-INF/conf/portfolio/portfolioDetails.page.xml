@@ -125,6 +125,11 @@
                     <switch value-field-id="assetActive">
                         <case value="false">text-secondary</case>
                     </switch>
+                    <click enabled="{typeof children == 'undefined'}">
+                        <open-page page-id="assetDetails" route="/:asset_id/details">
+                            <path-param name="asset_id" value="{asset.ticker}"/>
+                        </open-page>
+                    </click>
                 </rows>
                 <pre-filters>
                     <eq field-id="portfolioId" param="portfolio_id"/>
