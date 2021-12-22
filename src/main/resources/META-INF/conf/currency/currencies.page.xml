@@ -7,33 +7,39 @@
                 <fields>
                     <hidden id="id" default-value="1"/>
                     <row>
-                        <select id="pair1" label="Currency 1" param="pair1"
-                                required="true">
-                            <default-value id="RUB"/>
-                            <options>
-                                <option id="RUB" name="RUB"/>
-                                <option id="USD" name="USD"/>
-                                <option id="EUR" name="EUR"/>
-                            </options>
-                        </select>
-                        <select id="pair2" label="Currency 2" param="pair2"
-                                required="true">
-                            <default-value id="USD"/>
-                            <options>
-                                <option id="RUB" name="RUB"/>
-                                <option id="USD" name="USD"/>
-                                <option id="EUR" name="EUR"/>
-                            </options>
-                        </select>
-                        <radio-group id="period" label="Period" param="period" inline="true">
-                            <options>
-                                <option id="WEEK" name="Week"/>
-                                <option id="MONTH" name="Month"/>
-                                <option id="HALF_YEAR" name="Half year"/>
-                                <option id="YEAR" name="Year"/>
-                                <option id="FIVE_YEARS" name="5 years"/>
-                            </options>
-                        </radio-group>
+                        <col size="3">
+                            <select id="pair1" label="Currency 1" param="pair1"
+                                    required="true">
+                                <default-value id="RUB"/>
+                                <options>
+                                    <option id="RUB" name="RUB"/>
+                                    <option id="USD" name="USD"/>
+                                    <option id="EUR" name="EUR"/>
+                                </options>
+                            </select>
+                        </col>
+                        <col size="3">
+                            <select id="pair2" label="Currency 2" param="pair2"
+                                    required="true">
+                                <default-value id="USD"/>
+                                <options>
+                                    <option id="RUB" name="RUB"/>
+                                    <option id="USD" name="USD"/>
+                                    <option id="EUR" name="EUR"/>
+                                </options>
+                            </select>
+                        </col>
+                        <col size="6">
+                            <radio-group id="period" label="Period" param="period" inline="true">
+                                <options>
+                                    <option id="WEEK" name="Week"/>
+                                    <option id="MONTH" name="Month"/>
+                                    <option id="HALF_YEAR" name="Half year"/>
+                                    <option id="YEAR" name="Year"/>
+                                    <option id="FIVE_YEARS" name="5 years"/>
+                                </options>
+                            </radio-group>
+                        </col>
                     </row>
                 </fields>
                 <toolbar place="bottomLeft">

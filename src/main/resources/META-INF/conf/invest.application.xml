@@ -11,14 +11,12 @@
             </menu-item>
         </nav>
         <extra-menu>
-            <dropdown-menu name="Admin" icon="fa fa-cog">
-                <menu-item name="Securities">
-                    <open-page page-id="securities" route="/admin/securities"/>
-                </menu-item>
-                <menu-item name="Currencies">
-                    <open-page page-id="currencies" route="/admin/currencies"/>
-                </menu-item>
-            </dropdown-menu>
+            <menu-item name="Securities" icon="fa fa-file-text-o">
+                <open-page page-id="securities" route="/admin/securities"/>
+            </menu-item>
+            <menu-item name="Currencies" icon="fa fa-money">
+                <open-page page-id="currencies" route="/admin/currencies"/>
+            </menu-item>
         </extra-menu>
     </sidebar>
 </application>
