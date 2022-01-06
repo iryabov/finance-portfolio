@@ -20,8 +20,8 @@
                 </java>
             </invocation>
             <in>
-                <field id="name" mapping="name"/>
-                <field id="num" mapping="num"/>
+                <field id="name" mapping="[form].name"/>
+                <field id="num" mapping="[form].num"/>
             </in>
             <out>
                 <field id="id" domain="integer" mapping="#this"/>

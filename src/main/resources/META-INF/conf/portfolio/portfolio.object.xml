@@ -20,11 +20,11 @@
                 </java>
             </invocation>
             <in>
-                <field id="name" mapping="name"/>
-                <field id="note" mapping="note"/>
-                <field id="period.begin" mapping="beginDate"/>
-                <field id="period.end" mapping="endDate"/>
-                <field id="accounts" mapping="accounts" normalize="T(com.github.iryabov.invest.ui.UiUtilsKt).mapListToRef(#this)"/>
+                <field id="name" mapping="[form].name"/>
+                <field id="note" mapping="[form].note"/>
+                <field id="period.begin" mapping="[form].beginDate"/>
+                <field id="period.end" mapping="[form].endDate"/>
+                <field id="accounts" mapping="[form].accounts" normalize="T(com.github.iryabov.invest.ui.UiUtilsKt).mapListToRef(#this)"/>
             </in>
             <out>
                 <field id="id" domain="integer" mapping="#this"/>

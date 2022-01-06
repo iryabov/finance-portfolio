@@ -1,4 +1,99 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <query xmlns="http://n2oapp.net/framework/config/schema/query-4.0">
+    <unique result-mapping="#this" filters="accountId,ticker,currency">
+        <java method="getAsset" class="com.github.iryabov.invest.service.InvestService">
+            <spring/>
+            <arguments>
+                <argument type="primitive" name="accountId"/>
+                <argument type="primitive" name="currency"/>
+                <argument type="primitive" name="ticker"/>
+            </arguments>
+        </java>
+    </unique>
+    <unique result-mapping="#this" filters="portfolioId,ticker,currency">
+        <java method="getAssetByPortfolio" class="com.github.iryabov.invest.service.InvestService">
+            <spring/>
+            <arguments>
+                <argument type="primitive" name="portfolioId"/>
+                <argument type="primitive" name="currency"/>
+                <argument type="primitive" name="ticker"/>
+            </arguments>
+        </java>
+    </unique>
+
+    <fields>
+        <field id="accountId">
+            <filters>
+                <eq filter-id="accountId" mapping="[0]"/>
+            </filters>
+        </field>
+        <field id="currency">
+            <filters>
+                <eq filter-id="currency" default-value="${portfolio.currency}"
+                    normalize="T(com.github.iryabov.invest.relation.Currency).valueOf(#this)"
+                    mapping="[1]"/>
+            </filters>
+        </field>
+        <field id="id">
+            <select mapping="assetTicker"/>
+            <filters>
+                <eq filter-id="ticker" mapping="[2]"/>
+            </filters>
+        </field>
+        <field id="asset.ticker">
+            <select mapping="assetTicker"/>
+        </field>
+        <field id="asset.name">
+            <select mapping="assetName"/>
+        </field>
+        <field id="name">
+            <select mapping="assetName" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).fullName(#this, #data['asset.ticker'])"/>
+        </field>
+        <field id="asset.class">
+            <select mapping="assetClass"/>
+        </field>
+        <field id="asset.priceNow">
+            <select mapping="assetPriceNow"/>
+        </field>
+        <field id="quantity">
+            <select mapping="quantity"/>
+        </field>
+        <field id="netValue">
+            <select mapping="netValue"/>
+        </field>
+        <field id="marketValue">
+            <select mapping="marketValue"/>
+        </field>
+        <field id="valueProfitPercent">
+            <select mapping="valueProfitPercent" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitFormat(#this)"/>
+        </field>
+        <field id="fixedProfitPercent">
+            <select mapping="fixedProfitPercent" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitPercentFormat(#this)"/>
+        </field>
+        <field id="marketProfitPercent">
+            <select mapping="marketProfitPercent" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitPercentFormat(#this)"/>
+        </field>
+        <field id="marketProfit">
+            <select mapping="marketValue + proceeds - expenses"/>
+        </field>
+        <field id="marketProfitColor">
+            <select mapping="marketProfitPercent > 0 ? 'success' : 'danger'"/>
+        </field>
+        <field id="fixedProfit">
+            <select mapping="netValue + proceeds - expenses"/>
+        </field>
+        <field id="netProportion">
+            <select mapping="netProportion" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).percentFormat(#this)"/>
+        </field>
+        <field id="marketProportion">
+            <select mapping="marketProportion" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).percentFormat(#this)"/>
+        </field>
+        <field id="marketProfitProportion">
+            <select mapping="marketProfitProportion" normalize="T(com.github.iryabov.invest.service.impl.FormatUtilsKt).profitPercentFormat(#this)"/>
+        </field>
+        <field id="assetActive" domain="boolean">
+            <select mapping="quantity > 0"/>
+        </field>
+    </fields>
 
 </query>

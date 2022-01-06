@@ -8,6 +8,7 @@
                     <hidden id="id" default-value="1"/>
                     <row>
                         <col size="3">
+                            <hidden id="cur"/>
                             <select id="pair1" label="Currency 1" param="pair1"
                                     required="true">
                                 <default-value id="RUB"/>

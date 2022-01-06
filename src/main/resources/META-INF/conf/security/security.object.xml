@@ -36,14 +36,14 @@
                 </java>
             </invocation>
             <in>
-                <field id="ticker" mapping="ticker"/>
-                <field id="name" mapping="name"/>
-                <field id="price" mapping="priceNow"/>
-                <field id="assetClass.id" mapping="assetClass"/>
-                <field id="sector.id" mapping="sector"/>
-                <field id="country.id" mapping="country"/>
-                <field id="currency.id" mapping="currency"/>
-                <field id="api.id" mapping="api" default-value="NONE"/>
+                <field id="ticker" mapping="[form].ticker"/>
+                <field id="name" mapping="[form].name"/>
+                <field id="price" mapping="[form].priceNow"/>
+                <field id="assetClass.id" mapping="[form].assetClass"/>
+                <field id="sector.id" mapping="[form].sector"/>
+                <field id="country.id" mapping="[form].country"/>
+                <field id="currency.id" mapping="[form].currency"/>
+                <field id="api.id" mapping="[form].api" default-value="NONE"/>
             </in>
         </operation>
         <operation id="editSecurity">
@@ -56,14 +56,14 @@
                 </java>
             </invocation>
             <in>
-                <field id="ticker" mapping="ticker"/>
-                <field id="name" mapping="name"/>
-                <field id="price" mapping="priceNow"/>
-                <field id="assetClass.id" mapping="assetClass"/>
-                <field id="sector.id" mapping="sector"/>
-                <field id="country.id" mapping="country"/>
-                <field id="currency.id" mapping="currency"/>
-                <field id="api.id" mapping="api" default-value="NONE"/>
+                <field id="ticker" mapping="[form].ticker"/>
+                <field id="name" mapping="[form].name"/>
+                <field id="price" mapping="[form].priceNow"/>
+                <field id="assetClass.id" mapping="[form].assetClass"/>
+                <field id="sector.id" mapping="[form].sector"/>
+                <field id="country.id" mapping="[form].country"/>
+                <field id="currency.id" mapping="[form].currency"/>
+                <field id="api.id" mapping="[form].api" default-value="NONE"/>
             </in>
         </operation>
         <operation id="deleteSecurity">
