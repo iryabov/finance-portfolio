@@ -7,8 +7,9 @@
                 <row>
                     <col>
                         <radio-group id="period" label="Period" inline="true" no-label-block="true" no-label="true">
-                            <default-value id="2021" name="2021"/>
+                            <default-value id="2022" name="2022"/>
                             <options>
+                                <option id="2022" name="2022"/>
                                 <option id="2021" name="2021"/>
                                 <option id="2020" name="2020"/>
                                 <option id="2019" name="2019"/>
