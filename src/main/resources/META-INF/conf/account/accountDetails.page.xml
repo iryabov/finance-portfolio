@@ -63,7 +63,7 @@
         </region>
         <line>
             <table id="currencies" name="Currencies" query-id="accountCurrencies" route="/currencies" selection="none" size="100">
-                <pagination hide-single-page="true"/>
+                <pagination show-single-page="false" show-count="false"/>
                 <columns>
                     <column text-field-id="name" label="Name"/>
                     <column text-field-id="quantity" label="Quantity">
@@ -93,6 +93,8 @@
                     <eq field-id="accountId" param="account_id"/>
                 </pre-filters>
             </table>
+        </line>
+        <line>
             <table id="securities" name="Securities" query-id="accountAsset" route="/securities" selection="none" size="100">
                 <columns>
                     <column text-field-id="name" label="Name"/>
@@ -119,6 +121,7 @@
                         </open-page>
                     </click>
                 </rows>
+                <pagination show-single-page="false" show-count="false"/>
                 <pre-filters>
                     <eq field-id="accountId" param="account_id"/>
                 </pre-filters>

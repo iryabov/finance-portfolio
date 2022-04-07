@@ -511,11 +511,11 @@ class InvestServiceTest(
     fun exchangeECB() {
         val exchange = currenciesClientECB.findCurrencyByDate(LocalDate.of(2020, Month.JANUARY, 1))
         assertThat(exchange.getPairExchangePrice(Currency.USD, RUB).setScale(3, RoundingMode.HALF_DOWN))
-                .isEqualTo(BigDecimal(62.272).setScale(3, RoundingMode.HALF_DOWN))
+                .isEqualTo(BigDecimal(61.865).setScale(3, RoundingMode.HALF_DOWN))
         assertThat(exchange.getPairExchangePrice(RUB, Currency.USD).setScale(3, RoundingMode.HALF_DOWN))
                 .isEqualTo(BigDecimal(0.016).setScale(3, RoundingMode.HALF_DOWN))
         assertThat(exchange.getPairExchangePrice(Currency.EUR, Currency.USD).setScale(3, RoundingMode.HALF_DOWN))
-                .isEqualTo(BigDecimal(1.123).setScale(3, RoundingMode.HALF_DOWN))
+                .isEqualTo(BigDecimal(1.122).setScale(3, RoundingMode.HALF_DOWN))
     }
 
     @Test

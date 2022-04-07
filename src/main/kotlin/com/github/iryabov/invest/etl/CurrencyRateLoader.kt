@@ -15,7 +15,7 @@ import java.util.stream.Collectors
 @Component
 class CurrencyRateLoader(
         val rateRepo: CurrencyRateRepository,
-        @Qualifier("currenciesClientCBRF")
+        @Qualifier("currenciesClientECB")
         val currenciesClient: CurrenciesClient
 ) {
     fun load(from: LocalDate, till: LocalDate) {
